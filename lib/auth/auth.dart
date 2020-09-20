@@ -1,417 +1,127 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:async';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../models/Http_Exceptions.dart';
 
-enum AuthMode { Login, Signup }
+class Auth with ChangeNotifier {
+  String _token;
+  DateTime _expiryDate;
+  String _userId;
+  Timer _authTimer;
 
-class AuthScreen extends StatelessWidget {
-  AuthMode _authMode = AuthMode.Signup;
-  @override
-  Widget build(BuildContext context) {
-    final deviceSize = MediaQuery.of(context).size;
-    return Scaffold(
-      body: Container(
-        height: deviceSize.height * 2,
-        child: SingleChildScrollView(
-          padding: EdgeInsets.only(top: 100, bottom: 30),
-          child: _authMode == AuthMode.Login ? AuthLogin() : AuthSignup(),
-        ),
-      ),
-    );
+  bool get isAuth {
+    return token != null;
   }
-}
 
-class AuthLogin extends StatefulWidget {
-  @override
-  _AuthLoginState createState() => _AuthLoginState();
-}
-
-class _AuthLoginState extends State<AuthLogin> {
-  AuthMode _authMode = AuthMode.Login;
-
-  void _switchAuthMode() {
-    if (_authMode == AuthMode.Login) {
-      setState(() {
-        _authMode = AuthMode.Signup;
-      });
-    } else {
-      setState(() {
-        _authMode = AuthMode.Login;
-      });
+  String get token {
+    if (_expiryDate != null &&
+        _expiryDate.isAfter(DateTime.now()) &&
+        _token != null) {
+      return _token;
     }
+    return null;
   }
 
-  TapGestureRecognizer _gestureRecognizer;
-
-  @override
-  void initState() {
-    _gestureRecognizer = TapGestureRecognizer()..onTap = _switchAuthMode;
-    super.initState();
+  String get userId {
+    return _userId;
   }
 
-  @override
-  void dispose() {
-    _gestureRecognizer.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    GlobalKey<FormState> _formKey = GlobalKey();
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Center(
-          child: Text(
-            'SCRUMMY',
-            style: TextStyle(
-              fontFamily: 'Mclaren',
-              color: Colors.orange,
-              fontSize: 50,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 2,
-            ),
-          ),
+  Future<void> _authenticate(
+      String email, String password, String urlSegment) async {
+    final url =
+        'https://identitytoolkit.googleapis.com/v1/accounts:$urlSegment?key=AIzaSyBbhk-nrk0ExAI8SAcuEcDLmywpSn2pxX0';
+    try {
+      final response = await http.post(
+        url,
+        body: json.encode(
+          {
+            'email': email,
+            'password': password,
+            'returnSecureToken': true,
+          },
         ),
-        SizedBox(
-          height: 80,
-        ),
-        Text(
-          'Login into your account',
-          style: TextStyle(
-            fontFamily: 'Raleway',
-            color: Colors.grey[900],
-            fontSize: 15,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        SizedBox(
-          height: 15,
-        ),
-        Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                width: 240,
-                height: 60,
-                child: TextFormField(
-                  decoration: InputDecoration(
-                      prefixIcon: Icon(
-                        Icons.person_outline,
-                      ),
-                      labelText: 'Email',
-                      labelStyle: TextStyle(
-                        fontFamily: 'Raleway',
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(35.0),
-                      )),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
-                    if (value == null || !value.contains('@')) {
-                      return 'Invalid Email';
-                    }
-                  },
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                width: 240,
-                height: 60,
-                child: TextFormField(
-                  decoration: InputDecoration(
-                      prefixIcon: Icon(
-                        Icons.lock_outline,
-                      ),
-                      labelText: 'Password',
-                      labelStyle: TextStyle(
-                        fontFamily: 'Raleway',
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(35.0),
-                      )),
-                  obscureText: true,
-                ),
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              InkWell(
-                child: Text(
-                  'Forgotten Password?',
-                  style: TextStyle(
-                    fontFamily: 'Raleway',
-                    color: Colors.grey[900],
-                    fontSize: 15,
-                  ),
-                ),
-                onTap: () {},
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Container(
-                width: 240,
-                height: 40,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(25.0),
-                  child: FlatButton(
-                    color: Colors.orange,
-                    child: Text(
-                      'Login',
-                      style: TextStyle(
-                        fontFamily: 'Raleway',
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    onPressed: () {},
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              RichText(
-                text: TextSpan(
-                  text: 'New to Scrummy? ',
-                  style: TextStyle(
-                    color: Colors.grey[900],
-                    fontFamily: 'Raleway',
-                    fontSize: 15,
-                  ),
-                  children: <TextSpan>[
-                    TextSpan(
-                      text: 'Sign Up',
-                      style: TextStyle(
-                        color: Colors.orange,
-                        fontSize: 16.5,
-                        fontFamily: 'Raleway',
-                        fontWeight: FontWeight.bold,
-                      ),
-                      recognizer: _gestureRecognizer,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class AuthSignup extends StatefulWidget {
-  @override
-  _AuthSignupState createState() => _AuthSignupState();
-}
-
-class _AuthSignupState extends State<AuthSignup> {
-  @override
-  Widget build(BuildContext context) {
-    AuthMode _authMode = AuthMode.Signup;
-
-    void _switchAuthMode() {
-      if (_authMode == AuthMode.Login) {
-        setState(() {
-          _authMode = AuthMode.Signup;
-        });
-      } else {
-        setState(() {
-          _authMode = AuthMode.Login;
-        });
+      );
+      final responseData = json.decode(response.body);
+      if (responseData['error'] != null) {
+        throw HttpException(
+          responseData['error']['message'],
+        );
       }
-    }
-
-    TapGestureRecognizer _gestureRecognizer;
-
-    @override
-    void initState() {
-      _gestureRecognizer = TapGestureRecognizer()..onTap = _switchAuthMode;
-      super.initState();
-    }
-
-    @override
-    void dispose() {
-      _gestureRecognizer.dispose();
-      super.dispose();
-    }
-
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Center(
-          child: Text(
-            'SCRUMMY',
-            style: TextStyle(
-              fontFamily: 'Mclaren',
-              color: Colors.orange,
-              fontSize: 50,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 2,
-            ),
+      _token = responseData['idToken'];
+      _userId = responseData['localId'];
+      _expiryDate = DateTime.now().add(
+        Duration(
+          seconds: int.parse(
+            responseData['expiresIn'],
           ),
         ),
-        SizedBox(
-          height: 80,
-        ),
-        Text(
-          'Create your account',
-          style: TextStyle(
-            fontFamily: 'Raleway',
-            color: Colors.grey[600],
-            fontSize: 15,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        SizedBox(
-          height: 15,
-        ),
-        Form(
-          child: Column(
-            children: <Widget>[
-              Container(
-                width: 240,
-                height: 60,
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(
-                      Icons.person_outline,
-                    ),
-                    labelText: 'Enter your name',
-                    labelStyle: TextStyle(
-                      fontFamily: 'Raleway',
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(35.0),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                width: 240,
-                height: 60,
-                child: TextFormField(
-                  decoration: InputDecoration(
-                      prefixIcon: Icon(
-                        Icons.alternate_email,
-                      ),
-                      labelText: 'E-mail',
-                      labelStyle: TextStyle(
-                        fontFamily: 'Raleway',
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(35.0),
-                      )),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
-                    if (value == null || !value.contains('@')) {
-                      return 'Invalid Email';
-                    }
-                  },
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                width: 240,
-                height: 60,
-                child: TextFormField(
-                  decoration: InputDecoration(
-                      prefixIcon: Icon(
-                        Icons.lock_outline,
-                      ),
-                      labelText: 'Password',
-                      labelStyle: TextStyle(
-                        fontFamily: 'Raleway',
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(35.0),
-                      )),
-                  obscureText: true,
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                width: 240,
-                height: 60,
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(
-                      Icons.lock_outline,
-                    ),
-                    labelText: 'Confirm Password',
-                    labelStyle: TextStyle(
-                      fontFamily: 'Raleway',
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(35.0),
-                    ),
-                  ),
-                  obscureText: true,
-                ),
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Container(
-                width: 240,
-                height: 40,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(25.0),
-                  child: FlatButton(
-                    color: Colors.orange,
-                    child: Text(
-                      'Signup',
-                      style: TextStyle(
-                        fontFamily: 'Raleway',
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    onPressed: () {},
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              RichText(
-                text: TextSpan(
-                  text: 'Already have an account? ',
-                  style: TextStyle(
-                    color: Colors.grey[900],
-                    fontFamily: 'Raleway',
-                    fontSize: 15,
-                  ),
-                  children: <TextSpan>[
-                    TextSpan(
-                      text: 'Login',
-                      style: TextStyle(
-                        color: Colors.orange,
-                        fontSize: 16.5,
-                        fontFamily: 'Raleway',
-                        fontWeight: FontWeight.bold,
-                      ),
-                      recognizer: _gestureRecognizer,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
+      );
+      _autoLogout();
+      notifyListeners();
+      final prefs = await SharedPreferences.getInstance();
+      final userData = json.encode(
+        {
+          'token': _token,
+          'userId': _userId,
+          'expiryDate': _expiryDate.toIso8601String()
+        },
+      );
+      prefs.setString('userData', userData);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  Future<void> signup(String email, String password) async {
+    return _authenticate(email, password, 'signUp');
+  }
+
+  Future<void> login(String email, String password) async {
+    return _authenticate(email, password, 'signInWithPassword');
+  }
+
+  Future<bool> tryAutoLogin() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('userData')) {
+      return false;
+    }
+    final extractedUserData =
+        json.decode(prefs.getString('userData')) as Map<String, Object>;
+    final expiryDate = DateTime.parse(extractedUserData['expiryDate']);
+
+    if (expiryDate.isBefore(DateTime.now())) {
+      return false;
+    }
+
+    _token = extractedUserData['token'];
+    _userId = extractedUserData['userId'];
+    _expiryDate = expiryDate;
+    notifyListeners();
+    _autoLogout();
+    return true;
+  }
+
+  void logout() async {
+    _token = null;
+    _userId = null;
+    _expiryDate = null;
+    if (_authTimer != null) {
+      _authTimer.cancel();
+      _authTimer = null;
+    }
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    // prefs.remove('userData');
+    prefs.clear();
+  }
+
+  void _autoLogout() {
+    if (_authTimer != null) {
+      _authTimer.cancel();
+    }
+    final timeToExpiry = _expiryDate.difference(DateTime.now()).inSeconds;
+    _authTimer = Timer(Duration(seconds: timeToExpiry), logout);
   }
 }

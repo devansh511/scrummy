@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1038538752186",
+    "firebase_url": "https://fir-project-4a6b0.firebaseio.com",
+    "project_id": "fir-project-4a6b0",
+    "storage_bucket": "fir-project-4a6b0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1038538752186:android:4e5d8a3679ed8dd9820283",
+        "android_client_info": {
+          "package_name": "com.devansh.scrummy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1038538752186-e1baj8ua9gs42jo8u4ipa31pkdq4hsdv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbhk-nrk0ExAI8SAcuEcDLmywpSn2pxX0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1038538752186-e1baj8ua9gs42jo8u4ipa31pkdq4hsdv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
