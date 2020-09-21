@@ -229,6 +229,11 @@ class _AuthPageState extends State<AuthPage> {
                 width: 240,
                 height: 60,
                 child: TextFormField(
+                  style: TextStyle(
+                    fontFamily: 'Raleway',
+                    color: Colors.grey[600],
+                    fontSize: 20.0,
+                  ),
                   controller: _controller2,
                   decoration: InputDecoration(
                     prefixIcon: Icon(

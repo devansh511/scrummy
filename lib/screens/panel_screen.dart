@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class PanelScreen extends StatefulWidget {
   @override
@@ -64,11 +65,11 @@ class _PanelScreenState extends State<PanelScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final deviceHeight = MediaQuery.of(context).size;
+    final deviceHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: SafeArea(
         child: Container(
-          height: deviceHeight.height,
+          height: deviceHeight,
           child: Center(
             child: Column(
               children: [
@@ -90,8 +91,8 @@ class _PanelScreenState extends State<PanelScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
-                      height: 120,
-                      width: 120,
+                      height: 150,
+                      width: 150,
                       child: GestureDetector(
                         child: Card(
                           shape: RoundedRectangleBorder(
@@ -103,10 +104,11 @@ class _PanelScreenState extends State<PanelScreen> {
                           ),
                           elevation: _restElevation,
                           shadowColor: Colors.grey[300],
-                          child: Icon(
-                            Icons.restaurant_menu,
-                            size: 50,
+                          child: SvgPicture.asset(
+                            'assets/rest.svg',
+                            fit: BoxFit.none,
                             color: _restIconColor,
+                            width: 100.0,
                           ),
                         ),
                         onTap: () {
@@ -120,8 +122,8 @@ class _PanelScreenState extends State<PanelScreen> {
                       width: 40,
                     ),
                     Container(
-                      height: 120,
-                      width: 120,
+                      height: 150,
+                      width: 150,
                       child: GestureDetector(
                         child: Card(
                           shape: RoundedRectangleBorder(
@@ -133,10 +135,11 @@ class _PanelScreenState extends State<PanelScreen> {
                           ),
                           elevation: _custElevation,
                           shadowColor: Colors.grey[300],
-                          child: Icon(
-                            Icons.person_pin,
-                            size: 50,
+                          child: SvgPicture.asset(
+                            'assets/cust.svg',
+                            fit: BoxFit.none,
                             color: _custIconColor,
+                            width: 100.0,
                           ),
                         ),
                         onTap: () {
@@ -152,7 +155,8 @@ class _PanelScreenState extends State<PanelScreen> {
                 Row(
                   children: [
                     Container(
-                      margin: EdgeInsets.only(left: 45, top: 20),
+                      margin:
+                          EdgeInsets.only(left: 25, top: deviceHeight - 620.0),
                       child: Text(
                         'Restaurant',
                         style: TextStyle(
@@ -164,10 +168,10 @@ class _PanelScreenState extends State<PanelScreen> {
                       ),
                     ),
                     SizedBox(
-                      width: 40,
+                      width: 70,
                     ),
                     Container(
-                      margin: EdgeInsets.only(top: 20),
+                      margin: EdgeInsets.only(top: deviceHeight - 620.0),
                       child: Text(
                         'Customer',
                         style: TextStyle(
