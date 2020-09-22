@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:bubble_bottom_bar/bubble_bottom_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../screens/feed_screen.dart';
+import '../screens/empty_cart_screen.dart';
 import './profile_screen.dart';
+import './search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -37,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
           margin: EdgeInsets.only(left: 120.0),
         ),
       ),
-      body: ProfileScreen(),
+      body: SearchScreen(),
       // _currentIndex == 0
       //     ? null
       //     : _currentIndex == 1
