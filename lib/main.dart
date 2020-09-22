@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scrummy/screens/panel_screen.dart';
+import './auth/auth_screen.dart';
 import 'auth/auth.dart';
 import 'package:provider/provider.dart';
 import './screens/location_screen.dart';
