@@ -55,7 +55,7 @@ class DishesGrid extends StatelessWidget {
                       Text(
                         '₹189 | ★ ',
                         style: TextStyle(
-                          fontFamily: "Raleway",
+                          fontFamily: 'Raleway',
                           color: Colors.grey[600],
                           fontWeight: FontWeight.bold,
                         ),

@@ -5,6 +5,7 @@ import '../screens/feed_screen.dart';
 import '../screens/empty_cart_screen.dart';
 import './profile_screen.dart';
 import './search_screen.dart';
+import './cart_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -39,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
           margin: EdgeInsets.only(left: 120.0),
         ),
       ),
-      body: SearchScreen(),
+      body: ProfileScreen(),
       // _currentIndex == 0
       //     ? null
       //     : _currentIndex == 1

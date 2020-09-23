@@ -65,7 +65,7 @@ class EmptyCart extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  'But some food',
+                  'Buy some food',
                   style: TextStyle(
                     color: Colors.white,
                     fontFamily: 'Raleway',
