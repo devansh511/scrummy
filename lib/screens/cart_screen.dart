@@ -6,16 +6,16 @@ class CartScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(12.0, 20.0, 12.0, 12.0),
+        padding: const EdgeInsets.fromLTRB(12.0, 40.0, 12.0, 12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             Container(
               margin: EdgeInsets.only(left: 10.0),
               child: Row(
                 children: <Widget>[
                   Text(
-                    'Food in your cart',
+                    'My Cart',
                     style: TextStyle(
                       fontFamily: 'Raleway',
                       color: Colors.grey[600],
@@ -23,34 +23,20 @@ class CartScreen extends StatelessWidget {
                       fontSize: 17.0,
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.only(left: 120.0, right: 8.0),
-                    child: Text(
-                      'See all',
-                      style: TextStyle(
-                          fontFamily: 'Raleway',
-                          color: Colors.grey,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Container(
-                    child: FaIcon(
-                      FontAwesomeIcons.arrowRight,
-                      size: 15.0,
-                      color: Colors.grey,
-                    ),
-                  ),
                 ],
               ),
             ),
             ListView.builder(
+              padding: EdgeInsets.only(
+                top: 10.0,
+              ),
               physics: const ClampingScrollPhysics(),
               shrinkWrap: true,
-              itemCount: 1,
+              itemCount: 7,
               itemBuilder: (context, i) => Container(
                 height: 130.0,
                 child: Card(
-                  margin: EdgeInsets.only(bottom: 25.0, top: 10.0),
+                  margin: EdgeInsets.only(bottom: 19.0, top: 10.0),
                   elevation: 0.0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20.0),
@@ -77,18 +63,19 @@ class CartScreen extends StatelessWidget {
                           Text(
                             'Maharaja MAC',
                             style: TextStyle(
-                                fontFamily: 'Raleway',
-                                color: Colors.grey[600],
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18.0),
+                              fontFamily: 'Raleway',
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14.0,
+                            ),
                           ),
                           Text(
                             'Burgers',
                             style: TextStyle(
-                              fontFamily: 'Raleway',
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.bold,
-                            ),
+                                fontFamily: 'Raleway',
+                                color: Colors.grey[600],
+                                fontWeight: FontWeight.bold,
+                                fontSize: 11.0),
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -116,21 +103,29 @@ class CartScreen extends StatelessWidget {
                                       ],
                                     ),
                                   ),
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(25.0),
+                                  Container(
+                                    padding: EdgeInsets.all(4.0),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(25.0),
+                                      border: Border.all(
+                                        color: Colors.orange,
+                                        width: 1,
+                                      ),
+                                    ),
                                     child: Text(
                                       '20% OFF',
                                       style: TextStyle(
                                         color: Colors.orange,
                                         fontFamily: 'Raleway',
                                         fontWeight: FontWeight.bold,
+                                        fontSize: 13.0,
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
                               SizedBox(
-                                width: 50.0,
+                                width: 40.0,
                               ),
                               FlatButton(
                                 padding: EdgeInsets.symmetric(horizontal: 15.0),
@@ -155,106 +150,6 @@ class CartScreen extends StatelessWidget {
                               ),
                             ],
                           )
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Divider(
-              thickness: 2.0,
-              indent: 40.0,
-              endIndent: 40.0,
-            ),
-            Text(
-              'My Orders',
-              style: TextStyle(
-                fontFamily: 'Raleway',
-                color: Colors.grey[600],
-                fontWeight: FontWeight.bold,
-                fontSize: 20.0,
-              ),
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            ListView.builder(
-              physics: const ClampingScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: 3,
-              itemBuilder: (context, i) => Container(
-                height: 130.0,
-                child: Card(
-                  margin: EdgeInsets.only(bottom: 25.0),
-                  elevation: 0.0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                    side: BorderSide(
-                      color: Colors.grey[400],
-                    ),
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                        child: Image(
-                          image: AssetImage('assets/Untitled.png'),
-                          filterQuality: FilterQuality.high,
-                        ),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text(
-                            'Maharaja MAC',
-                            style: TextStyle(
-                                fontFamily: 'Raleway',
-                                color: Colors.grey[600],
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18.0),
-                          ),
-                          RichText(
-                            text: TextSpan(
-                              text: 'Total prize ',
-                              style: TextStyle(
-                                fontFamily: 'Raleway',
-                                color: Colors.grey[600],
-                                fontWeight: FontWeight.bold,
-                              ),
-                              children: <TextSpan>[
-                                TextSpan(
-                                  text: '₹ 189',
-                                  style: TextStyle(
-                                    color: Colors.grey[900],
-                                    fontFamily: 'Raleway',
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          RichText(
-                            text: TextSpan(
-                              text: 'Will be delivered in ',
-                              style: TextStyle(
-                                fontFamily: 'Raleway',
-                                color: Colors.grey[600],
-                                fontWeight: FontWeight.bold,
-                              ),
-                              children: <TextSpan>[
-                                TextSpan(
-                                  text: '32min',
-                                  style: TextStyle(
-                                    color: Colors.grey[900],
-                                    fontFamily: 'Raleway',
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
                         ],
                       ),
                     ],
