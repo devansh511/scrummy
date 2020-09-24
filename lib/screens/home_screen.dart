@@ -42,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
           margin: EdgeInsets.only(left: 120.0),
         ),
       ),
-      body: CheckoutScreen(),
+      body: FeedScreen(),
       // _currentIndex == 0
       //     ? null
       //     : _currentIndex == 1
