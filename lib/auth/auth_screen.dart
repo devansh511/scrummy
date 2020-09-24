@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:scrummy/screens/home_screen.dart';
+import 'package:scrummy/screens/location_screen.dart';
 import 'package:scrummy/screens/splash_screen.dart';
 import 'auth.dart';
 import 'package:provider/provider.dart';
@@ -80,7 +82,7 @@ class _AuthPageState extends State<AuthPage> {
               ),
             ),
             onPressed: () {
-              Navigator.of(context).pop();
+              // Navigator.of(context).pop();
             },
           ),
         ],
@@ -229,11 +231,11 @@ class _AuthPageState extends State<AuthPage> {
                 width: 240,
                 height: 60,
                 child: TextFormField(
-                  style: TextStyle(
-                    fontFamily: 'Raleway',
-                    color: Colors.grey[600],
-                    fontSize: 20.0,
-                  ),
+                  // style: TextStyle(
+                  //   fontFamily: 'Raleway',
+                  //   color: Colors.grey[600],
+                  //   fontSize: 20.0,
+                  // ),
                   controller: _controller2,
                   decoration: InputDecoration(
                     prefixIcon: Icon(
@@ -361,9 +363,15 @@ class _AuthPageState extends State<AuthPage> {
                         ),
                       ),
                       onPressed: () {
-                        print('Before submit');
+                        // print('Before submit');
                         _submit();
-                        print('After submit');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LocationScreen(),
+                          ),
+                        );
+                        // print('After submit');
                       },
                     ),
                   ),

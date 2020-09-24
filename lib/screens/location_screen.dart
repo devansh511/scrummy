@@ -64,7 +64,14 @@ class LocationScreen extends StatelessWidget {
                       fontSize: 18,
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HomeScreen(),
+                      ),
+                    );
+                  },
                 ),
               ),
             ),

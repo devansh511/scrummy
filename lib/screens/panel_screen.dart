@@ -155,8 +155,7 @@ class _PanelScreenState extends State<PanelScreen> {
                 Row(
                   children: [
                     Container(
-                      margin:
-                          EdgeInsets.only(left: 25, top: deviceHeight - 620.0),
+                      margin: EdgeInsets.only(left: 25, top: 10.0),
                       child: Text(
                         'Restaurant',
                         style: TextStyle(
@@ -171,7 +170,7 @@ class _PanelScreenState extends State<PanelScreen> {
                       width: 70,
                     ),
                     Container(
-                      margin: EdgeInsets.only(top: deviceHeight - 620.0),
+                      margin: EdgeInsets.only(top: 10.0),
                       child: Text(
                         'Customer',
                         style: TextStyle(

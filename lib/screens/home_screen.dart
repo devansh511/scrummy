@@ -24,6 +24,13 @@ class _HomeScreenState extends State<HomeScreen> {
     _currentIndex = 0;
   }
 
+  List<Widget> _currentScreen = [
+    FeedScreen(),
+    SearchScreen(),
+    CartScreen(),
+    ProfileScreen()
+  ];
+
   _changePage(int index) {
     setState(() {
       _currentIndex = index;
@@ -42,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
           margin: EdgeInsets.only(left: 120.0),
         ),
       ),
-      body: FeedScreen(),
+      body: _currentScreen[_currentIndex],
       // _currentIndex == 0
       //     ? null
       //     : _currentIndex == 1
