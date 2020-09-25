@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scrummy/auth/verify.dart';
 import 'package:scrummy/screens/home_screen.dart';
 import 'package:scrummy/screens/location_screen.dart';
 import 'package:scrummy/screens/splash_screen.dart';
@@ -38,10 +39,11 @@ class AuthPage extends StatefulWidget {
 
 class _AuthPageState extends State<AuthPage> {
   final GlobalKey<FormState> _formKey = GlobalKey();
-  AuthMode _authMode = AuthMode.Login;
+  AuthMode _authMode = AuthMode.Signup;
   Map<String, String> _authData = {
     'email': '',
     'password': '',
+    'name': '',
   };
   var _isLoading = false;
   final _controller1 = TextEditingController();
@@ -101,23 +103,27 @@ class _AuthPageState extends State<AuthPage> {
     });
 
     try {
-      if (_authMode == AuthMode.Login) {
-        // Log user in
+      // if (_authMode == AuthMode.Login) {
+      //   // Log user in
 
-        await Provider.of<Auth>(context, listen: false).login(
-          _authData['email'],
-          _authData['password'],
-        );
-      } else {
-        // Sign user up
-        await Provider.of<Auth>(context, listen: false).signup(
-          _authData['email'],
-          _authData['password'],
-        );
-      }
+      //   await Provider.of<Auth>(context, listen: false).login(
+      //     _authData['email'],
+      //     _authData['password'],
+      //   );
+      // } else {
+      // Sign user up
+      await Provider.of<Auth>(context, listen: false).signup(
+        _authData['email'],
+        _authData['password'],
+        _authData['name'],
+      );
+
+      await Provider.of<Auth>(context, listen: false)
+          .generateOtp(_authData['email']);
+      // }
 
       Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => SplashScreen()));
+          .push(MaterialPageRoute(builder: (context) => VerifyScreen()));
     } on HttpException catch (error) {
       var errorMessage = 'Authentication failed';
       if (error.toString().contains('EMAIL_EXISTS')) {
@@ -221,6 +227,9 @@ class _AuthPageState extends State<AuthPage> {
                             return 'Field cannot be empty';
                           }
                           return null;
+                        },
+                        onSaved: (value) {
+                          _authData['name'] = value;
                         },
                       ),
               ),
@@ -328,7 +337,7 @@ class _AuthPageState extends State<AuthPage> {
               SizedBox(
                 height: 15,
               ),
-              // : Container(
+              // Container(
               //     padding: EdgeInsets.only(bottom: 15),
               //     child: InkWell(
               //       child: Text(
@@ -342,40 +351,41 @@ class _AuthPageState extends State<AuthPage> {
               //       onTap: () {},
               //     ),
               //   ),
-              if (_isLoading)
-                CircularProgressIndicator(
-                  backgroundColor: Colors.orange,
-                )
-              else
-                Container(
-                  width: 240,
-                  height: 40,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(25.0),
-                    child: FlatButton(
-                      color: Colors.orange,
-                      child: Text(
-                        _authMode == AuthMode.Login ? 'Login' : 'Signup',
-                        style: TextStyle(
-                          fontFamily: 'Raleway',
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
+              // if (_isLoading)
+              //   CircularProgressIndicator(
+              //     backgroundColor: Colors.orange,
+              //   )
+              // else
+              Container(
+                width: 240,
+                height: 40,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(25.0),
+                  child: FlatButton(
+                    color: Colors.orange,
+                    child: Text(
+                      _authMode == AuthMode.Login ? 'Login' : 'Signup',
+                      style: TextStyle(
+                        fontFamily: 'Raleway',
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
                       ),
-                      onPressed: () {
-                        // print('Before submit');
-                        _submit();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => LocationScreen(),
-                          ),
-                        );
-                        // print('After submit');
-                      },
                     ),
+                    onPressed: _submit,
+                    // () {
+                    //   // print('Before submit');
+                    //   _submit();
+                    //   Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (context) => LocationScreen(),
+                    //     ),
+                    //   );
+                    //   // print('After submit');
+                    // },
                   ),
                 ),
+              ),
               SizedBox(
                 height: 15,
               ),

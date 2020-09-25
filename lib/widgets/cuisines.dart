@@ -20,8 +20,7 @@ class Cuisines extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   child: Container(
-                    width: 168.0,
-                    height: 120.0,
+                    height: 80.0,
                     child: Image(
                       image: AssetImage(
                         'assets/burger.png',
@@ -50,8 +49,7 @@ class Cuisines extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   child: Container(
-                    width: 168.0,
-                    height: 120.0,
+                    height: 80.0,
                     child: Image(
                       image: AssetImage(
                         'assets/chinese.png',
@@ -80,8 +78,7 @@ class Cuisines extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   child: Container(
-                    width: 168.0,
-                    height: 120.0,
+                    height: 80.0,
                     child: Image(
                       image: AssetImage(
                         'assets/southIndian.png',
@@ -110,8 +107,7 @@ class Cuisines extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   child: Container(
-                    width: 168.0,
-                    height: 120.0,
+                    height: 80.0,
                     child: Image(
                       image: AssetImage(
                         'assets/non-veg.png',
@@ -140,8 +136,7 @@ class Cuisines extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   child: Container(
-                    width: 168.0,
-                    height: 120.0,
+                    height: 80.0,
                     child: Image(
                       image: AssetImage(
                         'assets/sweets.png',

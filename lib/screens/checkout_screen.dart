@@ -12,46 +12,46 @@ class CheckoutScreen extends StatefulWidget {
 class _CheckoutScreenState extends State<CheckoutScreen> {
   @override
   Widget build(BuildContext context) {
-    final snackbar = SnackBar(
-      content: Row(
-        children: [
-          Text(
-            'Total price ',
-            style: TextStyle(
-              fontFamily: 'Raleway',
-              color: Colors.white,
-            ),
-          ),
-          Text(
-            ' ₹189',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-          FlatButton(
-            padding: EdgeInsets.symmetric(horizontal: 15.0),
-            color: Colors.orange,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(25.0),
-              side: BorderSide(
-                width: 1.0,
-                color: Colors.orange,
-              ),
-            ),
-            child: Text(
-              'Pay Now',
-              style: TextStyle(
-                color: Colors.white,
-                fontFamily: 'Raleway',
-                fontSize: 12.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            onPressed: () {},
-          ),
-        ],
-      ),
-      backgroundColor: Colors.orange,
-      duration: Duration(days: 365),
-    );
+    // final snackbar = SnackBar(
+    //   content: Row(
+    //     children: [
+    //       Text(
+    //         'Total price ',
+    //         style: TextStyle(
+    //           fontFamily: 'Raleway',
+    //           color: Colors.white,
+    //         ),
+    //       ),
+    //       Text(
+    //         ' ₹189',
+    //         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+    //       ),
+    //       FlatButton(
+    //         padding: EdgeInsets.symmetric(horizontal: 15.0),
+    //         color: Colors.orange,
+    //         shape: RoundedRectangleBorder(
+    //           borderRadius: BorderRadius.circular(25.0),
+    //           side: BorderSide(
+    //             width: 1.0,
+    //             color: Colors.orange,
+    //           ),
+    //         ),
+    //         child: Text(
+    //           'Pay Now',
+    //           style: TextStyle(
+    //             color: Colors.white,
+    //             fontFamily: 'Raleway',
+    //             fontSize: 12.0,
+    //             fontWeight: FontWeight.bold,
+    //           ),
+    //         ),
+    //         onPressed: () {},
+    //       ),
+    //     ],
+    //   ),
+    //   backgroundColor: Colors.orange,
+    //   duration: Duration(days: 365),
+    // );
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(12.0, 20.0, 12.0, 50.0),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:scrummy/screens/cart_screen.dart';
+import 'package:scrummy/screens/empty_cart_screen.dart';
 import 'package:scrummy/screens/location_screen.dart';
 import 'package:provider/provider.dart';
 import '../widgets/dishes_grid.dart';
@@ -38,7 +39,7 @@ class _FeedScreenState extends State<FeedScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CartScreen(),
+                      builder: (context) => LocationScreen(),
                     ),
                   );
                 },
@@ -49,7 +50,7 @@ class _FeedScreenState extends State<FeedScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CartScreen(),
+                      builder: (context) => EmptyCart(),
                     ),
                   );
                 },

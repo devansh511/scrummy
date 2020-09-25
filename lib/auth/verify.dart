@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../screens/location_screen.dart';
+import 'auth.dart';
 
 class VerifyScreen extends StatefulWidget {
   @override
@@ -7,6 +10,30 @@ class VerifyScreen extends StatefulWidget {
 
 class _VerifyScreenState extends State<VerifyScreen> {
   GlobalKey<FormState> _formKey = GlobalKey();
+  Map<String, String> _verifyData = {
+    'otp': '',
+  };
+
+  Future<void> _verifyOtp() async {
+    if (!_formKey.currentState.validate()) {
+      // Invalid!
+      return;
+    }
+    _formKey.currentState.save();
+    // setState(() {
+    //   _isLoading = true;
+    // });
+    try {
+      await Provider.of<Auth>(context, listen: false)
+          .verifyOtp(_verifyData['otp']);
+
+      // Navigator.of(context)
+      //     .push(MaterialPageRoute(builder: (context) => LocationScreen()));
+    } catch (error) {
+      throw error;
+    }
+  }
+
   TextEditingController _controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -75,6 +102,9 @@ class _VerifyScreenState extends State<VerifyScreen> {
                           }
                           return null;
                         },
+                        onSaved: (value) {
+                          _verifyData['otp'] = value;
+                        },
                       ),
                     ),
                     Text(
@@ -103,7 +133,10 @@ class _VerifyScreenState extends State<VerifyScreen> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            _verifyOtp();
+                            print(_verifyData['otp']);
+                          },
                         ),
                       ),
                     ),

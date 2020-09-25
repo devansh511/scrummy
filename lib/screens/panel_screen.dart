@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:scrummy/auth/auth_screen.dart';
 
 class PanelScreen extends StatefulWidget {
   @override
@@ -72,7 +73,7 @@ class _PanelScreenState extends State<PanelScreen> {
           height: deviceHeight,
           child: Center(
             child: Column(
-              children: [
+              children: <Widget>[
                 Container(
                   margin: EdgeInsets.only(top: 80.0, bottom: 70.0),
                   child: Text(
@@ -200,7 +201,14 @@ class _PanelScreenState extends State<PanelScreen> {
                           fontSize: 18,
                         ),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AuthScreen(),
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ),

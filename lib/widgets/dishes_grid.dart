@@ -23,7 +23,7 @@ class _DishesGridState extends State<DishesGrid> {
           Stack(
             children: [
               Image(
-                image: AssetImage('assets/burgerBottom.png'),
+                image: AssetImage('assets/bottomBorder.png'),
                 width: 600.0,
               ),
               Container(
@@ -125,7 +125,7 @@ class _DishesGridState extends State<DishesGrid> {
 
   @override
   Widget build(BuildContext context) {
-    final _deviceWidth = MediaQuery.of(context).size.width;
+    // final _deviceWidth = MediaQuery.of(context).size.width;
     return GridView.count(
       shrinkWrap: true,
       physics: const ClampingScrollPhysics(),
