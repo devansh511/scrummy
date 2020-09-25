@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:scrummy/screens/cart_screen.dart';
 import 'package:scrummy/screens/location_screen.dart';
 import 'package:provider/provider.dart';
 import '../widgets/dishes_grid.dart';
@@ -7,7 +8,12 @@ import '../widgets/cuisines.dart';
 import '../widgets/restaurants.dart';
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class FeedScreen extends StatelessWidget {
+class FeedScreen extends StatefulWidget {
+  @override
+  _FeedScreenState createState() => _FeedScreenState();
+}
+
+class _FeedScreenState extends State<FeedScreen> {
   @override
   Widget build(BuildContext context) {
     // final dishesData = Provider.of<Dishes>(context);
@@ -18,23 +24,36 @@ class FeedScreen extends StatelessWidget {
           children: <Widget>[
             ListTile(
               leading: Icon(Icons.edit_location),
-              title: Text(
-                'Location Here, ',
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontFamily: 'Raleway',
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => LocationScreen(),
+              title: GestureDetector(
+                child: Text(
+                  'Location Here, ',
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontFamily: 'Raleway',
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.bold,
                   ),
-                );
-              },
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CartScreen(),
+                    ),
+                  );
+                },
+              ),
+              trailing: GestureDetector(
+                child: Icon(Icons.shopping_cart),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CartScreen(),
+                    ),
+                  );
+                },
+              ),
             ),
             Container(
               width: 380.0,

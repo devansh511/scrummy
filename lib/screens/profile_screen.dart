@@ -84,27 +84,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 color: Colors.grey[400],
               ),
             ),
-            child: ListTile(
-              title: Text(
-                'Address',
-                style: TextStyle(
-                  fontFamily: 'Raleway',
-                  color: Colors.grey[600],
-                  fontWeight: FontWeight.bold,
+            child: GestureDetector(
+              child: ListTile(
+                title: Text(
+                  'Address',
+                  style: TextStyle(
+                    fontFamily: 'Raleway',
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                subtitle: Text(
+                  'Arya Nagar, Kashipur',
+                  style: TextStyle(
+                    fontFamily: 'Raleway',
+                    color: Colors.grey[400],
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                trailing: Icon(
+                  Icons.chevron_right,
+                  size: 30.0,
                 ),
               ),
-              subtitle: Text(
-                'Arya Nagar, Kashipur',
-                style: TextStyle(
-                  fontFamily: 'Raleway',
-                  color: Colors.grey[400],
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              trailing: Icon(
-                Icons.chevron_right,
-                size: 30.0,
-              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditProfile(),
+                  ),
+                );
+              },
             ),
           ),
           Container(

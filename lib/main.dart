@@ -23,9 +23,12 @@ class MyApp extends StatelessWidget {
         ],
         child: Consumer<Auth>(
           builder: (ctx, auth, _) => MaterialApp(
-            home: AuthScreen(),
+            home: HomeScreen(),
           ),
         ),
+      ),
+      theme: ThemeData(
+        canvasColor: Colors.transparent,
       ),
     );
   }

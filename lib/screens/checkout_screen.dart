@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:scrummy/screens/cart_screen.dart';
 import 'package:scrummy/widgets/order_list_view.dart';
 import '../widgets/food_list_view.dart';
 
-class CheckoutScreen extends StatelessWidget {
+class CheckoutScreen extends StatefulWidget {
+  @override
+  _CheckoutScreenState createState() => _CheckoutScreenState();
+}
+
+class _CheckoutScreenState extends State<CheckoutScreen> {
   @override
   Widget build(BuildContext context) {
     final snackbar = SnackBar(
@@ -65,15 +71,25 @@ class CheckoutScreen extends StatelessWidget {
                       fontSize: 17.0,
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.only(left: 120.0, right: 8.0),
-                    child: Text(
-                      'See all',
-                      style: TextStyle(
-                          fontFamily: 'Raleway',
-                          color: Colors.grey,
-                          fontWeight: FontWeight.bold),
+                  GestureDetector(
+                    child: Container(
+                      margin: EdgeInsets.only(left: 120.0, right: 8.0),
+                      child: Text(
+                        'See all',
+                        style: TextStyle(
+                            fontFamily: 'Raleway',
+                            color: Colors.grey,
+                            fontWeight: FontWeight.bold),
+                      ),
                     ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CartScreen(),
+                        ),
+                      );
+                    },
                   ),
                   Container(
                     child: FaIcon(

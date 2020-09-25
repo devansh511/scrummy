@@ -324,24 +324,24 @@ class _AuthPageState extends State<AuthPage> {
                         },
                       ),
               ),
-              _authMode == AuthMode.Signup
-                  ? SizedBox(
-                      height: 15,
-                    )
-                  : Container(
-                      padding: EdgeInsets.only(bottom: 15),
-                      child: InkWell(
-                        child: Text(
-                          'Forgotten Password?',
-                          style: TextStyle(
-                            fontFamily: 'Raleway',
-                            color: Colors.grey[900],
-                            fontSize: 15,
-                          ),
-                        ),
-                        onTap: () {},
-                      ),
-                    ),
+              // _authMode == AuthMode.Signup
+              SizedBox(
+                height: 15,
+              ),
+              // : Container(
+              //     padding: EdgeInsets.only(bottom: 15),
+              //     child: InkWell(
+              //       child: Text(
+              //         'Forgotten Password?',
+              //         style: TextStyle(
+              //           fontFamily: 'Raleway',
+              //           color: Colors.grey[900],
+              //           fontSize: 15,
+              //         ),
+              //       ),
+              //       onTap: () {},
+              //     ),
+              //   ),
               if (_isLoading)
                 CircularProgressIndicator(
                   backgroundColor: Colors.orange,
