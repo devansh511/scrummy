@@ -8,6 +8,20 @@ class PanelScreen extends StatefulWidget {
 }
 
 class _PanelScreenState extends State<PanelScreen> {
+  Map<String, String> _panelData = {'Role': ''};
+
+  void setPanel(int selPanel) {
+    if (selPanel == 2) {
+      _panelData['Role'] = '2';
+      print('Restaurant');
+      print(_panelData['Role']);
+    } else {
+      _panelData['Role'] = '1';
+      print('Customer');
+      print(_panelData['Role']);
+    }
+  }
+
   // Color iconColordk = Colors.grey[600];
   // Color cLickIconColor = Colors.orange;
   Color _custIconColor = Colors.grey[600];
@@ -115,6 +129,7 @@ class _PanelScreenState extends State<PanelScreen> {
                         onTap: () {
                           setState(() {
                             _changeIconColor('2');
+                            setPanel(2);
                           });
                         },
                       ),
@@ -146,6 +161,7 @@ class _PanelScreenState extends State<PanelScreen> {
                         onTap: () {
                           setState(() {
                             print('Tapping');
+                            setPanel(1);
                             _changeIconColor('1');
                           });
                         },

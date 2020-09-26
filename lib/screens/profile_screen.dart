@@ -239,8 +239,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           GestureDetector(
             onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => AuthScreen()));
+              // Navigator.push(context,
+              //     MaterialPageRoute(builder: (context) => AuthScreen()));
             },
             child: Container(
               margin: EdgeInsets.all(10.0),

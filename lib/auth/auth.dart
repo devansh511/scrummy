@@ -1,33 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:scrummy/auth/auth_screen.dart';
 import 'dart:convert';
 import 'dart:async';
+import './auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/Http_Exceptions.dart';
 
 class Auth with ChangeNotifier {
-  String _token;
+  String _accessToken;
+  String _refreshToken;
   DateTime _expiryDate;
   String _userId;
   Timer _authTimer;
   String _extractedEmail;
 
-  bool get isAuth {
-    return token != null;
-  }
+  // bool get isAuth {
+  //   return token != null;
+  // }
 
-  String get token {
-    if (_expiryDate != null &&
-        _expiryDate.isAfter(DateTime.now()) &&
-        _token != null) {
-      return _token;
-    }
-    return null;
-  }
+  // String get token {
+  //   if (_expiryDate != null &&
+  //       _expiryDate.isAfter(DateTime.now()) &&
+  //       _token != null) {
+  //     return _token;
+  //   }
+  //   return null;
+  // }
 
-  String get userId {
-    return _userId;
-  }
+  // String get userId {
+  //   return _userId;
+  // }
 
   // Future<void> _authenticate(String email, String password, String name) async {
   //   final url = 'https://d3cc68b4c9f1.ngrok.io/api/createaccount/';
@@ -53,14 +56,14 @@ class Auth with ChangeNotifier {
   //       );
   //     }
   //     _token = responseData['idToken'];
-  //     _userId = responseData['localId'];
-  //     _expiryDate = DateTime.now().add(
-  //       Duration(
-  //         seconds: int.parse(
-  //           responseData['expiresIn'],
-  //         ),
-  //       ),
-  //     );
+  // _userId = responseData['localId'];
+  // _expiryDate = DateTime.now().add(
+  //   Duration(
+  //     seconds: int.parse(
+  //       responseData['expiresIn'],
+  //     ),
+  //   ),
+  // );
   //     // _autoLogout();
   //     notifyListeners();
   //     final prefs = await SharedPreferences.getInstance();
@@ -77,39 +80,33 @@ class Auth with ChangeNotifier {
   //     throw error;
   //   }
   // }
-
-  // String getEmail(String email) {
+  // Future<void> generateOtp(String email) async {
+  //   // String get Email {
+  //   // return _extractedEmail;
+  //   // }
+  //   print(_extractedEmail);
   //   _extractedEmail = email;
-  //   return _extractedEmail;
+  //   final url = 'https://265e3fa01612.ngrok.io/api/otp/';
+  //   try {
+  //     final response = await http.post(url,
+  //         body: json.encode(
+  //           {'email': email},
+  //         ),
+  //         headers: {
+  //           "content-type": "application/json",
+  //           "accept": "application/json"
+  //         });
+  //     final responseData = json.decode(response.body);
+  //     print(email);
+  //     print(responseData);
+  //     notifyListeners();
+  //   } catch (error) {
+  //     throw (error);
+  //   }
   // }
 
-  Future<void> generateOtp(String email) async {
-    // String get Email {
-    // return _extractedEmail;
-    // }
-    // print(_extractedEmail);
-
-    final url = 'https://265e3fa01612.ngrok.io/api/otp/';
-    try {
-      final response = await http.post(url,
-          body: json.encode(
-            {'email': email},
-          ),
-          headers: {
-            "content-type": "application/json",
-            "accept": "application/json"
-          });
-      final responseData = json.decode(response.body);
-      print(email);
-      print(responseData);
-      notifyListeners();
-    } catch (error) {
-      throw (error);
-    }
-  }
-
   Future<void> signup(String email, String password, String name) async {
-    final url = 'https://265e3fa01612.ngrok.io/api/createaccount/';
+    final url = 'https://21239aebfd0f.ngrok.io/api/signup/';
     try {
       final response = await http.post(url,
           body: json.encode(
@@ -124,9 +121,12 @@ class Auth with ChangeNotifier {
             "content-type": "application/json",
             "accept": "application/json"
           });
-      final responseData = json.decode(response.body);
+      // final responseData = json.decode(response.body);
       // print(email);
-      print(responseData);
+      if (response.body.isNotEmpty) {
+        final signupResponse = json.decode(response.body);
+        print(signupResponse);
+      }
     } catch (error) {
       throw error;
     }
@@ -136,39 +136,50 @@ class Auth with ChangeNotifier {
   // print(name);
 
   Future<void> verifyOtp(String otp) async {
-    final url = 'https://265e3fa01612.ngrok.io/api/verify_otp/';
-    print(_extractedEmail);
+    final url = 'https://21239aebfd0f.ngrok.io/api/verify_otp/';
+    print(e_mail);
     try {
       final response = await http.post(url,
-          body: json.encode({
-            'otp': otp,
-            'otp_email': 'kumardevansh8@gmail.com',
-          }),
+          body: json.encode({'otp': otp, 'otp_email': e_mail}),
           headers: {
             "content-type": "application/json",
             "accept": "application/json"
           });
       final responseData = json.decode(response.body);
+
       print(otp);
-      print(_extractedEmail);
+
       print(responseData);
     } catch (error) {
       throw error;
     }
   }
 
-  Future<void> login(String email, String password) async {
-    final url = 'https://265e3fa01612.ngrok.io/api/token/';
-
+  Future<void> login() async {
+    final url = 'https://21239aebfd0f.ngrok.io/api/login/';
+    print(e_mail);
+    print(p_word);
     try {
       final response = await http.post(url,
-          body: json.encode({'email': email, 'password': password}),
+          body: json.encode({
+            'email': e_mail,
+            'password': p_word
+            //'returnSecureToken': true
+          }),
           headers: {
             "content-type": "application/json",
             "accept": "application/json"
           });
-      final responseData = json.decode(response.body);
-      print(responseData);
+      // final responseData = json.decode(response.body);
+      if (response.body.isNotEmpty) {
+        final loginResponse = json.decode(response.body);
+        _accessToken = loginResponse['access'];
+        _refreshToken = loginResponse['refresh'];
+        print(loginResponse);
+      }
+      print(_accessToken);
+      print(_refreshToken);
+      notifyListeners();
     } catch (error) {
       throw error;
     }

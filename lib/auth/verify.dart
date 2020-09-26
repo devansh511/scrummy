@@ -10,6 +10,8 @@ class VerifyScreen extends StatefulWidget {
 
 class _VerifyScreenState extends State<VerifyScreen> {
   GlobalKey<FormState> _formKey = GlobalKey();
+
+  var _isLoading = false;
   Map<String, String> _verifyData = {
     'otp': '',
   };
@@ -20,30 +22,36 @@ class _VerifyScreenState extends State<VerifyScreen> {
       return;
     }
     _formKey.currentState.save();
-    // setState(() {
-    //   _isLoading = true;
-    // });
+    setState(() {
+      _isLoading = true;
+    });
     try {
       await Provider.of<Auth>(context, listen: false)
           .verifyOtp(_verifyData['otp']);
 
-      // Navigator.of(context)
-      //     .push(MaterialPageRoute(builder: (context) => LocationScreen()));
+      await Provider.of<Auth>(context, listen: false).login();
+
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => LocationScreen(),
+        ),
+      );
     } catch (error) {
       throw error;
     }
+
+    _isLoading = false;
   }
 
   TextEditingController _controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    final deviceHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
-        padding: EdgeInsets.only(bottom: deviceHeight - 550),
+        padding: EdgeInsets.only(bottom: 20),
         child: Container(
-          margin: EdgeInsets.only(top: deviceHeight - 500.0),
+          margin: EdgeInsets.only(top: 100.0),
           child: Column(
             children: <Widget>[
               Center(
@@ -59,7 +67,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                 ),
               ),
               SizedBox(
-                height: 80.0,
+                height: 140.0,
               ),
               Text(
                 'Confirm your email',
@@ -78,7 +86,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                 child: Column(
                   children: <Widget>[
                     Container(
-                      margin: EdgeInsets.only(bottom: deviceHeight - 630.0),
+                      margin: EdgeInsets.only(bottom: 20.0),
                       width: 280.0,
                       height: 50.0,
                       child: TextFormField(
@@ -115,31 +123,36 @@ class _VerifyScreenState extends State<VerifyScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Container(
-                      margin: EdgeInsets.only(
-                        top: deviceHeight - 580.0,
-                      ),
-                      width: 280,
-                      height: 40,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(25.0),
-                        child: FlatButton(
-                          color: Colors.orange,
-                          child: Text(
-                            'Confirm',
-                            style: TextStyle(
-                              fontFamily: 'Raleway',
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
+                    if (_isLoading)
+                      CircularProgressIndicator(
+                        backgroundColor: Colors.orange,
+                      )
+                    else
+                      Container(
+                        margin: EdgeInsets.only(
+                          top: 30.0,
+                        ),
+                        width: 280,
+                        height: 40,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(25.0),
+                          child: FlatButton(
+                            color: Colors.orange,
+                            child: Text(
+                              'Confirm',
+                              style: TextStyle(
+                                fontFamily: 'Raleway',
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
+                            onPressed: () {
+                              _verifyOtp();
+                              print(_verifyData['otp']);
+                            },
                           ),
-                          onPressed: () {
-                            _verifyOtp();
-                            print(_verifyData['otp']);
-                          },
                         ),
                       ),
-                    ),
                   ],
                 ),
               ),

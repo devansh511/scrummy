@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:scrummy/auth/verify.dart';
 import 'package:scrummy/screens/home_screen.dart';
 import 'package:scrummy/screens/location_screen.dart';
+import 'package:scrummy/screens/reset_password.dart';
 import 'package:scrummy/screens/splash_screen.dart';
 import 'auth.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/gestures.dart';
 import '../models/Http_Exceptions.dart';
 import '../screens/splash_screen.dart';
+
+String e_mail;
+String p_word;
 
 class AuthScreen extends StatelessWidget {
   @override
@@ -26,7 +30,7 @@ class AuthScreen extends StatelessWidget {
   }
 }
 
-enum AuthMode { Login, Signup }
+enum AuthMode { Login, Signup, Reset }
 
 class AuthPage extends StatefulWidget {
   const AuthPage({
@@ -84,7 +88,7 @@ class _AuthPageState extends State<AuthPage> {
               ),
             ),
             onPressed: () {
-              // Navigator.of(context).pop();
+              //Navigator.of(context).pop();
             },
           ),
         ],
@@ -107,14 +111,11 @@ class _AuthPageState extends State<AuthPage> {
         // Log user in
 
         await Provider.of<Auth>(context, listen: false).login(
-          _authData['email'],
-          _authData['password'],
-        );
+            // _authData['email'],
+            // _authData['password'],
+            );
       } else {
         //Sign user up
-
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => VerifyScreen()));
 
         await Provider.of<Auth>(context, listen: false).signup(
           _authData['email'],
@@ -122,12 +123,18 @@ class _AuthPageState extends State<AuthPage> {
           _authData['name'],
         );
 
-        await Provider.of<Auth>(context, listen: false)
-            .generateOtp(_authData['email']);
-      }
-      print(_authData['email']);
+        // await Provider.of<Auth>(context, listen: false)
+        //     .generateOtp(_authData['email']);
 
-      // Provider.of<Auth>(context, listen: false).getEmail(_authData['email']);
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => VerifyScreen(),
+          ),
+        );
+      }
+      // print(_authData['email']);
+
+      // Provider.of<Auth>  (context, listen: false).getEmail(_authData['email']);
 
       // }
 
@@ -136,9 +143,9 @@ class _AuthPageState extends State<AuthPage> {
       if (error.toString().contains('EMAIL_EXISTS')) {
         errorMessage = 'Email already registered';
       } else if (error.toString().contains('INVALID_EMAIL')) {
-        errorMessage = 'Please enter a valid email';
+        errorMessage = 'Pl ease enter a valid email';
       } else if (error.toString().contains('WEAK_PASSWORD')) {
-        errorMessage = 'Password too weak';
+        errorMessage = 'Pass word too weak';
       } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
         errorMessage = 'Could not find a user with this email';
       } else if (error.toString().contains('INVALID_PASSWORD')) {
@@ -164,10 +171,12 @@ class _AuthPageState extends State<AuthPage> {
     if (_authMode == AuthMode.Login) {
       setState(() {
         _authMode = AuthMode.Signup;
+        print(_authMode);
       });
     } else {
       setState(() {
         _authMode = AuthMode.Login;
+        print(_authMode);
       });
     }
   }
@@ -195,7 +204,9 @@ class _AuthPageState extends State<AuthPage> {
         Text(
           _authMode == AuthMode.Login
               ? 'Login into your account'
-              : 'Create your account',
+              : _authMode == AuthMode.Login
+                  ? 'Create your account'
+                  : 'Create new password',
           style: TextStyle(
             fontFamily: 'Raleway',
             color: Colors.grey[600],
@@ -212,36 +223,43 @@ class _AuthPageState extends State<AuthPage> {
             children: <Widget>[
               Container(
                 width: 240,
-                height: _authMode == AuthMode.Login ? 0 : 60,
-                child: _authMode == AuthMode.Login
-                    ? null
-                    : TextFormField(
-                        controller: _controller1,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(
-                            Icons.person_outline,
+                height:
+                    (_authMode == AuthMode.Login || _authMode == AuthMode.Reset)
+                        ? 0
+                        : 60,
+                child:
+                    (_authMode == AuthMode.Login || _authMode == AuthMode.Reset)
+                        ? null
+                        : TextFormField(
+                            controller: _controller1,
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(
+                                Icons.person_outline,
+                              ),
+                              labelText: 'Enter your name',
+                              labelStyle: TextStyle(
+                                fontFamily: 'Raleway',
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(35.0),
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null) {
+                                return 'Field cannot be empty';
+                              }
+                              return null;
+                            },
+                            onSaved: (value) {
+                              _authData['name'] = value;
+                            },
                           ),
-                          labelText: 'Enter your name',
-                          labelStyle: TextStyle(
-                            fontFamily: 'Raleway',
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(35.0),
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null) {
-                            return 'Field cannot be empty';
-                          }
-                          return null;
-                        },
-                        onSaved: (value) {
-                          _authData['name'] = value;
-                        },
-                      ),
               ),
               SizedBox(
-                height: _authMode == AuthMode.Login ? 0 : 10,
+                height:
+                    (_authMode == AuthMode.Login || _authMode == AuthMode.Reset)
+                        ? 0
+                        : 10,
               ),
               Container(
                 width: 240,
@@ -255,9 +273,12 @@ class _AuthPageState extends State<AuthPage> {
                   controller: _controller2,
                   decoration: InputDecoration(
                     prefixIcon: Icon(
-                      Icons.alternate_email,
+                      _authMode == AuthMode.Reset
+                          ? Icons.lock_outline
+                          : Icons.alternate_email,
                     ),
-                    labelText: 'E-mail',
+                    labelText:
+                        _authMode == AuthMode.Reset ? 'New Password' : 'E-mail',
                     labelStyle: TextStyle(
                       fontFamily: 'Raleway',
                     ),
@@ -265,7 +286,10 @@ class _AuthPageState extends State<AuthPage> {
                       borderRadius: BorderRadius.circular(35.0),
                     ),
                   ),
-                  keyboardType: TextInputType.emailAddress,
+                  keyboardType: _authMode == AuthMode.Reset
+                      ? null
+                      : TextInputType.emailAddress,
+                  obscureText: _authMode == AuthMode.Reset ? true : false,
                   validator: (value) {
                     if (value == null || !value.contains('@')) {
                       return 'Invalid Email';
@@ -274,6 +298,7 @@ class _AuthPageState extends State<AuthPage> {
                   },
                   onSaved: (value) {
                     _authData['email'] = value;
+                    e_mail = value;
                   },
                 ),
               ),
@@ -289,7 +314,9 @@ class _AuthPageState extends State<AuthPage> {
                     prefixIcon: Icon(
                       Icons.lock_outline,
                     ),
-                    labelText: 'Password',
+                    labelText: _authMode == AuthMode.Reset
+                        ? 'Confirm New Password'
+                        : 'Password',
                     labelStyle: TextStyle(
                       fontFamily: 'Raleway',
                     ),
@@ -306,6 +333,7 @@ class _AuthPageState extends State<AuthPage> {
                   },
                   onSaved: (value) {
                     _authData['password'] = value;
+                    p_word = value;
                   },
                 ),
               ),
@@ -314,93 +342,110 @@ class _AuthPageState extends State<AuthPage> {
               ),
               Container(
                 width: 240,
-                height: _authMode == AuthMode.Login ? 0 : 60,
-                child: _authMode == AuthMode.Login
-                    ? null
-                    : TextFormField(
-                        controller: _controller4,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(
-                            Icons.lock_outline,
+                height:
+                    (_authMode == AuthMode.Login || _authMode == AuthMode.Reset)
+                        ? 0
+                        : 60,
+                child:
+                    (_authMode == AuthMode.Login || _authMode == AuthMode.Reset)
+                        ? null
+                        : TextFormField(
+                            controller: _controller4,
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(
+                                Icons.lock_outline,
+                              ),
+                              labelText: 'Confirm Password',
+                              labelStyle: TextStyle(
+                                fontFamily: 'Raleway',
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(35.0),
+                              ),
+                            ),
+                            obscureText: true,
+                            validator: (value) {
+                              if (value != _controller3.text) {
+                                return 'Passwords do not match';
+                              }
+                              return null;
+                            },
                           ),
-                          labelText: 'Confirm Password',
-                          labelStyle: TextStyle(
-                            fontFamily: 'Raleway',
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(35.0),
-                          ),
-                        ),
-                        obscureText: true,
-                        validator: (value) {
-                          if (value != _controller3.text) {
-                            return 'Passwords do not match';
-                          }
-                          return null;
-                        },
-                      ),
               ),
-              // _authMode == AuthMode.Signup
               SizedBox(
                 height: 15,
               ),
-              // Container(
-              //     padding: EdgeInsets.only(bottom: 15),
-              //     child: InkWell(
-              //       child: Text(
-              //         'Forgotten Password?',
-              //         style: TextStyle(
-              //           fontFamily: 'Raleway',
-              //           color: Colors.grey[900],
-              //           fontSize: 15,
-              //         ),
-              //       ),
-              //       onTap: () {},
-              //     ),
-              //   ),
-              // if (_isLoading)
-              //   CircularProgressIndicator(
-              //     backgroundColor: Colors.orange,
-              //   )
-              // else
-              Container(
-                width: 240,
-                height: 40,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(25.0),
-                  child: FlatButton(
-                    color: Colors.orange,
-                    child: Text(
-                      _authMode == AuthMode.Login ? 'Login' : 'Signup',
-                      style: TextStyle(
-                        fontFamily: 'Raleway',
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+              (_authMode == AuthMode.Signup || _authMode == AuthMode.Reset)
+                  ? SizedBox(
+                      height: 0,
+                    )
+                  : Container(
+                      padding: EdgeInsets.only(bottom: 15),
+                      child: InkWell(
+                        child: Text(
+                          'Forgotten Password?',
+                          style: TextStyle(
+                            fontFamily: 'Raleway',
+                            color: Colors.grey[900],
+                            fontSize: 15,
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => ResetPassword(),
+                            ),
+                          );
+                        },
                       ),
                     ),
-                    onPressed: _submit,
-                    // () {
-                    //   // print('Before submit');
-                    //   _submit();
-                    //   Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //       builder: (context) => LocationScreen(),
-                    //     ),
-                    //   );
-                    //   // print('After submit');
-                    // },
+              if (_isLoading)
+                CircularProgressIndicator(
+                  backgroundColor: Colors.orange,
+                )
+              else
+                Container(
+                  width: 240,
+                  height: 40,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(25.0),
+                    child: FlatButton(
+                      color: Colors.orange,
+                      child: Text(
+                        (_authMode == AuthMode.Login)
+                            ? 'Login'
+                            : (_authMode == AuthMode.Signup)
+                                ? 'Signup'
+                                : 'Create Password',
+                        style: TextStyle(
+                          fontFamily: 'Raleway',
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      onPressed: _submit,
+                      // () {
+                      //   // print('Before submit');
+                      //   _submit();
+                      //   Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (context) => LocationScreen(),
+                      //     ),
+                      //   );
+                      //   // print('After submit');
+                      // },
+                    ),
                   ),
                 ),
-              ),
               SizedBox(
                 height: 15,
               ),
               RichText(
                 text: TextSpan(
                   text: _authMode == AuthMode.Login
-                      ? 'New to Scrummy?'
-                      : 'Already have an account? ',
+                      ? 'New to Scrummy? '
+                      : 'Already on Scrummy? ',
                   style: TextStyle(
                     color: Colors.grey[900],
                     fontFamily: 'Raleway',
@@ -408,7 +453,7 @@ class _AuthPageState extends State<AuthPage> {
                   ),
                   children: <TextSpan>[
                     TextSpan(
-                      text: _authMode == AuthMode.Login ? 'Signup' : 'Login',
+                      text: _authMode == AuthMode.Login ? ' Signup' : ' Login',
                       style: TextStyle(
                         color: Colors.orange,
                         fontSize: 16.5,
