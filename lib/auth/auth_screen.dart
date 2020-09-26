@@ -39,7 +39,7 @@ class AuthPage extends StatefulWidget {
 
 class _AuthPageState extends State<AuthPage> {
   final GlobalKey<FormState> _formKey = GlobalKey();
-  AuthMode _authMode = AuthMode.Signup;
+  AuthMode _authMode = AuthMode.Login;
   Map<String, String> _authData = {
     'email': '',
     'password': '',
@@ -103,27 +103,34 @@ class _AuthPageState extends State<AuthPage> {
     });
 
     try {
-      // if (_authMode == AuthMode.Login) {
-      //   // Log user in
+      if (_authMode == AuthMode.Login) {
+        // Log user in
 
-      //   await Provider.of<Auth>(context, listen: false).login(
-      //     _authData['email'],
-      //     _authData['password'],
-      //   );
-      // } else {
-      // Sign user up
-      await Provider.of<Auth>(context, listen: false).signup(
-        _authData['email'],
-        _authData['password'],
-        _authData['name'],
-      );
+        await Provider.of<Auth>(context, listen: false).login(
+          _authData['email'],
+          _authData['password'],
+        );
+      } else {
+        //Sign user up
 
-      await Provider.of<Auth>(context, listen: false)
-          .generateOtp(_authData['email']);
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => VerifyScreen()));
+
+        await Provider.of<Auth>(context, listen: false).signup(
+          _authData['email'],
+          _authData['password'],
+          _authData['name'],
+        );
+
+        await Provider.of<Auth>(context, listen: false)
+            .generateOtp(_authData['email']);
+      }
+      print(_authData['email']);
+
+      // Provider.of<Auth>(context, listen: false).getEmail(_authData['email']);
+
       // }
 
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => VerifyScreen()));
     } on HttpException catch (error) {
       var errorMessage = 'Authentication failed';
       if (error.toString().contains('EMAIL_EXISTS')) {

@@ -78,9 +78,18 @@ class Auth with ChangeNotifier {
   //   }
   // }
 
+  // String getEmail(String email) {
+  //   _extractedEmail = email;
+  //   return _extractedEmail;
+  // }
+
   Future<void> generateOtp(String email) async {
-    _extractedEmail = email;
-    final url = 'https://d3cc68b4c9f1.ngrok.io/api/otp/';
+    // String get Email {
+    // return _extractedEmail;
+    // }
+    // print(_extractedEmail);
+
+    final url = 'https://265e3fa01612.ngrok.io/api/otp/';
     try {
       final response = await http.post(url,
           body: json.encode(
@@ -93,13 +102,14 @@ class Auth with ChangeNotifier {
       final responseData = json.decode(response.body);
       print(email);
       print(responseData);
+      notifyListeners();
     } catch (error) {
       throw (error);
     }
   }
 
   Future<void> signup(String email, String password, String name) async {
-    final url = 'https://d3cc68b4c9f1.ngrok.io/api/createaccount/';
+    final url = 'https://265e3fa01612.ngrok.io/api/createaccount/';
     try {
       final response = await http.post(url,
           body: json.encode(
@@ -115,7 +125,7 @@ class Auth with ChangeNotifier {
             "accept": "application/json"
           });
       final responseData = json.decode(response.body);
-      print(email);
+      // print(email);
       print(responseData);
     } catch (error) {
       throw error;
@@ -126,13 +136,13 @@ class Auth with ChangeNotifier {
   // print(name);
 
   Future<void> verifyOtp(String otp) async {
-    final url = 'https://d3cc68b4c9f1.ngrok.io/api/verify_otp/';
-
+    final url = 'https://265e3fa01612.ngrok.io/api/verify_otp/';
+    print(_extractedEmail);
     try {
       final response = await http.post(url,
           body: json.encode({
             'otp': otp,
-            'otp_email': _extractedEmail,
+            'otp_email': 'kumardevansh8@gmail.com',
           }),
           headers: {
             "content-type": "application/json",
@@ -141,6 +151,23 @@ class Auth with ChangeNotifier {
       final responseData = json.decode(response.body);
       print(otp);
       print(_extractedEmail);
+      print(responseData);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  Future<void> login(String email, String password) async {
+    final url = 'https://265e3fa01612.ngrok.io/api/token/';
+
+    try {
+      final response = await http.post(url,
+          body: json.encode({'email': email, 'password': password}),
+          headers: {
+            "content-type": "application/json",
+            "accept": "application/json"
+          });
+      final responseData = json.decode(response.body);
       print(responseData);
     } catch (error) {
       throw error;
