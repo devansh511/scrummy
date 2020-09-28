@@ -105,39 +105,47 @@ class Auth with ChangeNotifier {
   //   }
   // }
 
-  Future<void> signup(String email, String password, String name) async {
-    final url = 'https://21239aebfd0f.ngrok.io/api/signup/';
+  Future<int> signup(String email, String password, String name) async {
+    final url = 'http://04af2aff428a.ngrok.io/api/signup/';
+    int check = 0;
     try {
       final response = await http.post(url,
-          body: json.encode(
-            {
-              'email': email,
-              'password': password,
-              'Role': '1',
-              'profile': {'name': name, 'address': 'Arya Nagar'}
-            },
-          ),
+          body: json.encode({
+            'email': email,
+            'password': password,
+            'Role': '1',
+            'profile': {'name': name, 'address': 'Arya Nagar'}
+          }),
           headers: {
             "content-type": "application/json",
             "accept": "application/json"
           });
-      // final responseData = json.decode(response.body);
-      // print(email);
+      print(email);
+      final signupResponse = json.decode(response.body);
+      print(signupResponse);
       if (response.body.isNotEmpty) {
-        final signupResponse = json.decode(response.body);
-        print(signupResponse);
+        if (signupResponse['error'] != null) {
+          check = -1;
+          throw HttpException(
+            signupResponse['error'],
+          );
+        }
       }
+      print(signupResponse.statusCode);
+      notifyListeners();
     } catch (error) {
       throw error;
     }
+    return check;
   }
   // print(email);
   // print(password);
   // print(name);
 
-  Future<void> verifyOtp(String otp) async {
-    final url = 'https://21239aebfd0f.ngrok.io/api/verify_otp/';
-    print(e_mail);
+  Future<int> verifyOtp(String otp) async {
+    int check = 0;
+    final url = 'http://04af2aff428a.ngrok.io/api/verify_otp/';
+
     try {
       final response = await http.post(url,
           body: json.encode({'otp': otp, 'otp_email': e_mail}),
@@ -146,17 +154,26 @@ class Auth with ChangeNotifier {
             "accept": "application/json"
           });
       final responseData = json.decode(response.body);
-
-      print(otp);
-
       print(responseData);
+      if (responseData['error'] != null) {
+        check = -1;
+        throw HttpException(
+          responseData['error'],
+        );
+      }
+      print(responseData.statusCode);
+      print(e_mail);
+      print(otp);
+      notifyListeners();
     } catch (error) {
       throw error;
     }
+    return check;
   }
 
-  Future<void> login() async {
-    final url = 'https://21239aebfd0f.ngrok.io/api/login/';
+  Future<int> login() async {
+    int check = 0;
+    final url = 'http://04af2aff428a.ngrok.io/api/login/';
     print(e_mail);
     print(p_word);
     try {
@@ -170,21 +187,47 @@ class Auth with ChangeNotifier {
             "content-type": "application/json",
             "accept": "application/json"
           });
-      // final responseData = json.decode(response.body);
+      print(response.statusCode);
+      final loginResponse = json.decode(response.body);
+      print(loginResponse);
       if (response.body.isNotEmpty) {
-        final loginResponse = json.decode(response.body);
-        _accessToken = loginResponse['access'];
-        _refreshToken = loginResponse['refresh'];
-        print(loginResponse);
+        if (loginResponse['error'] != null) {
+          check = -1;
+          throw HttpException(
+            loginResponse['error'],
+          );
+        }
       }
+      _accessToken = loginResponse['access'];
+      _refreshToken = loginResponse['refresh'];
       print(_accessToken);
       print(_refreshToken);
       notifyListeners();
     } catch (error) {
       throw error;
     }
+    return check;
   }
-}
+
+  // Future<void> resetPwordOtp(String email) async {
+  //   final url = '';
+
+  //   try {
+  //     final response = await http.post(url,
+  //         body: json.encode({'otp_email': email}),
+  //         headers: {
+  //           "content-type": "application/json",
+  //           "accept": "application/json"
+  //         });
+  //     final responseData = json.decode(response.body);
+
+  //     print(email);
+
+  //     print(responseData);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
 // Future<void> login(String email, String password) async {
 //   return _authenticate(email, password);
@@ -233,3 +276,4 @@ class Auth with ChangeNotifier {
 //   _authTimer = Timer(Duration(seconds: timeToExpiry), logout);
 // }
 // }
+}

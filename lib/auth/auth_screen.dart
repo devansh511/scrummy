@@ -68,33 +68,73 @@ class _AuthPageState extends State<AuthPage> {
     super.dispose();
   }
 
-  void _showErrorDialog(String message) {
-    showDialog(
+  Future<void> _showMyDialog(String msg) async {
+    return showDialog<void>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(
-          'An error occured',
-          style: TextStyle(
-            fontFamily: 'Raleway',
-          ),
-        ),
-        content: Text(message),
-        actions: [
-          FlatButton(
-            child: Text(
-              'Okay',
-              style: TextStyle(
-                fontFamily: 'Raleway',
-              ),
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'An error occured',
+            style: TextStyle(
+              fontFamily: 'Raleway',
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[600],
             ),
-            onPressed: () {
-              //Navigator.of(context).pop();
-            },
           ),
-        ],
-      ),
+          content: Text(msg),
+          actions: <Widget>[
+            FlatButton(
+              child: Text(
+                'Okay',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Raleway',
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
+  // void _showErrorDialog(String message) {
+  //   // bool _pressed = false;
+  //   showDialog(
+  //     context: context,
+  //     builder: (ctx) => AlertDialog(
+  //       title: Text(
+  //         'An error occured',
+  // style: TextStyle(
+  //   fontFamily: 'Raleway',
+  //   fontWeight: FontWeight.bold,
+  //   color: Colors.grey[600],
+  // ),
+  //       ),
+  //       content: Text(message),
+  //       actions: [
+  //         FlatButton(
+  //           child: Text(
+  //             'Okay',
+  // style: TextStyle(
+  //   fontFamily: 'Raleway',
+  //   fontWeight: FontWeight.bold,
+  //   color: Colors.orange,
+  //             ),
+  //           ),
+  //           onPressed: () {
+  //             // Navigator.of(context).pop();
+  //             // _pressed = !_pressed;
+  //           },
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Future<void> _submit() async {
     if (!_formKey.currentState.validate()) {
@@ -109,54 +149,55 @@ class _AuthPageState extends State<AuthPage> {
     try {
       if (_authMode == AuthMode.Login) {
         // Log user in
-
-        await Provider.of<Auth>(context, listen: false).login(
-            // _authData['email'],
-            // _authData['password'],
-            );
+        final check = await Provider.of<Auth>(context, listen: false).login();
+        if (check != -1) {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => LocationScreen(),
+            ),
+          );
+        }
       } else {
         //Sign user up
 
-        await Provider.of<Auth>(context, listen: false).signup(
+        final check = await Provider.of<Auth>(context, listen: false).signup(
           _authData['email'],
           _authData['password'],
           _authData['name'],
         );
-
         // await Provider.of<Auth>(context, listen: false)
         //     .generateOtp(_authData['email']);
 
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => VerifyScreen(),
-          ),
-        );
+        if (check != -1) {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => VerifyScreen(),
+            ),
+          );
+        }
       }
-      // print(_authData['email']);
-
-      // Provider.of<Auth>  (context, listen: false).getEmail(_authData['email']);
-
-      // }
-
     } on HttpException catch (error) {
       var errorMessage = 'Authentication failed';
-      if (error.toString().contains('EMAIL_EXISTS')) {
+      if (error
+          .toString()
+          .contains('User with the given email address already exists')) {
         errorMessage = 'Email already registered';
-      } else if (error.toString().contains('INVALID_EMAIL')) {
-        errorMessage = 'Pl ease enter a valid email';
-      } else if (error.toString().contains('WEAK_PASSWORD')) {
-        errorMessage = 'Pass word too weak';
-      } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
-        errorMessage = 'Could not find a user with this email';
-      } else if (error.toString().contains('INVALID_PASSWORD')) {
-        errorMessage = 'Please enter correct password';
+      } else if (error
+          .toString()
+          .contains('No active account found with the given credentials')) {
+        errorMessage = 'Incorrect Email or Password';
       }
-      _showErrorDialog(errorMessage);
+      // } else {
+      //   errorMessage = 'Email not verified';
+      //   Navigator.of(context)
+      //       .push(MaterialPageRoute(builder: (context) => VerifyScreen()));
+      // }
+      _showMyDialog(errorMessage);
     } catch (error) {
       print(error);
       const errorMessage =
           'Could not authenticate you. Please try again later!';
-      _showErrorDialog(errorMessage);
+      _showMyDialog(errorMessage);
     }
     _controller1.clear();
     _controller2.clear();
@@ -383,7 +424,7 @@ class _AuthPageState extends State<AuthPage> {
                       padding: EdgeInsets.only(bottom: 15),
                       child: InkWell(
                         child: Text(
-                          'Forgotten Password?',
+                          'Skip Sign Up/Log In',
                           style: TextStyle(
                             fontFamily: 'Raleway',
                             color: Colors.grey[900],
@@ -393,7 +434,7 @@ class _AuthPageState extends State<AuthPage> {
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => ResetPassword(),
+                              builder: (context) => LocationScreen(),
                             ),
                           );
                         },
@@ -425,7 +466,7 @@ class _AuthPageState extends State<AuthPage> {
                       ),
                       onPressed: _submit,
                       // () {
-                      //   // print('Before submit');
+                      //   print('Before submit');
                       //   _submit();
                       //   Navigator.push(
                       //     context,
@@ -433,7 +474,7 @@ class _AuthPageState extends State<AuthPage> {
                       //       builder: (context) => LocationScreen(),
                       //     ),
                       //   );
-                      //   // print('After submit');
+                      //   print('After submit');
                       // },
                     ),
                   ),

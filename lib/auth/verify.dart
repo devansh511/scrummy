@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/gestures.dart';
+import 'package:scrummy/auth/auth_screen.dart';
 import '../screens/location_screen.dart';
+import '../models/Http_Exceptions.dart';
 import 'auth.dart';
+
+enum VerifyMode { Verify, Reset }
 
 class VerifyScreen extends StatefulWidget {
   @override
@@ -10,11 +15,107 @@ class VerifyScreen extends StatefulWidget {
 
 class _VerifyScreenState extends State<VerifyScreen> {
   GlobalKey<FormState> _formKey = GlobalKey();
+  VerifyMode _verifyMode = VerifyMode.Verify;
+  TapGestureRecognizer _gestureRecognizer;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    _gestureRecognizer = TapGestureRecognizer()..onTap = _switchScreen;
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _gestureRecognizer.dispose();
+    super.dispose();
+  }
+
+  void _switchScreen() {
+    if (_verifyMode == VerifyMode.Reset) {
+      setState(() {
+        _verifyMode = VerifyMode.Verify;
+      });
+    } else {
+      setState(() {
+        _verifyMode = VerifyMode.Reset;
+      });
+    }
+
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => AuthScreen(),
+    ));
+  }
 
   var _isLoading = false;
-  Map<String, String> _verifyData = {
-    'otp': '',
-  };
+  Map<String, String> _verifyData = {'otp': ''};
+  Future<void> _showMyDialog(String msg) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'An error occured',
+            style: TextStyle(
+              fontFamily: 'Raleway',
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[600],
+            ),
+          ),
+          content: Text(msg),
+          actions: <Widget>[
+            FlatButton(
+              child: Text(
+                'Okay',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Raleway',
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+  // void _showErrorDialog(String message) {
+  //   // bool _pressed = false;
+  //   showDialog(
+  //     context: context,
+  //     builder: (ctx) => AlertDialog(
+  //       title: Text(
+  //         'An error occured',
+  //         style: TextStyle(
+  //           fontFamily: 'Raleway',
+  //           fontWeight: FontWeight.bold,
+  //           color: Colors.grey[600],
+  //         ),
+  //       ),
+  //       content: Text(message),
+  //       actions: [
+  //         FlatButton(
+  //           child: Text(
+  //             'Okay',
+  //             style: TextStyle(
+  //               fontFamily: 'Raleway',
+  //               fontWeight: FontWeight.bold,
+  //               color: Colors.orange,
+  //             ),
+  //           ),
+  //           onPressed: () {
+  //             // Navigator.of(context).pop();
+  //             // _pressed = !_pressed;
+  //           },
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Future<void> _verifyOtp() async {
     if (!_formKey.currentState.validate()) {
@@ -25,22 +126,39 @@ class _VerifyScreenState extends State<VerifyScreen> {
     setState(() {
       _isLoading = true;
     });
+
     try {
-      await Provider.of<Auth>(context, listen: false)
+      final checkOtp = await Provider.of<Auth>(context, listen: false)
           .verifyOtp(_verifyData['otp']);
 
-      await Provider.of<Auth>(context, listen: false).login();
+      final checkLogin =
+          await Provider.of<Auth>(context, listen: false).login();
 
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => LocationScreen(),
-        ),
-      );
+      // await Provider.of<Auth>(context, listen: false)
+      //     .resetPwordOtp(_verifyData['otp_email']);
+      if (checkOtp != -1 && checkLogin != -1) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => LocationScreen(),
+          ),
+        );
+      }
+    } on HttpException catch (error) {
+      var errorMessage = 'Authentication failed';
+      if (error.toString().contains('OTP object not found')) {
+        errorMessage = 'Wrong OTP entered';
+      }
+      _showMyDialog(errorMessage);
     } catch (error) {
-      throw error;
+      print(error);
+      const errorMessage =
+          'Could not authenticate you. Please try again later!';
+      _showMyDialog(errorMessage);
     }
 
-    _isLoading = false;
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   TextEditingController _controller = TextEditingController();
@@ -70,7 +188,9 @@ class _VerifyScreenState extends State<VerifyScreen> {
                 height: 140.0,
               ),
               Text(
-                'Confirm your email',
+                _verifyMode == VerifyMode.Reset
+                    ? 'Reset your password'
+                    : 'Confirm your email',
                 style: TextStyle(
                   fontFamily: 'Raleway',
                   color: Colors.grey[600],
@@ -94,9 +214,13 @@ class _VerifyScreenState extends State<VerifyScreen> {
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
                           prefixIcon: Icon(
-                            Icons.vpn_key,
+                            _verifyMode == VerifyMode.Reset
+                                ? Icons.person_outline
+                                : Icons.vpn_key,
                           ),
-                          labelText: 'Enter OTP',
+                          labelText: _verifyMode == VerifyMode.Reset
+                              ? 'E-mail'
+                              : 'OTP',
                           labelStyle: TextStyle(
                             fontFamily: 'Raleway',
                           ),
@@ -111,12 +235,18 @@ class _VerifyScreenState extends State<VerifyScreen> {
                           return null;
                         },
                         onSaved: (value) {
-                          _verifyData['otp'] = value;
+                          if (_verifyMode == VerifyMode.Reset) {
+                            _verifyData['otp_email'] = value;
+                          } else {
+                            _verifyData['otp'] = value;
+                          }
                         },
                       ),
                     ),
                     Text(
-                      'We have sent an OTP on your email',
+                      _verifyMode == VerifyMode.Reset
+                          ? 'We will sent you an email to reset your password'
+                          : 'We have sent an OTP on your email',
                       style: TextStyle(
                         fontFamily: 'Raleway',
                         color: Colors.grey[600],
@@ -139,7 +269,9 @@ class _VerifyScreenState extends State<VerifyScreen> {
                           child: FlatButton(
                             color: Colors.orange,
                             child: Text(
-                              'Confirm',
+                              _verifyMode == VerifyMode.Reset
+                                  ? 'Request OTP'
+                                  : 'Confirm',
                               style: TextStyle(
                                 fontFamily: 'Raleway',
                                 color: Colors.white,
@@ -153,6 +285,31 @@ class _VerifyScreenState extends State<VerifyScreen> {
                           ),
                         ),
                       ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              RichText(
+                text: TextSpan(
+                  text: 'Already on Scrummy? ',
+                  style: TextStyle(
+                    color: Colors.grey[900],
+                    fontFamily: 'Raleway',
+                    fontSize: 15,
+                  ),
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: ' Login',
+                      style: TextStyle(
+                        color: Colors.orange,
+                        fontSize: 16.5,
+                        fontFamily: 'Raleway',
+                        fontWeight: FontWeight.bold,
+                      ),
+                      recognizer: _gestureRecognizer,
+                    ),
                   ],
                 ),
               ),

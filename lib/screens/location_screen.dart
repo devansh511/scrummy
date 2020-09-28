@@ -1,7 +1,23 @@
 import 'package:flutter/material.dart';
 import './home_screen.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoder/geocoder.dart';
 
-class LocationScreen extends StatelessWidget {
+class LocationScreen extends StatefulWidget {
+  @override
+  _LocationScreenState createState() => _LocationScreenState();
+}
+
+class _LocationScreenState extends State<LocationScreen> {
+  void _getUserLocation() async {
+    // final userLocation = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    final userLocation =
+        await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    print(userLocation);
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => HomeScreen()));
+  }
+
   @override
   Widget build(BuildContext context) {
     // final deviceSize = MediaQuery.of(context).size;
@@ -65,12 +81,7 @@ class LocationScreen extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => HomeScreen(),
-                      ),
-                    );
+                    _getUserLocation();
                   },
                 ),
               ),

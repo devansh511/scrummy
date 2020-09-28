@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import './screens/location_screen.dart';
 import './screens/home_screen.dart';
 import './screens/edit_profile_screen.dart';
+import './screens/splash_screen.dart';
 
 import 'auth/verify.dart';
 
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
         ],
         child: Consumer<Auth>(
           builder: (ctx, auth, _) => MaterialApp(
-            home: PanelScreen(),
+            home: SplashScreen(),
           ),
         ),
       ),
