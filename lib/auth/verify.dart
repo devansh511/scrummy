@@ -143,22 +143,27 @@ class _VerifyScreenState extends State<VerifyScreen> {
           ),
         );
       }
+      setState(() {
+        _isLoading = false;
+      });
     } on HttpException catch (error) {
+      setState(() {
+        _isLoading = false;
+      });
       var errorMessage = 'Authentication failed';
       if (error.toString().contains('OTP object not found')) {
         errorMessage = 'Wrong OTP entered';
       }
       _showMyDialog(errorMessage);
     } catch (error) {
+      setState(() {
+        _isLoading = false;
+      });
       print(error);
       const errorMessage =
           'Could not authenticate you. Please try again later!';
       _showMyDialog(errorMessage);
     }
-
-    setState(() {
-      _isLoading = false;
-    });
   }
 
   TextEditingController _controller = TextEditingController();
@@ -256,6 +261,8 @@ class _VerifyScreenState extends State<VerifyScreen> {
                     if (_isLoading)
                       CircularProgressIndicator(
                         backgroundColor: Colors.orange,
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(Colors.orange),
                       )
                     else
                       Container(

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import './edit_profile_screen.dart';
 import '../auth/auth_screen.dart';
+import 'package:provider/provider.dart';
+import '../auth/auth.dart';
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -9,6 +11,30 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  void _logOut() {
+    Provider.of<Auth>(context, listen: false).logout();
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        transitionDuration: Duration(seconds: 3),
+        transitionsBuilder: (BuildContext context, Animation<double> splash,
+            Animation<double> auth, Widget child) {
+          splash = CurvedAnimation(parent: splash, curve: Curves.elasticIn);
+
+          return ScaleTransition(
+            alignment: Alignment.bottomCenter,
+            scale: splash,
+            child: child,
+          );
+        },
+        pageBuilder: (BuildContext context, Animation<double> splash,
+            Animation<double> auth) {
+          return AuthScreen();
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -264,6 +290,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Icons.chevron_right,
                   size: 30.0,
                 ),
+                onTap: () {
+                  _logOut();
+                },
               ),
             ),
           ),

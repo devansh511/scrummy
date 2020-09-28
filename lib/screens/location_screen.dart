@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import './home_screen.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoder/geocoder.dart';
+import 'dart:async';
+
+String addr1 = "";
+String addr2 = "";
 
 class LocationScreen extends StatefulWidget {
   @override
@@ -9,13 +13,58 @@ class LocationScreen extends StatefulWidget {
 }
 
 class _LocationScreenState extends State<LocationScreen> {
-  void _getUserLocation() async {
-    // final userLocation = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    final userLocation =
-        await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    print(userLocation);
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => HomeScreen()));
+  var _isLoading = false;
+
+  void getDeliveryAddress() async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      final userLocation =
+          await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+
+      final latitude = userLocation.latitude;
+      final longitude = userLocation.longitude;
+      final coordinates = Coordinates(latitude, longitude);
+      var addresses =
+          await Geocoder.local.findAddressesFromCoordinates(coordinates);
+
+      setState(() {
+        _isLoading = false;
+        addr1 = addresses.first.featureName;
+        addr2 = addresses.first.addressLine;
+        print(addr1);
+        print(addr2);
+      });
+
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          transitionDuration: Duration(seconds: 3),
+          transitionsBuilder: (BuildContext context, Animation<double> splash,
+              Animation<double> auth, Widget child) {
+            splash = CurvedAnimation(parent: splash, curve: Curves.elasticIn);
+
+            return ScaleTransition(
+              alignment: Alignment.bottomCenter,
+              scale: splash,
+              child: child,
+            );
+          },
+          pageBuilder: (BuildContext context, Animation<double> splash,
+              Animation<double> auth) {
+            return HomeScreen();
+          },
+        ),
+      );
+    } catch (error) {
+      setState(() {
+        _isLoading = false;
+      });
+      throw error;
+    }
+    // Navigator.of(context)
+    //     .push(MaterialPageRoute(builder: (context) => HomeScreen()));
   }
 
   @override
@@ -64,28 +113,34 @@ class _LocationScreenState extends State<LocationScreen> {
                 ),
               ),
             ),
-            Container(
-              width: 260,
-              height: 45,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(25.0),
-                child: FlatButton(
-                  color: Colors.orange[700],
-                  child: Text(
-                    'Allow Location Access',
-                    style: TextStyle(
-                      fontFamily: 'Raleway',
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
+            if (_isLoading)
+              CircularProgressIndicator(
+                backgroundColor: Colors.white,
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
+              )
+            else
+              Container(
+                width: 260,
+                height: 45,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(25.0),
+                  child: FlatButton(
+                    color: Colors.orange[700],
+                    child: Text(
+                      'Allow Location Access',
+                      style: TextStyle(
+                        fontFamily: 'Raleway',
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
                     ),
+                    onPressed: () {
+                      getDeliveryAddress();
+                    },
                   ),
-                  onPressed: () {
-                    _getUserLocation();
-                  },
                 ),
               ),
-            ),
           ],
         ),
       ),

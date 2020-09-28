@@ -68,6 +68,29 @@ class _AuthPageState extends State<AuthPage> {
     super.dispose();
   }
 
+  void _skipAuth() {
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        transitionDuration: Duration(seconds: 2),
+        transitionsBuilder: (BuildContext context, Animation<double> splash,
+            Animation<double> auth, Widget child) {
+          splash = CurvedAnimation(parent: splash, curve: Curves.elasticInOut);
+
+          return ScaleTransition(
+            alignment: Alignment.bottomCenter,
+            scale: splash,
+            child: child,
+          );
+        },
+        pageBuilder: (BuildContext context, Animation<double> splash,
+            Animation<double> auth) {
+          return LocationScreen();
+        },
+      ),
+    );
+  }
+
   Future<void> _showMyDialog(String msg) async {
     return showDialog<void>(
       context: context,
@@ -432,17 +455,14 @@ class _AuthPageState extends State<AuthPage> {
                           ),
                         ),
                         onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => LocationScreen(),
-                            ),
-                          );
+                          _skipAuth();
                         },
                       ),
                     ),
               if (_isLoading)
                 CircularProgressIndicator(
                   backgroundColor: Colors.orange,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
                 )
               else
                 Container(

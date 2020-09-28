@@ -27,11 +27,11 @@ class _FeedScreenState extends State<FeedScreen> {
               leading: Icon(Icons.edit_location),
               title: GestureDetector(
                 child: Text(
-                  'Location Here, ',
+                  addr2,
                   style: TextStyle(
                     color: Colors.grey[600],
                     fontFamily: 'Raleway',
-                    fontSize: 18.0,
+                    fontSize: 14.0,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

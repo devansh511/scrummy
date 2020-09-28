@@ -121,16 +121,17 @@ class Auth with ChangeNotifier {
             "accept": "application/json"
           });
       print(email);
+      print(check);
       final signupResponse = json.decode(response.body);
       print(signupResponse);
       if (response.body.isNotEmpty) {
         if (signupResponse['error'] != null) {
           check = -1;
-          throw HttpException(
-            signupResponse['error'],
-          );
+          print(check);
+          throw HttpException(signupResponse['error']);
         }
       }
+      print(check);
       print(signupResponse.statusCode);
       notifyListeners();
     } catch (error) {
@@ -157,9 +158,7 @@ class Auth with ChangeNotifier {
       print(responseData);
       if (responseData['error'] != null) {
         check = -1;
-        throw HttpException(
-          responseData['error'],
-        );
+        throw HttpException(responseData['error']);
       }
       print(responseData.statusCode);
       print(e_mail);
@@ -193,9 +192,7 @@ class Auth with ChangeNotifier {
       if (response.body.isNotEmpty) {
         if (loginResponse['error'] != null) {
           check = -1;
-          throw HttpException(
-            loginResponse['error'],
-          );
+          throw HttpException(loginResponse['error']);
         }
       }
       _accessToken = loginResponse['access'];
@@ -254,19 +251,19 @@ class Auth with ChangeNotifier {
 //   return true;
 // }
 
-// void logout() async {
-//   _token = null;
-//   _userId = null;
-//   _expiryDate = null;
-//   if (_authTimer != null) {
-//     _authTimer.cancel();
-//     _authTimer = null;
-//   }
-//   notifyListeners();
-//   final prefs = await SharedPreferences.getInstance();
-//   // prefs.remove('userData');
-//   prefs.clear();
-// }
+  void logout() async {
+    _accessToken = null;
+    _refreshToken = null;
+    _expiryDate = null;
+    if (_authTimer != null) {
+      _authTimer.cancel();
+      _authTimer = null;
+    }
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    // prefs.remove('userData');
+    prefs.clear();
+  }
 
 // void _autoLogout() {
 //   if (_authTimer != null) {

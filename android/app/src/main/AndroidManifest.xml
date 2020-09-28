@@ -12,8 +12,8 @@
          
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="scrummy"
-        android:icon="@mipmap/ic_launcher">
+        android:label="Scrummy"
+        android:icon="@mipmap/scrummy">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
