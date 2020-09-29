@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/Http_Exceptions.dart';
+import '../screens/reset_password.dart';
 
 class Auth with ChangeNotifier {
   String _accessToken;
@@ -12,7 +13,7 @@ class Auth with ChangeNotifier {
   DateTime _expiryTime;
   String _userId;
   Timer _authTimer;
-  String _endPoint = "df37db14057d";
+  String _endPoint = "c77c85d3f53a";
   // bool get isAuth {
   //   return token != null;
   // }
@@ -79,7 +80,7 @@ class Auth with ChangeNotifier {
   //   }
   // }
   Future<void> generateOtp(String email) async {
-    final url = 'http://$_endPoint.ngrok.io/api/otp/';
+    final url = 'https://$_endPoint.ngrok.io/api/otp/';
     try {
       final response = await http.post(url,
           body: json.encode(
@@ -99,7 +100,7 @@ class Auth with ChangeNotifier {
   }
 
   Future<int> signup(String email, String password, String name) async {
-    final url = "http://$_endPoint.ngrok.io/api/signup/";
+    final url = "https://$_endPoint.ngrok.io/api/signup/";
     int check = 0;
     try {
       final response = await http.post(url,
@@ -135,7 +136,7 @@ class Auth with ChangeNotifier {
 
   Future<int> checkVerify(String email, String password) async {
     int check = 0;
-    final url = "http://$_endPoint.ngrok.io/api/otp_verified/";
+    final url = "https://$_endPoint.ngrok.io/api/otp_verified/";
     try {
       final response = await http.post(url,
           body: json.encode({"email": email, "password": password}),
@@ -157,8 +158,11 @@ class Auth with ChangeNotifier {
   }
 
   Future<int> verifyOtp(String otp) async {
+    print(otp);
+    print(e_mail);
+
     int check = 0;
-    final url = "http://$_endPoint.ngrok.io/api/verify_otp/";
+    final url = "https://$_endPoint.ngrok.io/api/verify_otp/";
 
     try {
       final response = await http.post(url,
@@ -185,7 +189,7 @@ class Auth with ChangeNotifier {
 
   Future<int> login() async {
     int check = 0;
-    final url = "http://$_endPoint.ngrok.io/api/login/";
+    final url = "https://$_endPoint.ngrok.io/api/login/";
     print(e_mail);
     print(p_word);
     try {
@@ -258,42 +262,85 @@ class Auth with ChangeNotifier {
 //   // prefs.remove('userData');
 //   prefs.clear();
 // }
+  Future<int> passwordOtp(String otp) async {
+    print(otp);
+    print(e_mailReset);
 
-  Future<void> resetOtp(String email) async {
-    final url = 'http://$_endPoint.ngrok.io/api/';
+    int check = 0;
+    final url = "https://$_endPoint.ngrok.io/api/passresetotp/";
 
     try {
       final response = await http.post(url,
-          body: json.encode({'otp_email': email}),
+          body: json.encode({"otp": otp, "email": e_mailReset}),
           headers: {
             "content-type": "application/json",
             "accept": "application/json"
           });
       final responseData = json.decode(response.body);
-
-      print(email);
-
       print(responseData);
+      if (responseData["error"] != null) {
+        check = -1;
+        throw HttpException(responseData["error"]);
+      }
+      // print(responseData.statusCode);
+      print(e_mail);
+      print(otp);
+      notifyListeners();
     } catch (error) {
       throw error;
     }
+    return check;
   }
 
-  Future<void> resetPwd(String password) async {
-    final url = 'http://$_endPoint.ngrok.io/api/';
-
+  Future<int> resetOtp(String email) async {
+    print(email);
+    final url = 'https://$_endPoint.ngrok.io/api/otp/';
+    int check = 0;
     try {
       final response = await http.post(url,
-          body: json.encode({"password": password}),
+          body: json.encode({'email': email}),
           headers: {
             "content-type": "application/json",
             "accept": "application/json"
           });
       final responseData = json.decode(response.body);
       print(responseData);
+      if (response.body.isNotEmpty) {
+        if (responseData["error"] != null) {
+          check = -1;
+          throw HttpException(responseData["error"]);
+        }
+      }
+      print(email);
     } catch (error) {
       throw error;
     }
+    return check;
+  }
+
+  Future<int> resetPwd(String password) async {
+    int check = 0;
+    final url = 'https://$_endPoint.ngrok.io/api/resetpassword/';
+
+    try {
+      final response = await http.post(url,
+          body: json.encode({"password": password, "email": e_mailReset}),
+          headers: {
+            "content-type": "application/json",
+            "accept": "application/json"
+          });
+      final responseData = json.decode(response.body);
+      print(responseData);
+      // if (response.body.isNotEmpty) {
+      //   if (responseData["error"] != null) {
+      //     check = -1;
+      //     throw HttpException(responseData["error"]);
+      //   }
+      // }
+    } catch (error) {
+      throw error;
+    }
+    return check;
   }
 }
 // Future<void> login(String email, String password) async {

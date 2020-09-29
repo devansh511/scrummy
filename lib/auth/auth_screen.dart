@@ -68,7 +68,7 @@ class _AuthPageState extends State<AuthPage> {
     super.dispose();
   }
 
-  void _skipAuth() {
+  void _resetPassword() {
     Navigator.pushReplacement(
       context,
       PageRouteBuilder(
@@ -85,7 +85,7 @@ class _AuthPageState extends State<AuthPage> {
         },
         pageBuilder: (BuildContext context, Animation<double> splash,
             Animation<double> auth) {
-          return LocationScreen();
+          return ResetPassword();
         },
       ),
     );
@@ -172,12 +172,15 @@ class _AuthPageState extends State<AuthPage> {
     try {
       if (_authMode == AuthMode.Login) {
         // Log user in
+        print(_authData['email']);
+        print(_authData['password']);
         final checkOtp = await Provider.of<Auth>(context, listen: false)
             .checkVerify(_authData['email'], _authData['password']);
         final checkLogin =
             await Provider.of<Auth>(context, listen: false).login();
         if (checkOtp != -1 && checkLogin != -1) {
-          Navigator.of(context).push(
+          Navigator.pushReplacement(
+            context,
             MaterialPageRoute(
               builder: (context) => LocationScreen(),
             ),
@@ -463,7 +466,7 @@ class _AuthPageState extends State<AuthPage> {
                       padding: EdgeInsets.only(bottom: 15),
                       child: InkWell(
                         child: Text(
-                          'Skip Sign Up/Log In',
+                          ' Forgotten Password?',
                           style: TextStyle(
                             fontFamily: 'Raleway',
                             color: Colors.grey[900],
@@ -471,7 +474,7 @@ class _AuthPageState extends State<AuthPage> {
                           ),
                         ),
                         onTap: () {
-                          _skipAuth();
+                          _resetPassword();
                         },
                       ),
                     ),

@@ -4,9 +4,11 @@ import 'package:flutter/gestures.dart';
 import 'package:scrummy/auth/auth_screen.dart';
 import '../screens/location_screen.dart';
 import '../models/Http_Exceptions.dart';
+import '../screens/reset_password.dart';
 import 'auth.dart';
 
 enum VerifyMode { Verify, Reset }
+int check = auth;
 
 class VerifyScreen extends StatefulWidget {
   @override
@@ -17,7 +19,6 @@ class _VerifyScreenState extends State<VerifyScreen> {
   GlobalKey<FormState> _formKey = GlobalKey();
   VerifyMode _verifyMode = VerifyMode.Verify;
   TapGestureRecognizer _gestureRecognizer;
-
   @override
   void initState() {
     // TODO: implement initState
@@ -118,6 +119,8 @@ class _VerifyScreenState extends State<VerifyScreen> {
   // }
 
   Future<void> _verifyOtp() async {
+    var checkLogin;
+    var checkPwd;
     if (!_formKey.currentState.validate()) {
       // Invalid!
       return;
@@ -128,24 +131,31 @@ class _VerifyScreenState extends State<VerifyScreen> {
     });
 
     try {
-      final checkOtp = await Provider.of<Auth>(context, listen: false)
-          .verifyOtp(_verifyData['otp']);
+      if (check == -1) {
+        final reset = await Provider.of<Auth>(context, listen: false)
+            .passwordOtp(_verifyData["otp"]);
+        if (reset != -1) {
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => ResetPassword()));
+        }
+      } else {
+        final checkOtp = await Provider.of<Auth>(context, listen: false)
+            .verifyOtp(_verifyData['otp']);
 
-      final checkLogin =
-          await Provider.of<Auth>(context, listen: false).login();
+        checkLogin = await Provider.of<Auth>(context, listen: false).login();
 
-      await Provider.of<Auth>(context, listen: false)
-          .resetOtp(_verifyData['otp_email']);
+        if (checkOtp != -1 && checkPwd != -1) {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => AuthScreen()));
+        }
 
-      await Provider.of<Auth>(context, listen: false)
-          .resetPwd(_verifyData['password']);
-
-      if (checkOtp != -1 && checkLogin != -1) {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => LocationScreen(),
-          ),
-        );
+        if (checkOtp != -1 && checkLogin != -1) {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => LocationScreen(),
+            ),
+          );
+        }
       }
       setState(() {
         _isLoading = false;
@@ -264,9 +274,12 @@ class _VerifyScreenState extends State<VerifyScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                    SizedBox(
+                      height: 20.0,
+                    ),
                     if (_isLoading)
                       CircularProgressIndicator(
-                        backgroundColor: Colors.orange,
+                        backgroundColor: Colors.white,
                         valueColor:
                             AlwaysStoppedAnimation<Color>(Colors.orange),
                       )
