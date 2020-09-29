@@ -3,18 +3,16 @@ import 'package:http/http.dart' as http;
 import 'package:scrummy/auth/auth_screen.dart';
 import 'dart:convert';
 import 'dart:async';
-import './auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/Http_Exceptions.dart';
 
 class Auth with ChangeNotifier {
   String _accessToken;
   String _refreshToken;
-  DateTime _expiryDate;
+  DateTime _expiryTime;
   String _userId;
   Timer _authTimer;
-  String _extractedEmail;
-
+  String _endPoint = "df37db14057d";
   // bool get isAuth {
   //   return token != null;
   // }
@@ -22,8 +20,8 @@ class Auth with ChangeNotifier {
   // String get token {
   //   if (_expiryDate != null &&
   //       _expiryDate.isAfter(DateTime.now()) &&
-  //       _token != null) {
-  //     return _token;
+  //       _accessToken != null) {
+  //     return _refreshToken;
   //   }
   //   return null;
   // }
@@ -67,54 +65,49 @@ class Auth with ChangeNotifier {
   //     // _autoLogout();
   //     notifyListeners();
   //     final prefs = await SharedPreferences.getInstance();
-  //     final userData = json.encode(
-  //       {
-  //         'token': _token,
-  //         'userId': _userId,
-  //         'expiryDate': _expiryDate.toIso8601String()
-  //       },
-  //     );
-  //     prefs.setString('userData', userData);
+  // final userData = json.encode(
+  //   {
+  //     'token': _token,
+  //     'userId': _userId,
+  //     'expiryDate': _expiryDate.toIso8601String()
+  //   },
+  // );
+  // prefs.setString('userData', userData);
   //     print(responseData);
   //   } catch (error) {
   //     throw error;
   //   }
   // }
-  // Future<void> generateOtp(String email) async {
-  //   // String get Email {
-  //   // return _extractedEmail;
-  //   // }
-  //   print(_extractedEmail);
-  //   _extractedEmail = email;
-  //   final url = 'https://265e3fa01612.ngrok.io/api/otp/';
-  //   try {
-  //     final response = await http.post(url,
-  //         body: json.encode(
-  //           {'email': email},
-  //         ),
-  //         headers: {
-  //           "content-type": "application/json",
-  //           "accept": "application/json"
-  //         });
-  //     final responseData = json.decode(response.body);
-  //     print(email);
-  //     print(responseData);
-  //     notifyListeners();
-  //   } catch (error) {
-  //     throw (error);
-  //   }
-  // }
+  Future<void> generateOtp(String email) async {
+    final url = 'http://$_endPoint.ngrok.io/api/otp/';
+    try {
+      final response = await http.post(url,
+          body: json.encode(
+            {"email": email},
+          ),
+          headers: {
+            "content-type": "application/json",
+            "accept": "application/json"
+          });
+      final responseData = json.decode(response.body);
+      print(email);
+      print(responseData);
+      notifyListeners();
+    } catch (error) {
+      throw (error);
+    }
+  }
 
   Future<int> signup(String email, String password, String name) async {
-    final url = 'http://04af2aff428a.ngrok.io/api/signup/';
+    final url = "http://$_endPoint.ngrok.io/api/signup/";
     int check = 0;
     try {
       final response = await http.post(url,
           body: json.encode({
-            'email': email,
-            'password': password,
-            'Role': '1',
-            'profile': {'name': name, 'address': 'Arya Nagar'}
+            "email": email,
+            "password": password,
+            "Role": '1',
+            "profile": {"name": name, "address": 'Arya Nagar'}
           }),
           headers: {
             "content-type": "application/json",
@@ -125,42 +118,62 @@ class Auth with ChangeNotifier {
       final signupResponse = json.decode(response.body);
       print(signupResponse);
       if (response.body.isNotEmpty) {
-        if (signupResponse['error'] != null) {
+        if (signupResponse["error"] != null) {
           check = -1;
           print(check);
-          throw HttpException(signupResponse['error']);
+          throw HttpException(signupResponse["error"]);
         }
       }
       print(check);
-      print(signupResponse.statusCode);
+      // print(signupResponse.statusCode);
       notifyListeners();
     } catch (error) {
       throw error;
     }
     return check;
   }
-  // print(email);
-  // print(password);
-  // print(name);
 
-  Future<int> verifyOtp(String otp) async {
+  Future<int> checkVerify(String email, String password) async {
     int check = 0;
-    final url = 'http://04af2aff428a.ngrok.io/api/verify_otp/';
-
+    final url = "http://$_endPoint.ngrok.io/api/otp_verified/";
     try {
       final response = await http.post(url,
-          body: json.encode({'otp': otp, 'otp_email': e_mail}),
+          body: json.encode({"email": email, "password": password}),
           headers: {
             "content-type": "application/json",
             "accept": "application/json"
           });
       final responseData = json.decode(response.body);
       print(responseData);
-      if (responseData['error'] != null) {
+      if (responseData["error"] != null) {
         check = -1;
-        throw HttpException(responseData['error']);
+        throw HttpException(responseData["error"]);
       }
-      print(responseData.statusCode);
+      notifyListeners();
+    } catch (error) {
+      throw error;
+    }
+    return check;
+  }
+
+  Future<int> verifyOtp(String otp) async {
+    int check = 0;
+    final url = "http://$_endPoint.ngrok.io/api/verify_otp/";
+
+    try {
+      final response = await http.post(url,
+          body: json.encode({"otp": otp, "otp_email": e_mail}),
+          headers: {
+            "content-type": "application/json",
+            "accept": "application/json"
+          });
+      final responseData = json.decode(response.body);
+      print(responseData);
+      if (responseData["error"] != null) {
+        check = -1;
+        throw HttpException(responseData["error"]);
+      }
+      // print(responseData.statusCode);
       print(e_mail);
       print(otp);
       notifyListeners();
@@ -172,33 +185,44 @@ class Auth with ChangeNotifier {
 
   Future<int> login() async {
     int check = 0;
-    final url = 'http://04af2aff428a.ngrok.io/api/login/';
+    final url = "http://$_endPoint.ngrok.io/api/login/";
     print(e_mail);
     print(p_word);
     try {
       final response = await http.post(url,
           body: json.encode({
-            'email': e_mail,
-            'password': p_word
+            "email": e_mail,
+            "password": p_word
             //'returnSecureToken': true
           }),
           headers: {
             "content-type": "application/json",
             "accept": "application/json"
           });
-      print(response.statusCode);
+      // print(response.statusCode);
       final loginResponse = json.decode(response.body);
       print(loginResponse);
       if (response.body.isNotEmpty) {
-        if (loginResponse['error'] != null) {
+        if (loginResponse["detail"] != null) {
           check = -1;
-          throw HttpException(loginResponse['error']);
+          throw HttpException(loginResponse["detail"]);
         }
       }
-      _accessToken = loginResponse['access'];
-      _refreshToken = loginResponse['refresh'];
+
+      _accessToken = loginResponse["access"];
+      _refreshToken = loginResponse["refresh"];
       print(_accessToken);
       print(_refreshToken);
+      _expiryTime = DateTime.now().add(Duration(seconds: 300));
+      final prefs = await SharedPreferences.getInstance();
+      final userData = json.encode(
+        {
+          "access": _accessToken,
+          "refresh": _refreshToken,
+          "expiryTime": _expiryTime.toIso8601String()
+        },
+      );
+      prefs.setString('userData', userData);
       notifyListeners();
     } catch (error) {
       throw error;
@@ -206,64 +230,110 @@ class Auth with ChangeNotifier {
     return check;
   }
 
-  // Future<void> resetPwordOtp(String email) async {
-  //   final url = '';
-
-  //   try {
-  //     final response = await http.post(url,
-  //         body: json.encode({'otp_email': email}),
-  //         headers: {
-  //           "content-type": "application/json",
-  //           "accept": "application/json"
-  //         });
-  //     final responseData = json.decode(response.body);
-
-  //     print(email);
-
-  //     print(responseData);
-  //   } catch (error) {
-  //     throw error;
+  // Future<bool> autoLogin() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   if (!prefs.containsKey('userData')) {
+  //     return false;
   //   }
-  // }
+  // final extractedUserData =
+  //     json.decode(prefs.getString('userData')) as Map<String, Object>;
 
+  // final expiryTime = DateTime.parse(extractedUserData['expiryTime']);
+
+  // if (expiryTime.isBefore(DateTime.now())) {
+
+  //   return false;
+  // }
+  // }
+//   void logout() async {
+//   _accessToken = null;
+//   _refreshToken = null;
+//   _expiryTime = null;
+//   if (_authTimer != null) {
+//     _authTimer.cancel();
+//     _authTimer = null;
+//   }
+//   notifyListeners();
+//   final prefs = await SharedPreferences.getInstance();
+//   // prefs.remove('userData');
+//   prefs.clear();
+// }
+
+  Future<void> resetOtp(String email) async {
+    final url = 'http://$_endPoint.ngrok.io/api/';
+
+    try {
+      final response = await http.post(url,
+          body: json.encode({'otp_email': email}),
+          headers: {
+            "content-type": "application/json",
+            "accept": "application/json"
+          });
+      final responseData = json.decode(response.body);
+
+      print(email);
+
+      print(responseData);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  Future<void> resetPwd(String password) async {
+    final url = 'http://$_endPoint.ngrok.io/api/';
+
+    try {
+      final response = await http.post(url,
+          body: json.encode({"password": password}),
+          headers: {
+            "content-type": "application/json",
+            "accept": "application/json"
+          });
+      final responseData = json.decode(response.body);
+      print(responseData);
+    } catch (error) {
+      throw error;
+    }
+  }
+}
 // Future<void> login(String email, String password) async {
 //   return _authenticate(email, password);
 // }
 
 // Future<bool> tryAutoLogin() async {
 //   final prefs = await SharedPreferences.getInstance();
-//   if (!prefs.containsKey('userData')) {
-//     return false;
-//   }
-//   final extractedUserData =
-//       json.decode(prefs.getString('userData')) as Map<String, Object>;
-//   final expiryDate = DateTime.parse(extractedUserData['expiryDate']);
+// if (!prefs.containsKey('userData')) {
+//   return false;
+// }
+// final extractedUserData =
+//     json.decode(prefs.getString('userData')) as Map<String, Object>;
+// final expiryDate = DateTime.parse(extractedUserData['expiryDate']);
 
-//   if (expiryDate.isBefore(DateTime.now())) {
-//     return false;
-//   }
+// if (expiryDate.isBefore(DateTime.now())) {
+//   return false;
+// }
 
-//   _token = extractedUserData['token'];
-//   _userId = extractedUserData['userId'];
+//   _accessToken = extractedUserData['access'];
+//   _refreshToken = extractedUserData['refresh'];
 //   _expiryDate = expiryDate;
 //   notifyListeners();
 //   _autoLogout();
 //   return true;
 // }
 
-  void logout() async {
-    _accessToken = null;
-    _refreshToken = null;
-    _expiryDate = null;
-    if (_authTimer != null) {
-      _authTimer.cancel();
-      _authTimer = null;
-    }
-    notifyListeners();
-    final prefs = await SharedPreferences.getInstance();
-    // prefs.remove('userData');
-    prefs.clear();
-  }
+// void logout() async {
+//   _accessToken = null;
+//   _refreshToken = null;
+//   _expiryDate = null;
+//   if (_authTimer != null) {
+//     _authTimer.cancel();
+//     _authTimer = null;
+//   }
+//   notifyListeners();
+//   final prefs = await SharedPreferences.getInstance();
+//   // prefs.remove('userData');
+//   prefs.clear();
+// }
 
 // void _autoLogout() {
 //   if (_authTimer != null) {
@@ -272,5 +342,3 @@ class Auth with ChangeNotifier {
 //   final timeToExpiry = _expiryDate.difference(DateTime.now()).inSeconds;
 //   _authTimer = Timer(Duration(seconds: timeToExpiry), logout);
 // }
-// }
-}

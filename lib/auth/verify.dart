@@ -48,7 +48,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
   }
 
   var _isLoading = false;
-  Map<String, String> _verifyData = {'otp': ''};
+  Map<String, String> _verifyData = {"otp": ""};
   Future<void> _showMyDialog(String msg) async {
     return showDialog<void>(
       context: context,
@@ -134,8 +134,12 @@ class _VerifyScreenState extends State<VerifyScreen> {
       final checkLogin =
           await Provider.of<Auth>(context, listen: false).login();
 
-      // await Provider.of<Auth>(context, listen: false)
-      //     .resetPwordOtp(_verifyData['otp_email']);
+      await Provider.of<Auth>(context, listen: false)
+          .resetOtp(_verifyData['otp_email']);
+
+      await Provider.of<Auth>(context, listen: false)
+          .resetPwd(_verifyData['password']);
+
       if (checkOtp != -1 && checkLogin != -1) {
         Navigator.of(context).push(
           MaterialPageRoute(
@@ -151,8 +155,10 @@ class _VerifyScreenState extends State<VerifyScreen> {
         _isLoading = false;
       });
       var errorMessage = 'Authentication failed';
-      if (error.toString().contains('OTP object not found')) {
+      if (error.toString().contains('wrong otp')) {
         errorMessage = 'Wrong OTP entered';
+      } else if (error.toString().contains('otp expired')) {
+        errorMessage = 'OTP expired! Check for new OTP on your email';
       }
       _showMyDialog(errorMessage);
     } catch (error) {

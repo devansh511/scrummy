@@ -75,7 +75,7 @@ class _AuthPageState extends State<AuthPage> {
         transitionDuration: Duration(seconds: 2),
         transitionsBuilder: (BuildContext context, Animation<double> splash,
             Animation<double> auth, Widget child) {
-          splash = CurvedAnimation(parent: splash, curve: Curves.elasticInOut);
+          splash = CurvedAnimation(parent: splash, curve: Curves.elasticIn);
 
           return ScaleTransition(
             alignment: Alignment.bottomCenter,
@@ -172,8 +172,11 @@ class _AuthPageState extends State<AuthPage> {
     try {
       if (_authMode == AuthMode.Login) {
         // Log user in
-        final check = await Provider.of<Auth>(context, listen: false).login();
-        if (check != -1) {
+        final checkOtp = await Provider.of<Auth>(context, listen: false)
+            .checkVerify(_authData['email'], _authData['password']);
+        final checkLogin =
+            await Provider.of<Auth>(context, listen: false).login();
+        if (checkOtp != -1 && checkLogin != -1) {
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => LocationScreen(),
@@ -188,8 +191,6 @@ class _AuthPageState extends State<AuthPage> {
           _authData['password'],
           _authData['name'],
         );
-        // await Provider.of<Auth>(context, listen: false)
-        //     .generateOtp(_authData['email']);
 
         if (check != -1) {
           Navigator.of(context).push(
@@ -205,10 +206,25 @@ class _AuthPageState extends State<AuthPage> {
           .toString()
           .contains('User with the given email address already exists')) {
         errorMessage = 'Email already registered';
+      } else if (error.toString().contains('email not found in users')) {
+        errorMessage = 'You are not registered on Scrummy';
+      } else if (error.toString().contains('user is not otp verified')) {
+        errorMessage = "Activate your Scrummy account";
+        await Provider.of<Auth>(context, listen: false)
+            .generateOtp(_authData['email']);
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => VerifyScreen(),
+          ),
+        );
       } else if (error
           .toString()
-          .contains('No active account found with the given credentials')) {
-        errorMessage = 'Incorrect Email or Password';
+          .contains("No active account found with the given credentials")) {
+        errorMessage = "Incorrect Password";
+      } else if (error.toString().contains("invalid email")) {
+        errorMessage = "Invalid Email";
+      } else if (error.toString().contains("wrong password")) {
+        errorMessage = "Incorrect Password";
       }
       // } else {
       //   errorMessage = 'Email not verified';
@@ -461,7 +477,7 @@ class _AuthPageState extends State<AuthPage> {
                     ),
               if (_isLoading)
                 CircularProgressIndicator(
-                  backgroundColor: Colors.orange,
+                  backgroundColor: Colors.white,
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
                 )
               else

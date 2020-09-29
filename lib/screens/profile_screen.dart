@@ -11,29 +11,29 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  void _logOut() {
-    Provider.of<Auth>(context, listen: false).logout();
-    Navigator.pushReplacement(
-      context,
-      PageRouteBuilder(
-        transitionDuration: Duration(seconds: 3),
-        transitionsBuilder: (BuildContext context, Animation<double> splash,
-            Animation<double> auth, Widget child) {
-          splash = CurvedAnimation(parent: splash, curve: Curves.elasticIn);
+  // void _logOut() {
+  //   Provider.of<Auth>(context, listen: false).logout();
+  //   Navigator.pushReplacement(
+  //     context,
+  //     PageRouteBuilder(
+  //       transitionDuration: Duration(seconds: 3),
+  //       transitionsBuilder: (BuildContext context, Animation<double> splash,
+  //           Animation<double> auth, Widget child) {
+  //         splash = CurvedAnimation(parent: splash, curve: Curves.elasticIn);
 
-          return ScaleTransition(
-            alignment: Alignment.bottomCenter,
-            scale: splash,
-            child: child,
-          );
-        },
-        pageBuilder: (BuildContext context, Animation<double> splash,
-            Animation<double> auth) {
-          return AuthScreen();
-        },
-      ),
-    );
-  }
+  //         return ScaleTransition(
+  //           alignment: Alignment.bottomCenter,
+  //           scale: splash,
+  //           child: child,
+  //         );
+  //       },
+  //       pageBuilder: (BuildContext context, Animation<double> splash,
+  //           Animation<double> auth) {
+  //         return AuthScreen();
+  //       },
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -291,7 +291,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   size: 30.0,
                 ),
                 onTap: () {
-                  _logOut();
+                  // _logOut();
                 },
               ),
             ),

@@ -17,7 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   delayTimer() async {
-    var duration = Duration(seconds: 3);
+    var duration = Duration(seconds: 4);
     return Timer(duration, route);
   }
 
@@ -28,7 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
         transitionDuration: Duration(seconds: 3),
         transitionsBuilder: (BuildContext context, Animation<double> splash,
             Animation<double> auth, Widget child) {
-          splash = CurvedAnimation(parent: splash, curve: Curves.elasticInOut);
+          splash = CurvedAnimation(parent: splash, curve: Curves.elasticIn);
 
           return ScaleTransition(
             alignment: Alignment.bottomCenter,
@@ -48,8 +48,13 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
-        child: SvgPicture.asset('assets/logo.svg'),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 170.0),
+          child: Center(
+            child: SvgPicture.asset('assets/logo.svg'),
+          ),
+        ),
       ),
     );
   }

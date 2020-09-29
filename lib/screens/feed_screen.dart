@@ -27,7 +27,7 @@ class _FeedScreenState extends State<FeedScreen> {
               leading: Icon(Icons.edit_location),
               title: GestureDetector(
                 child: Text(
-                  addr2,
+                  addr1,
                   style: TextStyle(
                     color: Colors.grey[600],
                     fontFamily: 'Raleway',
