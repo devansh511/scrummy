@@ -305,6 +305,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                               ),
                             ),
                             onPressed: () {
+                              FocusScope.of(context).requestFocus(FocusNode());
                               _verifyOtp();
                               print(_verifyData['otp']);
                             },

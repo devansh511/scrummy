@@ -7,7 +7,7 @@ import './screens/location_screen.dart';
 import './screens/home_screen.dart';
 import './screens/edit_profile_screen.dart';
 import './screens/splash_screen.dart';
-
+import './providers/food.dart';
 import 'auth/verify.dart';
 
 void main() => runApp(MyApp());
@@ -20,6 +20,9 @@ class MyApp extends StatelessWidget {
         providers: [
           ChangeNotifierProvider.value(
             value: Auth(),
+          ),
+          ChangeNotifierProvider.value(
+            value: Food(),
           ),
         ],
         child: Consumer<Auth>(

@@ -322,6 +322,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                         ),
                       ),
                       onPressed: () {
+                        FocusScope.of(context).requestFocus(FocusNode());
                         print(e_mailReset);
                         _mode == Modes.OTP ? _submit() : _submitMail();
                       },
@@ -453,6 +454,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                           ),
                         ),
                         onPressed: () {
+                          FocusScope.of(context).requestFocus(FocusNode());
                           _mode == Modes.OTP ? _submit() : _submitMail();
                         },
                       ),

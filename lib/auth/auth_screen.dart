@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:scrummy/auth/verify.dart';
 import 'package:scrummy/screens/home_screen.dart';
 import 'package:scrummy/screens/location_screen.dart';
@@ -18,6 +20,7 @@ class AuthScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final deviceHeight = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
@@ -51,10 +54,26 @@ class _AuthPageState extends State<AuthPage> {
   };
   var _isLoading = false;
   final _controller1 = TextEditingController();
-  final _controller2 = TextEditingController();
-  final _controller3 = TextEditingController();
+  final _controller2l = TextEditingController();
+  final _controller2s = TextEditingController();
+  final _controller3l = TextEditingController();
+  final _controller3s = TextEditingController();
   final _controller4 = TextEditingController();
   TapGestureRecognizer _gestureRecognizer;
+  String _userNameErrorText;
+  bool _userNameError = false;
+  String _emailText;
+  bool _emailError = false;
+  String _passwordTextl;
+  bool _passwordErrorl = false;
+  String _passwordTexts;
+  bool _passwordErrors = false;
+  String _cnfPasswordText;
+  bool _cnfPasswordError = false;
+  bool _showPassword1 = true;
+  bool _showPassword2 = true;
+  bool _showPassword3 = true;
+  bool _val = false;
 
   @override
   void initState() {
@@ -160,11 +179,6 @@ class _AuthPageState extends State<AuthPage> {
   // }
 
   Future<void> _submit() async {
-    if (!_formKey.currentState.validate()) {
-      // Invalid!
-      return;
-    }
-    _formKey.currentState.save();
     setState(() {
       _isLoading = true;
     });
@@ -241,11 +255,15 @@ class _AuthPageState extends State<AuthPage> {
           'Could not authenticate you. Please try again later!';
       _showMyDialog(errorMessage);
     }
-    _controller1.clear();
-    _controller2.clear();
-    _controller3.clear();
-    _controller4.clear();
+
     setState(() {
+      _controller1.clear();
+      _controller2l.clear();
+      _controller2s.clear();
+      _controller3l.clear();
+      _controller3s.clear();
+      _controller4.clear();
+      _controller4.addListener(() {});
       _isLoading = false;
     });
   }
@@ -287,9 +305,7 @@ class _AuthPageState extends State<AuthPage> {
         Text(
           _authMode == AuthMode.Login
               ? 'Login into your account'
-              : _authMode == AuthMode.Login
-                  ? 'Create your account'
-                  : 'Create new password',
+              : 'Create your account',
           style: TextStyle(
             fontFamily: 'Raleway',
             color: Colors.grey[600],
@@ -302,163 +318,305 @@ class _AuthPageState extends State<AuthPage> {
         ),
         Form(
           key: _formKey,
+          autovalidate: _val,
           child: Column(
             children: <Widget>[
               Container(
                 width: 240,
-                height:
-                    (_authMode == AuthMode.Login || _authMode == AuthMode.Reset)
-                        ? 0
-                        : 60,
-                child:
-                    (_authMode == AuthMode.Login || _authMode == AuthMode.Reset)
-                        ? null
-                        : TextFormField(
-                            controller: _controller1,
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(
-                                Icons.person_outline,
-                              ),
-                              labelText: 'Enter your name',
-                              labelStyle: TextStyle(
-                                fontFamily: 'Raleway',
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(35.0),
-                              ),
-                            ),
-                            validator: (value) {
-                              if (value == null) {
-                                return 'Field cannot be empty';
-                              }
-                              return null;
-                            },
-                            onSaved: (value) {
-                              _authData['name'] = value;
-                            },
+                height: (_authMode == AuthMode.Login) ? 0 : 60,
+                child: (_authMode == AuthMode.Login)
+                    ? null
+                    : TextFormField(
+                        controller: _controller1,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.person_outline,
                           ),
+                          labelText: 'Enter your name',
+                          errorText: _userNameErrorText,
+                          labelStyle: TextStyle(
+                            fontFamily: 'Raleway',
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(35.0),
+                          ),
+                        ),
+                        validator: (value) {
+                          // setState(() {
+                          if (value == null) {
+                            _userNameError = true;
+                            _userNameErrorText = 'Please enter a name';
+                          }
+                          // });
+                          return null;
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            _userNameError = false;
+                            _userNameErrorText = null;
+                          });
+                        },
+                        onSaved: (value) {
+                          _authData['name'] = value;
+                        },
+                      ),
               ),
               SizedBox(
-                height:
-                    (_authMode == AuthMode.Login || _authMode == AuthMode.Reset)
-                        ? 0
-                        : 10,
+                height: (_authMode == AuthMode.Login) ? 0 : 10,
               ),
               Container(
                 width: 240,
-                height: 60,
-                child: TextFormField(
-                  // style: TextStyle(
-                  //   fontFamily: 'Raleway',
-                  //   color: Colors.grey[600],
-                  //   fontSize: 20.0,
-                  // ),
-                  controller: _controller2,
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(
-                      _authMode == AuthMode.Reset
-                          ? Icons.lock_outline
-                          : Icons.alternate_email,
-                    ),
-                    labelText:
-                        _authMode == AuthMode.Reset ? 'New Password' : 'E-mail',
-                    labelStyle: TextStyle(
-                      fontFamily: 'Raleway',
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(35.0),
-                    ),
-                  ),
-                  keyboardType: _authMode == AuthMode.Reset
-                      ? null
-                      : TextInputType.emailAddress,
-                  obscureText: _authMode == AuthMode.Reset ? true : false,
-                  validator: (value) {
-                    if (value == null || !value.contains('@')) {
-                      return 'Invalid Email';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    _authData['email'] = value;
-                    e_mail = value;
-                  },
-                ),
+                height: _authMode == AuthMode.Login ? 60 : 0,
+                child: _authMode == AuthMode.Signup
+                    ? null
+                    : TextFormField(
+                        // style: TextStyle(
+                        //   fontFamily: 'Raleway',
+                        //   color: Colors.grey[600],
+                        //   fontSize: 20.0,
+                        // ),
+                        controller: _controller2l,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.alternate_email,
+                          ),
+                          labelText: 'E-mail',
+                          errorText: _emailText,
+                          labelStyle: TextStyle(
+                            fontFamily: 'Raleway',
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(35.0),
+                          ),
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (value) {
+                          // setState(() {
+                          if (value == null || !value.contains('@')) {
+                            _emailError = true;
+                            _emailText = "Please enter a valid email";
+                          }
+                          // });
+                          return null;
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            _emailError = false;
+                            _emailText = null;
+                          });
+                        },
+                        onSaved: (value) {
+                          _authData['email'] = value;
+                          e_mail = value;
+                        },
+                      ),
+              ),
+              Container(
+                width: 240,
+                height: _authMode == AuthMode.Login ? 0 : 60,
+                child: _authMode == AuthMode.Login
+                    ? null
+                    : TextFormField(
+                        // style: TextStyle(
+                        //   fontFamily: 'Raleway',
+                        //   color: Colors.grey[600],
+                        //   fontSize: 20.0,
+                        // ),
+                        controller: _controller2s,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.alternate_email,
+                          ),
+                          labelText: 'E-mail',
+                          errorText: _emailText,
+                          labelStyle: TextStyle(
+                            fontFamily: 'Raleway',
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(35.0),
+                          ),
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (value) {
+                          // setState(() {
+                          if (value == null || !value.contains('@')) {
+                            _emailError = true;
+                            _emailText = "Please enter a valid email";
+                          }
+                          // });
+                          return null;
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            _emailError = false;
+                            _emailText = null;
+                          });
+                        },
+                        onSaved: (value) {
+                          _authData['email'] = value;
+                          e_mail = value;
+                        },
+                      ),
               ),
               SizedBox(
                 height: 10,
               ),
               Container(
                 width: 240,
-                height: 60,
-                child: TextFormField(
-                  controller: _controller3,
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(
-                      Icons.lock_outline,
-                    ),
-                    labelText: _authMode == AuthMode.Reset
-                        ? 'Confirm New Password'
-                        : 'Password',
-                    labelStyle: TextStyle(
-                      fontFamily: 'Raleway',
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(35.0),
-                    ),
-                  ),
-                  obscureText: true,
-                  validator: (value) {
-                    if (value.isEmpty || value.length < 6) {
-                      return 'Password must be of least 6 digits';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    _authData['password'] = value;
-                    p_word = value;
-                  },
-                ),
+                height: _authMode == AuthMode.Login ? 60 : 0,
+                child: _authMode == AuthMode.Signup
+                    ? null
+                    : TextFormField(
+                        controller: _controller3l,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.lock_outline,
+                          ),
+                          suffixIcon: GestureDetector(
+                            child: Icon(Icons.remove_red_eye),
+                            onTap: () {
+                              setState(() {
+                                _showPassword1 = !_showPassword1;
+                              });
+                            },
+                          ),
+                          labelText: 'Password',
+                          errorText: _passwordTextl,
+                          labelStyle: TextStyle(
+                            fontFamily: 'Raleway',
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(35.0),
+                          ),
+                        ),
+                        obscureText: _showPassword1,
+                        validator: (value) {
+                          // setState(() {
+                          if (value.isEmpty || value.length < 6) {
+                            _passwordErrorl = true;
+                            _passwordTextl =
+                                "Password must be of least 6 digits";
+                          }
+                          // });
+                          return null;
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            _passwordErrorl = false;
+                            _passwordTextl = null;
+                          });
+                        },
+                        onSaved: (value) {
+                          _authData['password'] = value;
+                          p_word = value;
+                        },
+                      ),
+              ),
+              Container(
+                width: 240,
+                height: _authMode == AuthMode.Signup ? 60 : 0,
+                child: _authMode == AuthMode.Login
+                    ? null
+                    : TextFormField(
+                        controller: _controller3s,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.lock_outline,
+                          ),
+                          suffixIcon: GestureDetector(
+                            child: Icon(Icons.remove_red_eye),
+                            onTap: () {
+                              setState(() {
+                                _showPassword2 = !_showPassword2;
+                              });
+                            },
+                          ),
+                          labelText: _authMode == AuthMode.Reset
+                              ? 'Confirm New Password'
+                              : 'Password',
+                          errorText: _passwordTexts,
+                          labelStyle: TextStyle(
+                            fontFamily: 'Raleway',
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(35.0),
+                          ),
+                        ),
+                        obscureText: _showPassword2,
+                        validator: (value) {
+                          // setState(() {
+                          if (value.isEmpty || value.length < 6) {
+                            _passwordErrors = true;
+                            _passwordTexts =
+                                "Password must be of least 6 digits";
+                          }
+                          // });
+
+                          return null;
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            _passwordErrors = false;
+                            _passwordTexts = null;
+                          });
+                        },
+                        onSaved: (value) {
+                          _authData['password'] = value;
+                          p_word = value;
+                        },
+                      ),
               ),
               SizedBox(
                 height: 10,
               ),
               Container(
                 width: 240,
-                height:
-                    (_authMode == AuthMode.Login || _authMode == AuthMode.Reset)
-                        ? 0
-                        : 60,
-                child:
-                    (_authMode == AuthMode.Login || _authMode == AuthMode.Reset)
-                        ? null
-                        : TextFormField(
-                            controller: _controller4,
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(
-                                Icons.lock_outline,
-                              ),
-                              labelText: 'Confirm Password',
-                              labelStyle: TextStyle(
-                                fontFamily: 'Raleway',
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(35.0),
-                              ),
-                            ),
-                            obscureText: true,
-                            validator: (value) {
-                              if (value != _controller3.text) {
-                                return 'Passwords do not match';
-                              }
-                              return null;
+                height: (_authMode == AuthMode.Signup) ? 60 : 0,
+                child: (_authMode == AuthMode.Login)
+                    ? null
+                    : TextFormField(
+                        controller: _controller4,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.lock_outline,
+                          ),
+                          suffixIcon: GestureDetector(
+                            child: Icon(Icons.remove_red_eye),
+                            onTap: () {
+                              setState(() {
+                                _showPassword3 = !_showPassword3;
+                              });
                             },
                           ),
+                          labelText: 'Confirm Password',
+                          errorText: _cnfPasswordText,
+                          labelStyle: TextStyle(
+                            fontFamily: 'Raleway',
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(35.0),
+                          ),
+                        ),
+                        obscureText: _showPassword3,
+                        validator: (value) {
+                          if (value != _controller3s.text) {
+                            _cnfPasswordError = true;
+                            _cnfPasswordText = "Password does not match";
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            _cnfPasswordError = false;
+                            _cnfPasswordText = null;
+                          });
+                        },
+                      ),
               ),
               SizedBox(
                 height: 15,
               ),
-              (_authMode == AuthMode.Signup || _authMode == AuthMode.Reset)
+              (_authMode == AuthMode.Signup)
                   ? SizedBox(
                       height: 0,
                     )
@@ -503,7 +661,19 @@ class _AuthPageState extends State<AuthPage> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      onPressed: _submit,
+                      onPressed: () {
+                        FocusScope.of(context).requestFocus(FocusNode());
+                        if (!_formKey.currentState.validate()) {
+                          // Invalid!
+                          setState(() {
+                            _val = true;
+                          });
+                          HapticFeedback.vibrate();
+                          return;
+                        }
+                        _formKey.currentState.save();
+                        _submit();
+                      },
                       // () {
                       //   print('Before submit');
                       //   _submit();
