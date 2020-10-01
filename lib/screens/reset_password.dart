@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/services.dart';
 import 'package:scrummy/models/Http_Exceptions.dart';
 import '../auth/auth.dart';
 import 'dart:async';
@@ -26,6 +27,9 @@ class _ResetPasswordState extends State<ResetPassword> {
   final _controller2 = TextEditingController();
   final _controller3 = TextEditingController();
   var _isLoading = false;
+  bool _val = false, _val1 = false;
+  bool _showPassword4 = true;
+  bool _showPassword5 = true;
 
   // void _switchModes() {
   //   if (_mode == Modes.Email) {
@@ -111,11 +115,7 @@ class _ResetPasswordState extends State<ResetPassword> {
   }
 
   void _submitMail() async {
-    if (!_formKey1.currentState.validate()) {
-      // Invalid!
-      return;
-    }
-    _formKey1.currentState.save();
+    // _formKey1.currentState.save();
 
     setState(() {
       _isLoading = true;
@@ -158,13 +158,9 @@ class _ResetPasswordState extends State<ResetPassword> {
   }
 
   void _submit() async {
-    if (!_formKey.currentState.validate()) {
-      // Invalid!
-      return;
-    }
-    _formKey.currentState.save();
+    // _formKey.currentState.save();
     _controller3.clear();
-    _formKey.currentState.save();
+    // _formKey.currentState.save();
     setState(() {
       _isLoading = true;
     });
@@ -268,6 +264,7 @@ class _ResetPasswordState extends State<ResetPassword> {
           ),
           Form(
             key: _formKey1,
+            autovalidate: _val1,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -295,7 +292,7 @@ class _ResetPasswordState extends State<ResetPassword> {
 
                         return null;
                       },
-                      onSaved: (value) {
+                      onChanged: (value) {
                         print(value);
                         e_mailReset = value;
                         print(e_mail);
@@ -323,8 +320,16 @@ class _ResetPasswordState extends State<ResetPassword> {
                       ),
                       onPressed: () {
                         FocusScope.of(context).requestFocus(FocusNode());
+                        if (!_formKey1.currentState.validate()) {
+                          // Invalid!
+                          setState(() {
+                            _val1 = true;
+                          });
+                          return;
+                        } else {
+                          _mode == Modes.OTP ? _submit() : _submitMail();
+                        }
                         print(e_mailReset);
-                        _mode == Modes.OTP ? _submit() : _submitMail();
                       },
                     ),
                   ),
@@ -334,6 +339,7 @@ class _ResetPasswordState extends State<ResetPassword> {
           ),
           Form(
             key: _formKey,
+            autovalidate: _val,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
@@ -375,6 +381,14 @@ class _ResetPasswordState extends State<ResetPassword> {
                       controller: _controller1,
                       decoration: InputDecoration(
                           prefixIcon: Icon(Icons.lock_outline),
+                          suffixIcon: GestureDetector(
+                            child: Icon(Icons.remove_red_eye),
+                            onTap: () {
+                              setState(() {
+                                _showPassword4 = !_showPassword4;
+                              });
+                            },
+                          ),
                           labelText: 'New Password',
                           labelStyle: TextStyle(
                             fontFamily: 'Raleway',
@@ -382,14 +396,14 @@ class _ResetPasswordState extends State<ResetPassword> {
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(35.0),
                           )),
-                      obscureText: true,
+                      obscureText: _showPassword4,
                       validator: (value) {
                         if (value.isEmpty || value.length < 6) {
                           return 'Password must be of least 6 digits';
                         }
                         return null;
                       },
-                      onSaved: (value) {
+                      onChanged: (value) {
                         print(value);
                         p_wordReset = value;
                         print(p_word);
@@ -411,6 +425,14 @@ class _ResetPasswordState extends State<ResetPassword> {
                         prefixIcon: Icon(
                           Icons.lock_outline,
                         ),
+                        suffixIcon: GestureDetector(
+                          child: Icon(Icons.remove_red_eye),
+                          onTap: () {
+                            setState(() {
+                              _showPassword5 = !_showPassword5;
+                            });
+                          },
+                        ),
                         labelText: 'Confirm Password',
                         labelStyle: TextStyle(
                           fontFamily: 'Raleway',
@@ -419,7 +441,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                           borderRadius: BorderRadius.circular(35.0),
                         ),
                       ),
-                      obscureText: true,
+                      obscureText: _showPassword5,
                       validator: (value) {
                         if (value != _controller1.text) {
                           return 'Passwords do not match';
@@ -455,7 +477,16 @@ class _ResetPasswordState extends State<ResetPassword> {
                         ),
                         onPressed: () {
                           FocusScope.of(context).requestFocus(FocusNode());
-                          _mode == Modes.OTP ? _submit() : _submitMail();
+                          if (!_formKey.currentState.validate()) {
+                            // Invalid!
+                            setState(() {
+                              _val = true;
+                            });
+                            HapticFeedback.vibrate();
+                            return;
+                          } else {
+                            _mode == Modes.OTP ? _submit() : _submitMail();
+                          }
                         },
                       ),
                     ),

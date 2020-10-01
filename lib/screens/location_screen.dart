@@ -73,7 +73,7 @@ class _LocationScreenState extends State<LocationScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
-        padding: EdgeInsets.only(top: 100.0),
+        padding: EdgeInsets.only(top: 100.0, bottom: 50.0),
         child: SafeArea(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

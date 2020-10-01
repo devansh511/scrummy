@@ -1,0 +1,13 @@
+{
+    "id": 1,
+    "url": "http://127.0.0.1:8000/api/foodlist/1/",
+    "name": "Burger",
+    "delivery_time": 60,
+    "rating": 5,
+    "price": 80,
+    "offer": 5,
+    "category": "Fast Food",
+    "cuisine": "Italian",
+    "slug": "burger",
+    "image": "http://127.0.0.1:8000/uploads/pizza.jpg"
+}

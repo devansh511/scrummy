@@ -3,17 +3,17 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 
-class FoodDetails {
-  final String foodId;
-  final String foodUrl;
-  final String foodName;
-  final String deliveryTime;
-  final String foodRating;
-  final String foodPrice;
-  final String offer;
-  final String category;
-  final String cuisine;
-  final String imageUrl;
+class FoodDetails with ChangeNotifier {
+  final String foodId,
+      foodUrl,
+      foodName,
+      deliveryTime,
+      foodRating,
+      foodPrice,
+      offer,
+      category,
+      cuisine,
+      imageUrl;
 
   FoodDetails(
       {@required this.foodId,
@@ -29,32 +29,37 @@ class FoodDetails {
 }
 
 class Food with ChangeNotifier {
-  List<FoodDetails> _items = [];
+  List loadedFoods = [];
 
-  List<FoodDetails> get items {
-    return [..._items];
-  }
+  // List get item {
+  //   return loadedFoods;
+  // }
 
-  Future<void> _fetchFood() async {
-    final url = "https://cabff666799b.ngrok.io/api/foodlist/";
+  Future<void> fetchFood() async {
+    final url = "http://101062800aa4.ngrok.io/api/foodlist/";
 
     try {
       final response = await http.get(url);
-      final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      var extractedData =
+          json.decode(response.body); // as Map<String, dynamic>;
+      print(extractedData);
       if (extractedData == null) {
         return;
       }
-      List<FoodDetails> loadedFoods = [];
-      extractedData.forEach((fId, foodData) {
-        loadedFoods.add(FoodDetails(
-          foodId: fId,
-          foodUrl: foodData["url"],
-          foodName: foodData["name"],
-          foodPrice: foodData["price"],
-          imageUrl: foodData["image"],
-        ));
+
+      extractedData.forEach((fData) {
+        loadedFoods.add([
+          fData["id"].toString(),
+          fData["name"],
+          fData["url"],
+          fData["price"].toString(),
+          fData["image"]
+        ]);
       });
-      _items = loadedFoods;
+      // items = loadedFoods;
+      print(loadedFoods);
+      print(loadedFoods.length);
+      // loadedFoods = parsedJson.map((i)=>Food.fromJson(i)).toList();
       notifyListeners();
       //print(FoodDetails.foodName);
     } catch (error) {

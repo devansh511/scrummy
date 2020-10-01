@@ -25,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Navigator.pushReplacement(
       context,
       PageRouteBuilder(
-        transitionDuration: Duration(seconds: 3),
+        transitionDuration: Duration(seconds: 1),
         transitionsBuilder: (BuildContext context, Animation<double> splash,
             Animation<double> auth, Widget child) {
           splash = CurvedAnimation(parent: splash, curve: Curves.elasticIn);

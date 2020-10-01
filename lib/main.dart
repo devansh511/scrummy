@@ -15,25 +15,23 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: MultiProvider(
-        providers: [
-          ChangeNotifierProvider.value(
-            value: Auth(),
-          ),
-          ChangeNotifierProvider.value(
-            value: Food(),
-          ),
-        ],
-        child: Consumer<Auth>(
-          builder: (ctx, auth, _) => MaterialApp(
-            home: AuthScreen(),
-          ),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(
+          value: Auth(),
+        ),
+        ChangeNotifierProvider.value(
+          value: Food(),
+        ),
+      ],
+      child: Consumer<Auth>(
+        builder: (ctx, auth, _) => MaterialApp(
+          home: AuthScreen(),
         ),
       ),
-      theme: ThemeData(
-        canvasColor: Colors.transparent,
-      ),
+      // theme: ThemeData(
+      //   canvasColor: Colors.transparent,
+      // ),
     );
   }
 }

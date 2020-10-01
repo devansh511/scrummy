@@ -10,13 +10,14 @@ import '../screens/reset_password.dart';
 class Auth with ChangeNotifier {
   String _accessToken;
   String _refreshToken;
-  DateTime _expiryTime;
+  DateTime _expiryDate;
   String _userId;
   Timer _authTimer;
-  String _endPoint = "cabff666799b";
-  // bool get isAuth {
-  //   return token != null;
-  // }
+  String _endPoint = "101062800aa4";
+
+  bool get isAuth {
+    return _accessToken != null;
+  }
 
   // String get token {
   //   if (_expiryDate != null &&
@@ -217,13 +218,13 @@ class Auth with ChangeNotifier {
       _refreshToken = loginResponse["refresh"];
       print(_accessToken);
       print(_refreshToken);
-      _expiryTime = DateTime.now().add(Duration(seconds: 300));
+      _expiryDate = DateTime.now().add(Duration(seconds: 300));
       final prefs = await SharedPreferences.getInstance();
       final userData = json.encode(
         {
           "access": _accessToken,
           "refresh": _refreshToken,
-          "expiryTime": _expiryTime.toIso8601String()
+          "expiryTime": _expiryDate.toIso8601String()
         },
       );
       prefs.setString('userData', userData);
@@ -234,6 +235,7 @@ class Auth with ChangeNotifier {
     return check;
   }
 
+  Future<void> autoLogin() async {}
   // Future<bool> autoLogin() async {
   //   final prefs = await SharedPreferences.getInstance();
   //   if (!prefs.containsKey('userData')) {
@@ -342,11 +344,6 @@ class Auth with ChangeNotifier {
     }
     return check;
   }
-}
-// Future<void> login(String email, String password) async {
-//   return _authenticate(email, password);
-// }
-
 // Future<bool> tryAutoLogin() async {
 //   final prefs = await SharedPreferences.getInstance();
 // if (!prefs.containsKey('userData')) {
@@ -368,24 +365,24 @@ class Auth with ChangeNotifier {
 //   return true;
 // }
 
-// void logout() async {
-//   _accessToken = null;
-//   _refreshToken = null;
-//   _expiryDate = null;
-//   if (_authTimer != null) {
-//     _authTimer.cancel();
-//     _authTimer = null;
-//   }
-//   notifyListeners();
-//   final prefs = await SharedPreferences.getInstance();
-//   // prefs.remove('userData');
-//   prefs.clear();
-// }
+  void logout() async {
+    _accessToken = null;
+    _refreshToken = null;
+    if (_authTimer != null) {
+      _authTimer.cancel();
+      _authTimer = null;
+    }
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    // prefs.remove('userData');
+    prefs.clear();
+  }
 
-// void _autoLogout() {
-//   if (_authTimer != null) {
-//     _authTimer.cancel();
-//   }
-//   final timeToExpiry = _expiryDate.difference(DateTime.now()).inSeconds;
-//   _authTimer = Timer(Duration(seconds: timeToExpiry), logout);
-// }
+  // void _autoLogout() {
+  //   if (_authTimer != null) {
+  //     _authTimer.cancel();
+  //   }
+  //   final timeToExpiry = _expiryDate.difference(DateTime.now()).inSeconds;
+  //   _authTimer = Timer(Duration(seconds: timeToExpiry), logout);
+  // }
+}

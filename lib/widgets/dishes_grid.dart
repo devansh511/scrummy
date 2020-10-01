@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import '../providers/food.dart';
 
 class DishesGrid extends StatefulWidget {
   @override
@@ -124,12 +126,27 @@ class _DishesGridState extends State<DishesGrid> {
   );
 
   @override
+  void didChangeDependencies() {
+    void _fetch() async {
+      try {
+        await Provider.of<Food>(context).fetchFood();
+      } catch (error) {
+        print(error);
+      }
+    }
+
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final dishesData = Provider.of<Food>(context, listen: false).loadedFoods;
+    print(dishesData);
     return GridView.builder(
       shrinkWrap: true,
       physics: const ClampingScrollPhysics(),
       padding: const EdgeInsets.all(10),
-      itemCount: 6,
+      itemCount: dishesData.length,
       itemBuilder: (context, i) => GestureDetector(
         child: Card(
           shape: RoundedRectangleBorder(
@@ -150,7 +167,7 @@ class _DishesGridState extends State<DishesGrid> {
                   image: AssetImage('assets/burger.png'),
                 ),
                 Text(
-                  'McDonald\'s',
+                  '${dishesData[i][1]}',
                   style: TextStyle(
                     fontFamily: 'Raleway',
                     color: Colors.grey[800],
@@ -202,6 +219,7 @@ class _DishesGridState extends State<DishesGrid> {
           ),
         ),
         onTap: () {
+          // _fetch();
           setState(() {
             showModalBottomSheet(
               context: context,

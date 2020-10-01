@@ -62,18 +62,45 @@ class _AuthPageState extends State<AuthPage> {
   TapGestureRecognizer _gestureRecognizer;
   String _userNameErrorText;
   bool _userNameError = false;
-  String _emailText;
-  bool _emailError = false;
-  String _passwordTextl;
-  bool _passwordErrorl = false;
-  String _passwordTexts;
-  bool _passwordErrors = false;
-  String _cnfPasswordText;
-  bool _cnfPasswordError = false;
+
+  // String _emailTextl;
+  // bool _emailErrorl = false;
+  // String _emailTexts;
+  // bool _emailErrors = false;
+  // String _passwordTextl;
+  // bool _passwordErrorl = false;
+  // String _passwordTexts;
+  // bool _passwordErrors = false;
+  // String _cnfPasswordText;
+  // bool _cnfPasswordError = false;
   bool _showPassword1 = true;
   bool _showPassword2 = true;
   bool _showPassword3 = true;
   bool _val = false;
+
+  String valName(value) {
+    if (value == null) {
+      return "Field cannot be empty";
+    } else
+      return null;
+  }
+
+  String valEmail(value) {
+    // Pattern _pattern =
+    //     r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    // RegExp _regex = RegExp(_pattern);
+    if (value == null || !value.contains("@"))
+      return 'Please enter a valid email';
+    else
+      return null;
+  }
+
+  String valPassword(value) {
+    if (value.length < 6)
+      return 'Password must be least of 6 digits!';
+    else
+      return null;
+  }
 
   @override
   void initState() {
@@ -202,7 +229,9 @@ class _AuthPageState extends State<AuthPage> {
         }
       } else {
         //Sign user up
-
+        print(_authData['password']);
+        print(_authData['email']);
+        print(_authData['name']);
         final check = await Provider.of<Auth>(context, listen: false).signup(
           _authData['email'],
           _authData['password'],
@@ -251,8 +280,7 @@ class _AuthPageState extends State<AuthPage> {
       _showMyDialog(errorMessage);
     } catch (error) {
       print(error);
-      const errorMessage =
-          'Could not authenticate you. Please try again later!';
+      const errorMessage = 'Something went wrong!';
       _showMyDialog(errorMessage);
     }
 
@@ -263,7 +291,6 @@ class _AuthPageState extends State<AuthPage> {
       _controller3l.clear();
       _controller3s.clear();
       _controller4.clear();
-      _controller4.addListener(() {});
       _isLoading = false;
     });
   }
@@ -333,7 +360,7 @@ class _AuthPageState extends State<AuthPage> {
                             Icons.person_outline,
                           ),
                           labelText: 'Enter your name',
-                          errorText: _userNameErrorText,
+                          // errorText: _userNameErrorText,
                           labelStyle: TextStyle(
                             fontFamily: 'Raleway',
                           ),
@@ -341,22 +368,14 @@ class _AuthPageState extends State<AuthPage> {
                             borderRadius: BorderRadius.circular(35.0),
                           ),
                         ),
-                        validator: (value) {
-                          // setState(() {
-                          if (value == null) {
-                            _userNameError = true;
-                            _userNameErrorText = 'Please enter a name';
-                          }
-                          // });
-                          return null;
-                        },
+                        validator: valName,
+                        // onChanged: (value) {
+                        //   // setState(() {
+                        //   _userNameError = false;
+                        //   _userNameErrorText = null;
+                        //   // });
+                        // },
                         onChanged: (value) {
-                          setState(() {
-                            _userNameError = false;
-                            _userNameErrorText = null;
-                          });
-                        },
-                        onSaved: (value) {
                           _authData['name'] = value;
                         },
                       ),
@@ -381,7 +400,7 @@ class _AuthPageState extends State<AuthPage> {
                             Icons.alternate_email,
                           ),
                           labelText: 'E-mail',
-                          errorText: _emailText,
+                          // errorText: _emailTextl,
                           labelStyle: TextStyle(
                             fontFamily: 'Raleway',
                           ),
@@ -390,22 +409,14 @@ class _AuthPageState extends State<AuthPage> {
                           ),
                         ),
                         keyboardType: TextInputType.emailAddress,
-                        validator: (value) {
-                          // setState(() {
-                          if (value == null || !value.contains('@')) {
-                            _emailError = true;
-                            _emailText = "Please enter a valid email";
-                          }
-                          // });
-                          return null;
-                        },
+                        validator: valEmail,
+                        // onChanged: (value) {
+                        //   // setState(() {
+                        //   _emailErrorl = false;
+                        //   _emailTextl = null;
+                        //   // });
+                        // },
                         onChanged: (value) {
-                          setState(() {
-                            _emailError = false;
-                            _emailText = null;
-                          });
-                        },
-                        onSaved: (value) {
                           _authData['email'] = value;
                           e_mail = value;
                         },
@@ -428,7 +439,7 @@ class _AuthPageState extends State<AuthPage> {
                             Icons.alternate_email,
                           ),
                           labelText: 'E-mail',
-                          errorText: _emailText,
+                          // errorText: _emailTexts,
                           labelStyle: TextStyle(
                             fontFamily: 'Raleway',
                           ),
@@ -437,22 +448,14 @@ class _AuthPageState extends State<AuthPage> {
                           ),
                         ),
                         keyboardType: TextInputType.emailAddress,
-                        validator: (value) {
-                          // setState(() {
-                          if (value == null || !value.contains('@')) {
-                            _emailError = true;
-                            _emailText = "Please enter a valid email";
-                          }
-                          // });
-                          return null;
-                        },
+                        validator: valEmail,
+                        // onChanged: (value) {
+                        //   setState(() {
+                        //     _emailErrors = false;
+                        //     _emailTexts = null;
+                        //   });
+                        // },
                         onChanged: (value) {
-                          setState(() {
-                            _emailError = false;
-                            _emailText = null;
-                          });
-                        },
-                        onSaved: (value) {
                           _authData['email'] = value;
                           e_mail = value;
                         },
@@ -481,7 +484,7 @@ class _AuthPageState extends State<AuthPage> {
                             },
                           ),
                           labelText: 'Password',
-                          errorText: _passwordTextl,
+                          // errorText: _passwordTextl,
                           labelStyle: TextStyle(
                             fontFamily: 'Raleway',
                           ),
@@ -490,23 +493,14 @@ class _AuthPageState extends State<AuthPage> {
                           ),
                         ),
                         obscureText: _showPassword1,
-                        validator: (value) {
-                          // setState(() {
-                          if (value.isEmpty || value.length < 6) {
-                            _passwordErrorl = true;
-                            _passwordTextl =
-                                "Password must be of least 6 digits";
-                          }
-                          // });
-                          return null;
-                        },
+                        validator: valPassword,
+                        // onChanged: (value) {
+                        //   // setState(() {
+                        //   _passwordErrorl = false;
+                        //   _passwordTextl = null;
+                        //   // });
+                        // },
                         onChanged: (value) {
-                          setState(() {
-                            _passwordErrorl = false;
-                            _passwordTextl = null;
-                          });
-                        },
-                        onSaved: (value) {
                           _authData['password'] = value;
                           p_word = value;
                         },
@@ -531,10 +525,8 @@ class _AuthPageState extends State<AuthPage> {
                               });
                             },
                           ),
-                          labelText: _authMode == AuthMode.Reset
-                              ? 'Confirm New Password'
-                              : 'Password',
-                          errorText: _passwordTexts,
+                          labelText: 'Password',
+                          // errorText: _passwordTexts,
                           labelStyle: TextStyle(
                             fontFamily: 'Raleway',
                           ),
@@ -543,24 +535,14 @@ class _AuthPageState extends State<AuthPage> {
                           ),
                         ),
                         obscureText: _showPassword2,
-                        validator: (value) {
-                          // setState(() {
-                          if (value.isEmpty || value.length < 6) {
-                            _passwordErrors = true;
-                            _passwordTexts =
-                                "Password must be of least 6 digits";
-                          }
-                          // });
-
-                          return null;
-                        },
+                        validator: valPassword,
+                        // onChanged: (value) {
+                        //   // setState(() {
+                        //   _passwordErrors = false;
+                        //   _passwordTexts = null;
+                        //   // });
+                        // },
                         onChanged: (value) {
-                          setState(() {
-                            _passwordErrors = false;
-                            _passwordTexts = null;
-                          });
-                        },
-                        onSaved: (value) {
                           _authData['password'] = value;
                           p_word = value;
                         },
@@ -589,7 +571,7 @@ class _AuthPageState extends State<AuthPage> {
                             },
                           ),
                           labelText: 'Confirm Password',
-                          errorText: _cnfPasswordText,
+                          // errorText: _cnfPasswordText,
                           labelStyle: TextStyle(
                             fontFamily: 'Raleway',
                           ),
@@ -598,19 +580,15 @@ class _AuthPageState extends State<AuthPage> {
                           ),
                         ),
                         obscureText: _showPassword3,
-                        validator: (value) {
-                          if (value != _controller3s.text) {
-                            _cnfPasswordError = true;
-                            _cnfPasswordText = "Password does not match";
-                          }
-                          return null;
-                        },
-                        onChanged: (value) {
-                          setState(() {
-                            _cnfPasswordError = false;
-                            _cnfPasswordText = null;
-                          });
-                        },
+                        validator: (value) => (value != _controller3s.text
+                            ? 'Passwords do not match'
+                            : null),
+                        // onChanged: (value) {
+                        //   // setState(() {
+                        //   _cnfPasswordError = false;
+                        //   _cnfPasswordText = null;
+                        //   // });
+                        // },
                       ),
               ),
               SizedBox(
@@ -670,9 +648,9 @@ class _AuthPageState extends State<AuthPage> {
                           });
                           HapticFeedback.vibrate();
                           return;
+                        } else {
+                          _submit();
                         }
-                        _formKey.currentState.save();
-                        _submit();
                       },
                       // () {
                       //   print('Before submit');
