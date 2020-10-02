@@ -126,21 +126,9 @@ class _DishesGridState extends State<DishesGrid> {
   );
 
   @override
-  void didChangeDependencies() {
-    void _fetch() async {
-      try {
-        await Provider.of<Food>(context).fetchFood();
-      } catch (error) {
-        print(error);
-      }
-    }
-
-    super.didChangeDependencies();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final dishesData = Provider.of<Food>(context, listen: false).loadedFoods;
+    print("Hello");
     print(dishesData);
     return GridView.builder(
       shrinkWrap: true,

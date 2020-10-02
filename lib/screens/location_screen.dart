@@ -3,6 +3,9 @@ import './home_screen.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoder/geocoder.dart';
 import 'dart:async';
+import '../auth/auth.dart';
+import 'package:provider/provider.dart';
+import '../providers/food.dart';
 
 String addr1 = "";
 String addr2 = "";
@@ -138,6 +141,7 @@ class _LocationScreenState extends State<LocationScreen> {
                         ),
                       ),
                       onPressed: () {
+                        Provider.of<Auth>(context, listen: false).saveLoc();
                         getDeliveryAddress();
                       },
                     ),

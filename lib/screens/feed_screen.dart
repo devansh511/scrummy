@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../widgets/dishes_grid.dart';
 import '../widgets/cuisines.dart';
 import '../widgets/restaurants.dart';
+import '../auth/auth.dart';
 
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -16,9 +17,20 @@ class FeedScreen extends StatefulWidget {
 }
 
 class _FeedScreenState extends State<FeedScreen> {
+  bool _getLoc() {
+    return Provider.of<Auth>(context, listen: false).isAuth;
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    _getLoc();
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    
     // final dishes = dishesData.items;
     return ListView(
       children: [
@@ -28,7 +40,7 @@ class _FeedScreenState extends State<FeedScreen> {
               leading: Icon(Icons.edit_location),
               title: GestureDetector(
                 child: Text(
-                  addr2,
+                  _getLoc() ? addr2 : " ",
                   style: TextStyle(
                     color: Colors.grey[600],
                     fontFamily: 'Raleway',
@@ -37,7 +49,7 @@ class _FeedScreenState extends State<FeedScreen> {
                   ),
                 ),
                 onTap: () {
-                  Navigator.push(
+                  Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                       builder: (context) => LocationScreen(),

@@ -68,6 +68,20 @@ class _VerifyScreenState extends State<VerifyScreen> {
           actions: <Widget>[
             FlatButton(
               child: Text(
+                'Resend',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Raleway',
+                ),
+              ),
+              onPressed: () {},
+            ),
+            SizedBox(
+              width: 20.0,
+            ),
+            FlatButton(
+              child: Text(
                 'Okay',
                 style: TextStyle(
                   color: Colors.grey[600],
@@ -168,7 +182,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
       if (error.toString().contains('wrong otp')) {
         errorMessage = 'Wrong OTP entered';
       } else if (error.toString().contains('otp expired')) {
-        errorMessage = 'OTP expired! Check for new OTP on your email';
+        errorMessage = 'OTP expired!';
       }
       _showMyDialog(errorMessage);
     } catch (error) {

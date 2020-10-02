@@ -36,7 +36,7 @@ class Food with ChangeNotifier {
   // }
 
   Future<void> fetchFood() async {
-    final url = "http://101062800aa4.ngrok.io/api/foodlist/";
+    final url = "http://6e4186ddc042.ngrok.io/api/foodlist/";
 
     try {
       final response = await http.get(url);

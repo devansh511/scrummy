@@ -26,7 +26,16 @@ class MyApp extends StatelessWidget {
       ],
       child: Consumer<Auth>(
         builder: (ctx, auth, _) => MaterialApp(
-          home: AuthScreen(),
+          home: auth.isAuth
+              ? HomeScreen()
+              : FutureBuilder(
+                  future: auth.autoLogin(),
+                  builder: (ctx, authResultSnapshot) =>
+                      authResultSnapshot.connectionState ==
+                              ConnectionState.waiting
+                          ? SplashScreen()
+                          : AuthScreen(),
+                ),
         ),
       ),
       // theme: ThemeData(

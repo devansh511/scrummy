@@ -1,8 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/food.dart';
 
 class Cuisines extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    void _fetch() async {
+      print("<<<<<<<<<<<<<<<<<<<");
+      try {
+        await Provider.of<Food>(context, listen: false).fetchFood();
+      } catch (error) {
+        print(error);
+      }
+    }
+
     return Container(
       margin: EdgeInsets.only(top: 10.0),
       child: SingleChildScrollView(
@@ -41,22 +52,25 @@ class Cuisines extends StatelessWidget {
             ),
             Column(
               children: <Widget>[
-                Card(
-                  elevation: 2.0,
-                  color: Colors.white,
-                  shadowColor: Colors.grey,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  child: Container(
-                    height: 80.0,
-                    child: Image(
-                      image: AssetImage(
-                        'assets/chinese.png',
+                GestureDetector(
+                  child: Card(
+                    elevation: 2.0,
+                    color: Colors.white,
+                    shadowColor: Colors.grey,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: Container(
+                      height: 80.0,
+                      child: Image(
+                        image: AssetImage(
+                          'assets/chinese.png',
+                        ),
+                        filterQuality: FilterQuality.high,
                       ),
-                      filterQuality: FilterQuality.high,
                     ),
                   ),
+                  onTap: _fetch,
                 ),
                 Text(
                   'Chinese',
