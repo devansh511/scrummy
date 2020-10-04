@@ -43,7 +43,7 @@ class _LocationScreenState extends State<LocationScreen> {
       Navigator.pushReplacement(
         context,
         PageRouteBuilder(
-          transitionDuration: Duration(seconds: 3),
+          transitionDuration: Duration(seconds: 2),
           transitionsBuilder: (BuildContext context, Animation<double> splash,
               Animation<double> auth, Widget child) {
             splash = CurvedAnimation(parent: splash, curve: Curves.elasticIn);

@@ -9,6 +9,7 @@ import 'auth.dart';
 
 enum VerifyMode { Verify, Reset }
 int check = auth;
+String eMail;
 
 class VerifyScreen extends StatefulWidget {
   @override
@@ -19,9 +20,10 @@ class _VerifyScreenState extends State<VerifyScreen> {
   GlobalKey<FormState> _formKey = GlobalKey();
   VerifyMode _verifyMode = VerifyMode.Verify;
   TapGestureRecognizer _gestureRecognizer;
+  int expired = 0;
   @override
   void initState() {
-    // TODO: implement initState
+    //TODO: implement initState
     _gestureRecognizer = TapGestureRecognizer()..onTap = _switchScreen;
     super.initState();
   }
@@ -66,19 +68,24 @@ class _VerifyScreenState extends State<VerifyScreen> {
           ),
           content: Text(msg),
           actions: <Widget>[
-            FlatButton(
-              child: Text(
-                'Resend',
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Raleway',
-                ),
-              ),
-              onPressed: () {},
-            ),
+            expired == 1
+                ? FlatButton(
+                    child: Text(
+                      'Resend',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Raleway',
+                      ),
+                    ),
+                    onPressed: () {
+                      _resendOtp();
+                      Navigator.of(context).pop();
+                    },
+                  )
+                : null,
             SizedBox(
-              width: 20.0,
+              width: 10.0,
             ),
             FlatButton(
               child: Text(
@@ -132,6 +139,19 @@ class _VerifyScreenState extends State<VerifyScreen> {
   //   );
   // }
 
+  Future<void> _resendOtp() async {
+    try {
+      print("0Resend otp");
+      print(e_mail);
+      await Provider.of<Auth>(context, listen: false).generateOtp(e_mail);
+      print("received otp");
+    } catch (error) {
+      print(error);
+      const errorMessage = 'Something went wrong';
+      _showMyDialog(errorMessage);
+    }
+  }
+
   Future<void> _verifyOtp() async {
     var checkLogin;
     var checkPwd;
@@ -178,11 +198,12 @@ class _VerifyScreenState extends State<VerifyScreen> {
       setState(() {
         _isLoading = false;
       });
-      var errorMessage = 'Authentication failed';
+      var errorMessage = 'Authentication failed. Please try again';
       if (error.toString().contains('wrong otp')) {
         errorMessage = 'Wrong OTP entered';
       } else if (error.toString().contains('otp expired')) {
-        errorMessage = 'OTP expired!';
+        expired = 1;
+        errorMessage = 'OTP expired';
       }
       _showMyDialog(errorMessage);
     } catch (error) {
@@ -190,8 +211,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
         _isLoading = false;
       });
       print(error);
-      const errorMessage =
-          'Could not authenticate you. Please try again later!';
+      const errorMessage = 'Something went wrong';
       _showMyDialog(errorMessage);
     }
   }
@@ -271,7 +291,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                         },
                         onSaved: (value) {
                           if (_verifyMode == VerifyMode.Reset) {
-                            _verifyData['otp_email'] = value;
+                            eMail = value;
                           } else {
                             _verifyData['otp'] = value;
                           }

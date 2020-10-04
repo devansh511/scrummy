@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:scrummy/screens/feed_screen.dart';
+import 'package:scrummy/screens/home_screen.dart';
 
 class EmptyCart extends StatelessWidget {
   @override
@@ -75,7 +77,12 @@ class EmptyCart extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HomeScreen()));
+                    },
                   ),
                 ],
               ),

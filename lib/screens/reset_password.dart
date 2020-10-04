@@ -148,8 +148,7 @@ class _ResetPasswordState extends State<ResetPassword> {
         _isLoading = false;
       });
       print(error);
-      const errorMessage =
-          'Could not authenticate you. Please try again later!';
+      const errorMessage = 'Something went wrong!';
       _showMyDialog(errorMessage);
     }
     setState(() {

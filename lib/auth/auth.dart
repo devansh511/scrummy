@@ -14,7 +14,7 @@ class Auth with ChangeNotifier {
   DateTime _expiryDate;
   String _userId;
   Timer _authTimer;
-  String _endPoint = "6e4186ddc042";
+  String _endPoint = "46b7de57b17c";
 
   // String get token {
   //   if (_expiryDate != null &&

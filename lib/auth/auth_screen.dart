@@ -251,7 +251,7 @@ class _AuthPageState extends State<AuthPage> {
       if (error
           .toString()
           .contains('User with the given email address already exists')) {
-        errorMessage = 'Email already registered';
+        errorMessage = 'Email already registered. Try logging in!';
       } else if (error.toString().contains('email not found in users')) {
         errorMessage = 'You are not registered on Scrummy';
       } else if (error.toString().contains('user is not otp verified')) {

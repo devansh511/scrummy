@@ -8,6 +8,7 @@ import '../widgets/dishes_grid.dart';
 import '../widgets/cuisines.dart';
 import '../widgets/restaurants.dart';
 import '../auth/auth.dart';
+import '../providers/food.dart';
 
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -21,12 +22,32 @@ class _FeedScreenState extends State<FeedScreen> {
     return Provider.of<Auth>(context, listen: false).isAuth;
   }
 
+  String location() {
+    if (addr2 == null) {
+      return "Food will be delivered here!";
+    } else {
+      return addr2;
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
-    _getLoc();
+    setState(() {
+      _getLoc();
+      location();
+    });
 
     super.initState();
+  }
+
+  void _fetch() async {
+    print("<<<<<<<<<<<<<<<<<<<");
+    try {
+      await Provider.of<Food>(context, listen: false).fetchFood();
+    } catch (error) {
+      print(error);
+    }
   }
 
   @override
@@ -40,7 +61,7 @@ class _FeedScreenState extends State<FeedScreen> {
               leading: Icon(Icons.edit_location),
               title: GestureDetector(
                 child: Text(
-                  _getLoc() ? addr2 : " ",
+                  '${location()}',
                   style: TextStyle(
                     color: Colors.grey[600],
                     fontFamily: 'Raleway',
@@ -133,23 +154,23 @@ class _FeedScreenState extends State<FeedScreen> {
                       fontSize: 17.0,
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.only(left: 190.0, right: 8.0),
-                    child: Text(
-                      'See all',
-                      style: TextStyle(
-                          fontFamily: 'Raleway',
-                          color: Colors.grey,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Container(
-                    child: FaIcon(
-                      FontAwesomeIcons.arrowRight,
-                      size: 15.0,
-                      color: Colors.grey,
-                    ),
-                  )
+                  // Container(
+                  //   margin: EdgeInsets.only(left: 190.0, right: 8.0),
+                  //   child: Text(
+                  //     'See all',
+                  //     style: TextStyle(
+                  //         fontFamily: 'Raleway',
+                  //         color: Colors.grey,
+                  //         fontWeight: FontWeight.bold),
+                  //   ),
+                  // ),
+                  // Container(
+                  //   child: FaIcon(
+                  //     FontAwesomeIcons.arrowRight,
+                  //     size: 15.0,
+                  //     color: Colors.grey,
+                  //   ),
+                  // )
                 ],
               ),
             ),
@@ -169,13 +190,17 @@ class _FeedScreenState extends State<FeedScreen> {
                   ),
                   Container(
                     margin: EdgeInsets.only(left: 220.0, right: 8.0),
-                    child: Text(
-                      'See all',
-                      style: TextStyle(
-                          fontFamily: 'Raleway',
-                          color: Colors.grey,
-                          fontWeight: FontWeight.bold),
-                    ),
+                    child: GestureDetector(
+                        child: Text(
+                          'See all',
+                          style: TextStyle(
+                              fontFamily: 'Raleway',
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        onTap: () {
+                          _fetch();
+                        }),
                   ),
                   Container(
                     child: FaIcon(

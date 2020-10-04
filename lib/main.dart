@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
       child: Consumer<Auth>(
         builder: (ctx, auth, _) => MaterialApp(
           home: auth.isAuth
-              ? HomeScreen()
+              ? (addr2 == null ? LocationScreen() : HomeScreen())
               : FutureBuilder(
                   future: auth.autoLogin(),
                   builder: (ctx, authResultSnapshot) =>
