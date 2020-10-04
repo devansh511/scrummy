@@ -8,48 +8,10 @@ class Cuisines extends StatefulWidget {
 }
 
 class _CuisinesState extends State<Cuisines> {
-  String cuisine = "North";
-
-  void _fetchChinese() async {
+  void _fetchCuisine(String cuisine) async {
     print("<<<<<<<<<<<<<<<<<<<");
     try {
-      await Provider.of<Food>(context, listen: false).fetchChinese();
-    } catch (error) {
-      print(error);
-    }
-  }
-
-  void _fetchNon() async {
-    print("<<<<<<<<<<<<<<<<<<<");
-    try {
-      await Provider.of<Food>(context, listen: false).fetchNonVeg();
-    } catch (error) {
-      print(error);
-    }
-  }
-
-  void _fetchSouth() async {
-    print("<<<<<<<<<<<<<<<<<<<");
-    try {
-      await Provider.of<Food>(context, listen: false).fetchSouth();
-    } catch (error) {
-      print(error);
-    }
-  }
-
-  void _fetchSweets() async {
-    print("<<<<<<<<<<<<<<<<<<<");
-    try {
-      await Provider.of<Food>(context, listen: false).fetchSweets();
-    } catch (error) {
-      print(error);
-    }
-  }
-
-  void _fetchItalian() async {
-    print("<<<<<<<<<<<<<<<<<<<");
-    try {
-      await Provider.of<Food>(context, listen: false).fetchItalian();
+      await Provider.of<Food>(context, listen: false).fetchCuisines(cuisine);
     } catch (error) {
       print(error);
     }
@@ -94,7 +56,7 @@ class _CuisinesState extends State<Cuisines> {
                     ),
                   ),
                   onTap: () {
-                    _fetchItalian();
+                    _fetchCuisine("italian");
                   },
                 ),
                 Text(
@@ -128,7 +90,7 @@ class _CuisinesState extends State<Cuisines> {
                     ),
                   ),
                   onTap: () {
-                    _fetchChinese();
+                    _fetchCuisine("chinese");
                   },
                 ),
                 Text(
@@ -162,7 +124,7 @@ class _CuisinesState extends State<Cuisines> {
                     ),
                   ),
                   onTap: () {
-                    _fetchSouth();
+                    _fetchCuisine("south%20indian");
                   },
                 ),
                 Text(
@@ -196,7 +158,7 @@ class _CuisinesState extends State<Cuisines> {
                     ),
                   ),
                   onTap: () {
-                    _fetchNon();
+                    _fetchCuisine("non-veg");
                   },
                 ),
                 Text(
@@ -230,7 +192,7 @@ class _CuisinesState extends State<Cuisines> {
                     ),
                   ),
                   onTap: () {
-                    _fetchSweets();
+                    _fetchCuisine("sweets");
                   },
                 ),
                 Text(

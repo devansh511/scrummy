@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import '../providers/food.dart';
+import '../providers/cart.dart';
 
 class DishesGrid extends StatefulWidget {
   @override
@@ -25,8 +26,8 @@ class _DishesGridState extends State<DishesGrid> {
   //         Stack(
   //           children: [
   //             Image(
-  //               // image: NetworkImage(
-  //               //       '${Provider.of<Food>(context).loadedFoods[i][2]}'),
+  //               image: NetworkImage(
+  //                     '${Provider.of<Food>(context).loadedFoods[i][2]}'),
   //               width: 600.0,
   //             ),
   //             Container(
@@ -180,9 +181,118 @@ class _DishesGridState extends State<DishesGrid> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Image(
-                image: NetworkImage(
-                    '${Provider.of<Food>(context).loadedFoods[i][2]}'),
+              GestureDetector(
+                child: Image(
+                  image: NetworkImage(
+                      '${Provider.of<Food>(context).loadedFoods[i][2]}'),
+                ),
+                onTap: () {
+                  setState(() {
+                    showModalBottomSheet(
+                        context: context,
+                        builder: (context) {
+                          return Container(
+                            color: Color(0xff737373),
+                            height: 306.0,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: const Radius.circular(25.0),
+                                  topRight: const Radius.circular(25.0),
+                                ),
+                              ),
+                              child: Column(
+                                children: [
+                                  Stack(
+                                    children: [
+                                      Image(
+                                        image: NetworkImage(
+                                            '${Provider.of<Food>(context).loadedFoods[i][2]}'),
+                                        height: 200.0,
+                                      ),
+                                      Container(
+                                        margin: EdgeInsets.only(top: 160.0),
+                                        child: ListTile(
+                                          title: Text(
+                                            '${Provider.of<Food>(context).loadedFoods[i][1]}',
+                                            style: TextStyle(
+                                              fontFamily: 'McLaren',
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          subtitle: Text(
+                                            '${Provider.of<Food>(context).loadedFoods[i][9]}',
+                                            style: TextStyle(
+                                              fontFamily: 'McLaren',
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Text(
+                                        '★${Provider.of<Food>(context).loadedFoods[i][4]}            | ',
+                                        style: TextStyle(
+                                          fontFamily: 'Raleway',
+                                          color: Colors.grey[600],
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        '🕑${Provider.of<Food>(context).loadedFoods[i][8]}mins        |',
+                                        style: TextStyle(
+                                          fontFamily: 'Raleway',
+                                          color: Colors.grey[600],
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        '₹${Provider.of<Food>(context).loadedFoods[i][3]}',
+                                        style: TextStyle(
+                                          fontFamily: 'Raleway',
+                                          color: Colors.grey[600],
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(30.0),
+                                    child: FlatButton(
+                                      // padding: EdgeInsets.fromLTRB(
+                                      //     120.0, 10.0, 120.0, 10.0),
+                                      // shape: Border(
+                                      //   top: BorderSide(
+                                      //       color: Colors.orange),
+                                      //   right: BorderSide(
+                                      //       color: Colors.orange),
+                                      //   bottom: BorderSide(
+                                      //       color: Colors.orange),
+                                      // ),
+                                      color: Colors.orange,
+                                      child: Icon(
+                                        Icons.shopping_cart,
+                                        size: 20.0,
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: () {},
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        });
+                  });
+                },
               ),
               Text(
                 '${Provider.of<Food>(context).loadedFoods[i][1]}',
@@ -195,7 +305,7 @@ class _DishesGridState extends State<DishesGrid> {
                 textAlign: TextAlign.left,
               ),
               Text(
-                'Maharaja Mac',
+                '${Provider.of<Food>(context).loadedFoods[i][7]} | 🕑${Provider.of<Food>(context).loadedFoods[i][8]}mins',
                 style: TextStyle(
                   color: Colors.grey[600],
                   fontFamily: 'Raleway',
@@ -226,31 +336,40 @@ class _DishesGridState extends State<DishesGrid> {
                     width: 40.0,
                   ),
                   GestureDetector(
-                      child: Icon(
-                        Icons.shopping_cart,
-                        color: Colors.grey[600],
-                        size: 21.0,
-                      ),
-                      onTap: () {
-                        setState(() {
-                          _changeColor();
-                        });
-                        Scaffold.of(context).hideCurrentSnackBar();
-                        Scaffold.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              'Added item to cart!',
-                            ),
-                            duration: Duration(seconds: 2),
-                            action: SnackBarAction(
-                              label: 'UNDO',
-                              onPressed: () {
-                                // cart.removeSingleItem(product.id);
-                              },
+                    child: Icon(
+                      Icons.shopping_cart,
+                      color: _cartColor,
+                      size: 21.0,
+                    ),
+                    onTap: () {
+                      setState(() {
+                        _changeColor();
+                      });
+                      Scaffold.of(context).hideCurrentSnackBar();
+                      Scaffold.of(context).showSnackBar(
+                        SnackBar(
+                          elevation: 2.0,
+                          backgroundColor: Colors.grey[200],
+                          content: Text(
+                            'Added item to cart!',
+                            style: TextStyle(
+                              color: Colors.orange,
                             ),
                           ),
-                        );
-                      }),
+                          duration: Duration(seconds: 2),
+                          action: SnackBarAction(
+                            label: 'UNDO',
+                            onPressed: () {
+                              // cart.removeSingleItem(product.id);
+                            },
+                          ),
+                        ),
+                      );
+                      Provider.of<Cart>(context, listen: false).addToCart(
+                          Provider.of<Food>(context, listen: false)
+                              .loadedFoods[i][0]);
+                    },
+                  ),
                 ],
               ),
             ],

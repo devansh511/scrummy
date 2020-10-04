@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scrummy/providers/cart.dart';
 import 'package:scrummy/screens/panel_screen.dart';
 import './auth/auth_screen.dart';
 import 'auth/auth.dart';
@@ -22,6 +23,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider.value(
           value: Food(),
+        ),
+        ChangeNotifierProvider.value(
+          value: Cart(),
         ),
       ],
       child: Consumer<Auth>(

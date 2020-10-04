@@ -7,20 +7,22 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/Http_Exceptions.dart';
 import '../screens/reset_password.dart';
 import '../screens/location_screen.dart';
+import '../constants.dart';
+
+String accessToken;
+String refreshToken;
 
 class Auth with ChangeNotifier {
-  String _accessToken;
-  String _refreshToken;
   DateTime _expiryDate;
   String _userId;
   Timer _authTimer;
-  String _endPoint = "46b7de57b17c";
+  // String kUrl = "a078d6616f5e";
 
   // String get token {
   //   if (_expiryDate != null &&
   //       _expiryDate.isAfter(DateTime.now()) &&
-  //       _accessToken != null) {
-  //     return _refreshToken;
+  //       accessToken != null) {
+  //     return refreshToken;
   //   }
   //   return null;
   // }
@@ -78,7 +80,7 @@ class Auth with ChangeNotifier {
   //   }
   // }
   Future<void> generateOtp(String email) async {
-    final url = 'https://$_endPoint.ngrok.io/api/otp/';
+    final url = 'https://$kUrl.ngrok.io/api/otp/';
     try {
       final response = await http.post(url,
           body: json.encode(
@@ -98,7 +100,7 @@ class Auth with ChangeNotifier {
   }
 
   Future<int> signup(String email, String password, String name) async {
-    final url = "https://$_endPoint.ngrok.io/api/signup/";
+    final url = "https://$kUrl.ngrok.io/api/signup/";
     int check = 0;
     try {
       final response = await http.post(url,
@@ -134,7 +136,7 @@ class Auth with ChangeNotifier {
 
   Future<int> checkVerify(String email, String password) async {
     int check = 0;
-    final url = "https://$_endPoint.ngrok.io/api/otp_verified/";
+    final url = "https://$kUrl.ngrok.io/api/otp_verified/";
     try {
       final response = await http.post(url,
           body: json.encode({"email": email, "password": password}),
@@ -160,7 +162,7 @@ class Auth with ChangeNotifier {
     print(e_mail);
 
     int check = 0;
-    final url = "https://$_endPoint.ngrok.io/api/verify_otp/";
+    final url = "https://$kUrl.ngrok.io/api/verify_otp/";
 
     try {
       final response = await http.post(url,
@@ -187,7 +189,7 @@ class Auth with ChangeNotifier {
 
   Future<int> login() async {
     int check = 0;
-    final url = "https://$_endPoint.ngrok.io/api/login/";
+    final url = "https://$kUrl.ngrok.io/api/login/";
     print(e_mail);
     print(p_word);
     try {
@@ -211,16 +213,16 @@ class Auth with ChangeNotifier {
         }
       }
 
-      _accessToken = loginResponse["access"];
-      _refreshToken = loginResponse["refresh"];
-      print(_accessToken);
-      print(_refreshToken);
+      accessToken = loginResponse["access"];
+      refreshToken = loginResponse["refresh"];
+      print(accessToken);
+      print(refreshToken);
       _expiryDate = DateTime.now().add(Duration(minutes: 600));
       final prefs = await SharedPreferences.getInstance();
       final userData = json.encode(
         {
-          "access": _accessToken,
-          "refresh": _refreshToken,
+          "access": accessToken,
+          "refresh": refreshToken,
           "expiryTime": _expiryDate.toIso8601String()
         },
       );
@@ -240,8 +242,8 @@ class Auth with ChangeNotifier {
     final extractedUserData =
         json.decode(prefs.getString('userData')) as Map<String, Object>;
     print(extractedUserData);
-    _accessToken = extractedUserData['access'];
-    _refreshToken = extractedUserData['refresh'];
+    accessToken = extractedUserData['access'];
+    refreshToken = extractedUserData['refresh'];
     notifyListeners();
 
     // final expiryTime = DateTime.parse(extractedUserData['expiryTime']);
@@ -269,7 +271,7 @@ class Auth with ChangeNotifier {
     print(e_mailReset);
 
     int check = 0;
-    final url = "https://$_endPoint.ngrok.io/api/passresetotp/";
+    final url = "https://$kUrl.ngrok.io/api/passresetotp/";
 
     try {
       final response = await http.post(url,
@@ -296,7 +298,7 @@ class Auth with ChangeNotifier {
 
   Future<int> resetOtp(String email) async {
     print(email);
-    final url = 'https://$_endPoint.ngrok.io/api/otp/';
+    final url = 'https://$kUrl.ngrok.io/api/otp/';
     int check = 0;
     try {
       final response = await http.post(url,
@@ -322,7 +324,7 @@ class Auth with ChangeNotifier {
 
   Future<int> resetPwd(String password) async {
     int check = 0;
-    final url = 'https://$_endPoint.ngrok.io/api/resetpassword/';
+    final url = 'https://$kUrl.ngrok.io/api/resetpassword/';
 
     try {
       final response = await http.post(url,
@@ -352,19 +354,19 @@ class Auth with ChangeNotifier {
   //   }
   //   final extractedUserData =
   //   json.decode(prefs.getString('userData')) as Map<String, Object>;
-  //   //final url = 'https://$_endPoint.ngrok.io/api/token/refresh/';
+  //   //final url = 'https://$kUrl.ngrok.io/api/token/refresh/';
 
   //   // final response = await http.post(url,
-  //   //     body: json.encode({"refresh": _refreshToken}),
+  //   //     body: json.encode({"refresh": refreshToken}),
   //   //     headers: {
   //   //       "content-type": "application/json",
   //   //       "accept": "application/json"
   //   //     });
   //   // final responseData = json.decode(response.body);
-  //   _accessToken = extractedUserData["access"];
-  //   _refreshToken = extractedUserData["refresh"];
-  //   print(_accessToken);
-  //   print(_refreshToken);
+  //   accessToken = extractedUserData["access"];
+  //   refreshToken = extractedUserData["refresh"];
+  //   print(accessToken);
+  //   print(refreshToken);
   // }
 
 // Future<bool> tryAutoLogin() async {
@@ -380,8 +382,8 @@ class Auth with ChangeNotifier {
 //   return false;
 // }
 
-//   _accessToken = extractedUserData['access'];
-//   _refreshToken = extractedUserData['refresh'];
+//   accessToken = extractedUserData['access'];
+//   refreshToken = extractedUserData['refresh'];
 //   _expiryDate = expiryDate;
 //   notifyListeners();
 //   _autoLogout();
@@ -389,15 +391,15 @@ class Auth with ChangeNotifier {
 // }
   bool get isAuth {
     print('Token');
-    print(_accessToken);
+    print(accessToken);
     print('Token');
 
-    return _accessToken != null;
+    return accessToken != null;
   }
 
   void logout() async {
-    _accessToken = null;
-    _refreshToken = null;
+    accessToken = null;
+    refreshToken = null;
     addr2 = null;
     // if (_authTimer != null) {
     //   _authTimer.cancel();
