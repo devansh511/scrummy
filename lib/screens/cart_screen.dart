@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:scrummy/screens/feed_screen.dart';
+import 'package:scrummy/screens/home_screen.dart';
 
 class CartScreen extends StatefulWidget {
   @override
@@ -7,12 +10,38 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
+  ScrollController _scrollController;
+
+  int add = 1;
+  void increase() {
+    add++;
+  }
+
+  void minus() {
+    add--;
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    _scrollController = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(12.0, 40.0, 12.0, 12.0),
+          padding: const EdgeInsets.fromLTRB(12.0, 60.0, 12.0, 12.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -38,9 +67,9 @@ class _CartScreenState extends State<CartScreen> {
                 ),
                 physics: const ClampingScrollPhysics(),
                 shrinkWrap: true,
-                itemCount: 7,
+                itemCount: 4,
                 itemBuilder: (context, i) => Container(
-                  height: 130.0,
+                  height: 135.0,
                   child: Card(
                     margin: EdgeInsets.only(bottom: 19.0, top: 10.0),
                     elevation: 0.0,
@@ -75,13 +104,24 @@ class _CartScreenState extends State<CartScreen> {
                                 fontSize: 14.0,
                               ),
                             ),
-                            Text(
-                              'Burgers',
-                              style: TextStyle(
-                                  fontFamily: 'Raleway',
+                            Row(
+                              children: [
+                                Text(
+                                  'Burgers',
+                                  style: TextStyle(
+                                      fontFamily: 'Raleway',
+                                      color: Colors.grey[600],
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 11.0),
+                                ),
+                                SizedBox(
+                                  width: 120.0,
+                                ),
+                                Icon(
+                                  Icons.delete_outline,
                                   color: Colors.grey[600],
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 11.0),
+                                ),
+                              ],
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -132,29 +172,57 @@ class _CartScreenState extends State<CartScreen> {
                                   ],
                                 ),
                                 SizedBox(
-                                  width: 40.0,
+                                  width: 20.0,
                                 ),
-                                FlatButton(
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 15.0),
-                                  color: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(25.0),
-                                    side: BorderSide(
-                                      width: 1.0,
-                                      color: Colors.orange,
-                                    ),
-                                  ),
+                                RawMaterialButton(
                                   child: Text(
-                                    'Order Now',
+                                    '-',
                                     style: TextStyle(
                                       color: Colors.orange,
-                                      fontFamily: 'Raleway',
-                                      fontSize: 12.0,
-                                      fontWeight: FontWeight.bold,
+                                      fontSize: 21,
                                     ),
                                   ),
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    setState(() {
+                                      minus();
+                                    });
+                                  },
+                                  elevation: 6.0,
+                                  constraints: BoxConstraints.tightFor(
+                                    width: 35.0,
+                                    height: 35.0,
+                                  ),
+                                  shape: CircleBorder(
+                                    side: BorderSide(color: Colors.orange),
+                                  ),
+                                ),
+                                Text(
+                                  '${add}',
+                                  style: TextStyle(
+                                    color: Colors.orange,
+                                  ),
+                                ),
+                                RawMaterialButton(
+                                  child: Text(
+                                    '+',
+                                    style: TextStyle(
+                                      color: Colors.orange,
+                                      fontSize: 21,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      increase();
+                                    });
+                                  },
+                                  elevation: 6.0,
+                                  constraints: BoxConstraints.tightFor(
+                                    width: 35.0,
+                                    height: 35.0,
+                                  ),
+                                  shape: CircleBorder(
+                                    side: BorderSide(color: Colors.orange),
+                                  ),
                                 ),
                               ],
                             )
@@ -165,8 +233,163 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                 ),
               ),
+              Text(
+                '   Payment Summary',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Raleway',
+                ),
+              ),
+              ListTile(
+                title: Text(
+                  'Total Items',
+                  style: TextStyle(
+                    color: Colors.grey[700],
+                    fontFamily: 'Raleway',
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                trailing: Text(
+                  '4',
+                  style: TextStyle(
+                    color: Colors.grey[900],
+                    fontFamily: 'Raleway',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17.0,
+                  ),
+                ),
+              ),
+              ListTile(
+                title: Text(
+                  'Total Amount',
+                  style: TextStyle(
+                    color: Colors.grey[700],
+                    fontFamily: 'Raleway',
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                trailing: Text(
+                  '₹189',
+                  style: TextStyle(
+                    color: Colors.grey[900],
+                    fontFamily: 'Raleway',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17.0,
+                  ),
+                ),
+              ),
             ],
           ),
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        elevation: 8.0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            FlatButton(
+              padding: EdgeInsets.only(left: 30.0, right: 30.0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(7.0),
+                side: BorderSide(color: Colors.orange),
+              ),
+              child: Text(
+                'Add more food',
+                style: TextStyle(
+                  color: Colors.orange,
+                  fontFamily: 'Raleway',
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onPressed: () {
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()));
+              },
+            ),
+            FlatButton(
+              padding: EdgeInsets.only(left: 42.0, right: 42.0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(7.0),
+              ),
+              color: Colors.orange,
+              child: Text(
+                'Order Now',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Raleway',
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onPressed: () {
+                return showDialog<void>(
+                  context: context,
+                  // barrierDismissible: false, // user must tap button!
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      content: Container(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            SvgPicture.asset('assets/illustration.svg'),
+                            SizedBox(
+                              height: 15.0,
+                            ),
+                            Text(
+                              'Payment Successful',
+                              style: TextStyle(
+                                color: Colors.orange,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'McLaren',
+                                fontSize: 21.0,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 15.0,
+                            ),
+                            Text(
+                              'Your food is on the way',
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontFamily: 'Raleway',
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 15.0,
+                            ),
+                            FlatButton(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  8.0,
+                                ),
+                              ),
+                              child: Text(
+                                'Go Home!',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Raleway',
+                                ),
+                              ),
+                              color: Colors.orange,
+                              onPressed: () {
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => HomeScreen()));
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ],
         ),
       ),
     );

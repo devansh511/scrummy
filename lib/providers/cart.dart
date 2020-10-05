@@ -37,6 +37,24 @@ class Cart with ChangeNotifier {
       print(error);
     }
   }
+
+  Future<void> displayCart() async {
+    print("executing display cart");
+    try {
+      print("try executing");
+      final url = "http://$kUrl.ngrok.io/api/cart/showcart/";
+      final response = await http.get(url, headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      });
+      print('This is response $response');
+      final responseData = json.decode(response.body);
+      print('This is responsedata $responseData');
+    } catch (error) {
+      print(error);
+    }
+  }
 }
 
 // class Cart1 with ChangeNotifier {

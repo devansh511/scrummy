@@ -253,16 +253,3 @@ class _FeedScreenState extends State<FeedScreen> {
     );
   }
 }
-
-// GridView.builder(
-//   itemBuilder: (ctx, i) => ChangeNotifierProvider.value(
-//     value: dishes[i],
-//     child: DishItems(),
-//   ),
-//   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-//     crossAxisCount: 2,
-//     childAspectRatio: 3 / 2,
-//     crossAxisSpacing: 10,
-//     mainAxisSpacing: 10,
-//   ),
-// ),
