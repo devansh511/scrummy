@@ -9,6 +9,7 @@ import '../widgets/cuisines.dart';
 import '../widgets/restaurants.dart';
 import '../auth/auth.dart';
 import '../providers/food.dart';
+import '../providers/cart.dart';
 
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -27,6 +28,14 @@ class _FeedScreenState extends State<FeedScreen> {
       return "Food will be delivered here!";
     } else {
       return addr2;
+    }
+  }
+
+  void display() async {
+    try {
+      await Provider.of<Cart>(context, listen: false).displayCart();
+    } catch (error) {
+      print(error);
     }
   }
 
@@ -81,10 +90,17 @@ class _FeedScreenState extends State<FeedScreen> {
               trailing: GestureDetector(
                 child: Icon(Icons.shopping_cart),
                 onTap: () {
+                  // display();
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => EmptyCart(),
+                      builder: (context) =>
+                          ((Provider.of<Cart>(context, listen: false)
+                                      .loadedFoods
+                                      .length) ==
+                                  0)
+                              ? EmptyCart()
+                              : CartScreen(),
                     ),
                   );
                 },
@@ -154,23 +170,6 @@ class _FeedScreenState extends State<FeedScreen> {
                       fontSize: 17.0,
                     ),
                   ),
-                  // Container(
-                  //   margin: EdgeInsets.only(left: 190.0, right: 8.0),
-                  //   child: Text(
-                  //     'See all',
-                  //     style: TextStyle(
-                  //         fontFamily: 'Raleway',
-                  //         color: Colors.grey,
-                  //         fontWeight: FontWeight.bold),
-                  //   ),
-                  // ),
-                  // Container(
-                  //   child: FaIcon(
-                  //     FontAwesomeIcons.arrowRight,
-                  //     size: 15.0,
-                  //     color: Colors.grey,
-                  //   ),
-                  // )
                 ],
               ),
             ),

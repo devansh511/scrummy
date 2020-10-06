@@ -1,3 +1,4 @@
+import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
@@ -18,8 +19,33 @@ import '../constants.dart';
 //     // @required this.price,
 //   });
 // }
+String quant = "1";
 
 class Cart with ChangeNotifier {
+  List loadedFoods = [];
+
+  Future<int> isAdded(String foodId) async {
+    int check = 0;
+    try {
+      final url = "http://$kUrl.ngrok.io/api/orderstatus/${int.parse(foodId)}/";
+      final response = await http.get(url, headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      });
+      final responseData = json.decode(response.body);
+      print(responseData);
+      if (responseData["details"] == "item in your cart") {
+        check = -1;
+      } else {
+        check = 1;
+      }
+    } catch (error) {
+      print(error);
+    }
+    return check;
+  }
+
   Future<void> addToCart(String foodId) async {
     print("executing addToCart");
     try {
@@ -38,6 +64,68 @@ class Cart with ChangeNotifier {
     }
   }
 
+  Future<void> increaseQuantity(String foodId) async {
+    try {
+      final url = "http://$kUrl.ngrok.io/api/add-to-cart/${int.parse(foodId)}/";
+      final response = await http.get(url, headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      });
+      final responseData = json.decode(response.body);
+      quant = responseData["quantity"].toString();
+      print(responseData);
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  Future<void> decreaseQuantity(String foodId) async {
+    try {
+      final url = "http://$kUrl.ngrok.io/api/add-to-cart/${int.parse(foodId)}/";
+      final response = await http.patch(url, headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      });
+      final responseData = json.decode(response.body);
+      print(responseData);
+      quant = responseData["quantity"].toString();
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  Future<void> deleteItems(String foodId) async {
+    try {
+      final url = "http://$kUrl.ngrok.io/api/add-to-cart/${int.parse(foodId)}/";
+      final response = await http.delete(url, headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      });
+      final responseData = json.decode(response.body);
+      print(responseData);
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  Future<void> emptyCart() async {
+    try {
+      final url = "http://$kUrl.ngrok.io/api/add-to-cart/clearcart/";
+      final response = await http.delete(url, headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      });
+      final responseData = json.decode(response.body);
+      print(responseData);
+    } catch (error) {
+      print(error);
+    }
+  }
+
   Future<void> displayCart() async {
     print("executing display cart");
     try {
@@ -51,88 +139,24 @@ class Cart with ChangeNotifier {
       print('This is response $response');
       final responseData = json.decode(response.body);
       print('This is responsedata $responseData');
+      if (responseData == null) {
+        print('null data');
+        return;
+      }
+      loadedFoods.clear();
+      responseData.forEach((fData) {
+        loadedFoods.add([
+          fData["id"].toString(),
+          fData["item_name"],
+          fData["image"],
+          fData["get_total_item_price"].toString(),
+          fData["delivery_time"],
+          fData["offer"],
+        ]);
+      });
+      print(loadedFoods);
     } catch (error) {
       print(error);
     }
   }
 }
-
-// class Cart1 with ChangeNotifier {
-//   Map<String, CartItem> _items = {};
-
-//   Map<String, CartItem> get items {
-//     return {..._items};
-//   }
-
-//   int get itemCount {
-//     return _items.length;
-//   }
-
-//   double get totalAmount {
-//     var total = 0.0;
-//     _items.forEach((key, cartItem) {
-//       total += cartItem.price * cartItem.quantity;
-//     });
-//     return total;
-//   }
-
-//   void addItem(
-//     String productId,
-//     double price,
-//     String token,
-//   ) {
-//     if (_items.containsKey(productId)) {
-//       // change quantity...
-//       _items.update(
-//         productId,
-//         (existingCartItem) => CartItem(
-//           id: existingCartItem.id,
-//           token: existingCartItem.token,
-//           price: existingCartItem.price,
-//           quantity: existingCartItem.quantity + 1,
-//         ),
-//       );
-//     } else {
-//       _items.putIfAbsent(
-//         productId,
-//         () => CartItem(
-//           id: DateTime.now().toString(),
-//           token: token,
-//           price: price,
-//           quantity: 1,
-//         ),
-//       );
-//     }
-//     notifyListeners();
-//   }
-
-//   void removeItem(String productId) {
-//     _items.remove(productId);
-//     notifyListeners();
-//   }
-
-//   void removeSingleItem(String productId) {
-//     if (!_items.containsKey(productId)) {
-//       return;
-//     }
-//     if (_items[productId].quantity > 1) {
-//       _items.update(
-//         productId,
-//         (existingCartItem) => CartItem(
-//           id: existingCartItem.id,
-//           token: existingCartItem.token,
-//           price: existingCartItem.price,
-//           quantity: existingCartItem.quantity - 1,
-//         ),
-//       );
-//     } else {
-//       _items.remove(productId);
-//     }
-//     notifyListeners();
-//   }
-
-//   void clear() {
-//     _items = {};
-//     notifyListeners();
-//   }
-// }
