@@ -11,21 +11,20 @@ class Restaurants extends StatefulWidget {
 }
 
 class _RestaurantsState extends State<Restaurants> {
-  void _fetch() async {
+  // void _fetchR() async {
+  //   try {
+  //     await Provider.of<Restaurant>(context, listen: false).fetchRestaurants();
+  //   } catch (error) {
+  //     print(error);
+  //   }
+  // }
+  void _fetchRestFood(String restName) async {
     try {
-      await Provider.of<Restaurant>(context, listen: false).fetchRestaurants();
+      await Provider.of<Restaurant>(context, listen: false)
+          .fetchRestFood(restName);
     } catch (error) {
       print(error);
     }
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    Future.delayed(Duration.zero, () {
-      _fetch();
-    });
-    super.initState();
   }
 
   @override
@@ -39,62 +38,70 @@ class _RestaurantsState extends State<Restaurants> {
           children: <Widget>[
             Column(
               children: <Widget>[
-                Card(
-                  elevation: 2.0,
-                  color: Colors.white,
-                  shadowColor: Colors.grey,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  child: Container(
-                    width: 168.0,
-                    height: 170.0,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0),
-                          child: Image(
-                            width: 100.0,
-                            image: NetworkImage(
-                              '${Provider.of<Restaurant>(context).loadedRestaurants[widget.idx][2]}',
+                GestureDetector(
+                  child: Card(
+                    elevation: 2.0,
+                    color: Colors.white,
+                    shadowColor: Colors.grey,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: Container(
+                      width: 168.0,
+                      height: 170.0,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10.0),
+                            child: Image(
+                              width: 148.0,
+                              image: NetworkImage(
+                                '${Provider.of<Restaurant>(context).loadedRestaurants[widget.idx][2]}',
+                              ),
+                              filterQuality: FilterQuality.high,
+                              fit: BoxFit.fill,
                             ),
-                            filterQuality: FilterQuality.high,
                           ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(
-                            left: 8.0,
-                            top: 8.0,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '${Provider.of<Restaurant>(context).loadedRestaurants[widget.idx][1]}',
-                                style: TextStyle(
-                                  fontFamily: 'Raleway',
-                                  color: Colors.grey[800],
-                                  fontWeight: FontWeight.bold,
+                          Container(
+                            margin: EdgeInsets.only(
+                              left: 8.0,
+                              top: 8.0,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${Provider.of<Restaurant>(context).loadedRestaurants[widget.idx][1]}',
+                                  style: TextStyle(
+                                    fontFamily: 'Raleway',
+                                    color: Colors.grey[800],
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.left,
                                 ),
-                                textAlign: TextAlign.left,
-                              ),
-                              Text(
-                                '★ ${Provider.of<Restaurant>(context).loadedRestaurants[widget.idx][3]}',
-                                style: TextStyle(
-                                  fontFamily: 'Raleway',
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14.0,
+                                Text(
+                                  '★ ${Provider.of<Restaurant>(context).loadedRestaurants[widget.idx][3]}',
+                                  style: TextStyle(
+                                    fontFamily: 'Raleway',
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14.0,
+                                  ),
+                                  textAlign: TextAlign.left,
                                 ),
-                                textAlign: TextAlign.left,
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
+                  onTap: () {
+                    _fetchRestFood(
+                        Provider.of<Restaurant>(context, listen: false)
+                            .loadedRestaurants[widget.idx][1]);
+                  },
                 ),
               ],
             ),
@@ -110,10 +117,10 @@ class RestaurantList extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
+      physics: const ClampingScrollPhysics(),
       scrollDirection: Axis.horizontal,
       itemCount: Provider.of<Restaurant>(context).loadedRestaurants.length,
-      itemBuilder: (context, i) => Restaurants(i),
+      itemBuilder: (_, i) => Restaurants(i),
     );
   }
 }

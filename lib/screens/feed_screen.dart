@@ -31,6 +31,14 @@ class _FeedScreenState extends State<FeedScreen> {
     }
   }
 
+  void _fetchR() async {
+    try {
+      await Provider.of<Restaurant>(context, listen: false).fetchRestaurants();
+    } catch (error) {
+      print(error);
+    }
+  }
+
   void display() async {
     try {
       await Provider.of<Cart>(context, listen: false).displayCart();
@@ -53,7 +61,7 @@ class _FeedScreenState extends State<FeedScreen> {
   void _fetch() async {
     print("<<<<<<<<<<<<<<<<<<<");
     try {
-      await Provider.of<Food>(context, listen: false).fetchFood();
+      await Provider.of<Food>(context).fetchFood();
     } catch (error) {
       print(error);
     }
@@ -234,12 +242,17 @@ class _FeedScreenState extends State<FeedScreen> {
                 ),
                 Container(
                   margin: EdgeInsets.only(left: 180.0, right: 8.0),
-                  child: Text(
-                    'See all',
-                    style: TextStyle(
-                        fontFamily: 'Raleway',
-                        color: Colors.grey,
-                        fontWeight: FontWeight.bold),
+                  child: GestureDetector(
+                    child: Text(
+                      'See all',
+                      style: TextStyle(
+                          fontFamily: 'Raleway',
+                          color: Colors.grey,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    onTap: () {
+                      _fetchR();
+                    },
                   ),
                 ),
                 Container(
@@ -252,7 +265,11 @@ class _FeedScreenState extends State<FeedScreen> {
               ],
             ),
           ),
-          Container(height: 70.0, width: screenWidth, child: RestaurantList()),
+          Container(
+            height: 190.0,
+            width: screenWidth,
+            child: RestaurantList(),
+          ),
         ],
       ),
     );

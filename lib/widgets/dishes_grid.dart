@@ -17,8 +17,8 @@ class _GridBuilderState extends State<GridBuilder> {
   bool added = false;
 
   Future<void> _isAdded(int i) async {
-    final check = await Provider.of<Cart>(context, listen: false)
-        .isAdded(Provider.of<Food>(context, listen: false).loadedFoods[i][0]);
+    final check = await Provider.of<Cart>(context, listen: false).isAdded(
+        Provider.of<Restaurant>(context, listen: false).loadedRestFood[i][0]);
     if (check == 1) {
       setState(() {
         _cartColor = Colors.orange;
@@ -61,7 +61,7 @@ class _GridBuilderState extends State<GridBuilder> {
                   child: Image(
                     fit: BoxFit.fill,
                     image: NetworkImage(
-                        '${Provider.of<Food>(context).loadedFoods[widget.i][2]}'),
+                        '${Provider.of<Restaurant>(context).loadedRestFood[widget.i][2]}'),
                     // width: 128.0,
                     height: 127.0,
                   ),
@@ -89,14 +89,14 @@ class _GridBuilderState extends State<GridBuilder> {
                                   children: [
                                     Image(
                                       image: NetworkImage(
-                                          '${Provider.of<Food>(context).loadedFoods[widget.i][2]}'),
+                                          '${Provider.of<Restaurant>(context).loadedRestFood[widget.i][2]}'),
                                       height: 200.0,
                                     ),
                                     Container(
                                       margin: EdgeInsets.only(top: 160.0),
                                       child: ListTile(
                                         title: Text(
-                                          '${Provider.of<Food>(context).loadedFoods[widget.i][1]}',
+                                          '${Provider.of<Restaurant>(context).loadedRestFood[widget.i][1]}',
                                           style: TextStyle(
                                             fontFamily: 'McLaren',
                                             color: Colors.white,
@@ -104,7 +104,7 @@ class _GridBuilderState extends State<GridBuilder> {
                                           ),
                                         ),
                                         subtitle: Text(
-                                          '${Provider.of<Food>(context).loadedFoods[widget.i][9]}',
+                                          '${Provider.of<Restaurant>(context).loadedRestFood[widget.i][9]}',
                                           style: TextStyle(
                                             fontFamily: 'McLaren',
                                             fontWeight: FontWeight.bold,
@@ -120,7 +120,7 @@ class _GridBuilderState extends State<GridBuilder> {
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
                                     Text(
-                                      '★${Provider.of<Food>(context).loadedFoods[widget.i][4]}            | ',
+                                      '★${Provider.of<Restaurant>(context).loadedRestFood[widget.i][4]}            | ',
                                       style: TextStyle(
                                         fontFamily: 'Raleway',
                                         color: Colors.grey[600],
@@ -128,7 +128,7 @@ class _GridBuilderState extends State<GridBuilder> {
                                       ),
                                     ),
                                     Text(
-                                      '🕑${Provider.of<Food>(context).loadedFoods[widget.i][8]}mins        |',
+                                      '🕑${Provider.of<Restaurant>(context).loadedRestFood[widget.i][8]}mins        |',
                                       style: TextStyle(
                                         fontFamily: 'Raleway',
                                         color: Colors.grey[600],
@@ -136,7 +136,7 @@ class _GridBuilderState extends State<GridBuilder> {
                                       ),
                                     ),
                                     Text(
-                                      '₹${Provider.of<Food>(context).loadedFoods[widget.i][3]}',
+                                      '₹${Provider.of<Restaurant>(context).loadedRestFood[widget.i][3]}',
                                       style: TextStyle(
                                         fontFamily: 'Raleway',
                                         color: Colors.grey[600],
@@ -166,7 +166,7 @@ class _GridBuilderState extends State<GridBuilder> {
               },
             ),
             Text(
-              '${Provider.of<Food>(context).loadedFoods[widget.i][1]}',
+              '${Provider.of<Restaurant>(context).loadedRestFood[widget.i][1]}',
               style: TextStyle(
                 fontFamily: 'Raleway',
                 color: Colors.grey[800],
@@ -176,7 +176,7 @@ class _GridBuilderState extends State<GridBuilder> {
               textAlign: TextAlign.left,
             ),
             Text(
-              '${Provider.of<Food>(context).loadedFoods[widget.i][9]} | 🕑${Provider.of<Food>(context).loadedFoods[widget.i][8]}mins',
+              '${Provider.of<Restaurant>(context).loadedRestFood[widget.i][9]} | 🕑${Provider.of<Restaurant>(context).loadedRestFood[widget.i][8]}mins',
               style: TextStyle(
                 color: Colors.grey[600],
                 fontFamily: 'Raleway',
@@ -187,7 +187,7 @@ class _GridBuilderState extends State<GridBuilder> {
             Row(
               children: [
                 Text(
-                  '₹${Provider.of<Food>(context).loadedFoods[widget.i][3]} | ★ ',
+                  '₹${Provider.of<Restaurant>(context).loadedRestFood[widget.i][3]} | ★ ',
                   style: TextStyle(
                     fontFamily: 'Raleway',
                     color: Colors.grey[600],
@@ -195,7 +195,7 @@ class _GridBuilderState extends State<GridBuilder> {
                   ),
                 ),
                 Text(
-                  '${Provider.of<Food>(context).loadedFoods[widget.i][4]}',
+                  '${Provider.of<Restaurant>(context).loadedRestFood[widget.i][4]}',
                   style: TextStyle(
                     color: Colors.grey[700],
                     fontFamily: 'Raleway',
@@ -230,8 +230,8 @@ class _GridBuilderState extends State<GridBuilder> {
                       ),
                     );
                     Provider.of<Cart>(context, listen: false).addToCart(
-                        Provider.of<Food>(context, listen: false)
-                            .loadedFoods[widget.i][0]);
+                        Provider.of<Restaurant>(context, listen: false)
+                            .loadedRestFood[widget.i][0]);
                   },
                   child: Icon(
                     Icons.shopping_cart,
@@ -251,12 +251,11 @@ class _GridBuilderState extends State<GridBuilder> {
 class DishesGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    print("Hello");
     return GridView.builder(
       shrinkWrap: true,
       physics: const ClampingScrollPhysics(),
       padding: const EdgeInsets.all(10),
-      itemCount: Provider.of<Food>(context).loadedFoods.length,
+      itemCount: Provider.of<Restaurant>(context).loadedRestFood.length,
       itemBuilder: (_, i) => GridBuilder(i),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,

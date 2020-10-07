@@ -88,11 +88,11 @@ class Food with ChangeNotifier {
           fData["name"],
           fData["image"],
           fData["price"].toString(),
-          fData["ratings"],
+          fData["ratings"].toString(),
           fData["offer"],
           fData["category"],
           fData["cuisine"],
-          fData["delivery_time"],
+          fData["delivery_time"].toString(),
           fData["restname"],
         ]);
       });
@@ -107,10 +107,11 @@ class Food with ChangeNotifier {
 
 class Restaurant with ChangeNotifier {
   List loadedRestaurants = [];
+  List loadedRestFood = [];
 
   Future<void> fetchRestaurants() async {
     try {
-      final url = "http://$kUrl.ngrok.io/api/api/restaurantlist/";
+      final url = "http://$kUrl.ngrok.io/api/restaurantlist/";
       final response = await http.get(url, headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -118,16 +119,42 @@ class Restaurant with ChangeNotifier {
       final responseData = json.decode(response.body);
       responseData.forEach((rData) {
         loadedRestaurants.add([
-          rData["id"],
+          rData["id"].toString(),
           rData["restaurent_name"],
           rData["wallpaper"],
           rData["ratings"],
-          // rData[""],
-          // rData[""],
-          // rData[""],
         ]);
       });
       print(responseData);
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  Future<void> fetchRestFood(String restName) async {
+    try {
+      final url = "http://$kUrl.ngrok.io/api/foodlist/$restName/";
+      final response = await http.get(url, headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      });
+      final responseData = json.decode(response.body);
+      print(responseData);
+      loadedRestFood.clear();
+      responseData.forEach((fData) {
+        loadedRestFood.add([
+          fData["id"].toString(),
+          fData["name"],
+          fData["image"],
+          fData["price"].toString(),
+          fData["ratings"].toString(),
+          fData["offer"],
+          fData["category"],
+          fData["cuisine"],
+          fData["delivery_time"].toString(),
+          fData["restname"],
+        ]);
+      });
     } catch (error) {
       print(error);
     }
