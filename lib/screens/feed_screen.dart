@@ -62,195 +62,199 @@ class _FeedScreenState extends State<FeedScreen> {
   @override
   Widget build(BuildContext context) {
     // final dishes = dishesData.items;
-    return ListView(
-      shrinkWrap: true,
-      physics: const ClampingScrollPhysics(),
-      children: [
-        Column(
-          children: <Widget>[
-            ListTile(
-              leading: Icon(Icons.edit_location),
-              title: GestureDetector(
-                child: Text(
-                  '${location()}',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontFamily: 'Raleway',
-                    fontSize: 14.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                onTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => LocationScreen(),
-                    ),
-                  );
-                },
-              ),
-              trailing: GestureDetector(
-                child: Icon(Icons.shopping_cart),
-                onTap: () {
-                  // display();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          ((Provider.of<Cart>(context, listen: false)
-                                      .loadedFoods
-                                      .length) ==
-                                  0)
-                              ? EmptyCart()
-                              : CartScreen(),
-                    ),
-                  );
-                },
-              ),
-            ),
-            Container(
-              width: 380.0,
-              height: 168.0,
-              child: Card(
-                elevation: 3.0,
-                margin: EdgeInsets.all(10.0),
-                shadowColor: Colors.grey,
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                ),
-                child: Container(
-                  padding: EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Column(
-                        children: [
-                          Text(
-                            'Subway',
-                            style: TextStyle(
-                              color: Colors.orange[700],
-                              fontFamily: 'McLaren',
-                              fontSize: 35.0,
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                          Text(
-                            'Get your favorite sub',
-                            style: TextStyle(
-                              fontFamily: 'Raleway',
-                              color: Colors.orange,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        width: 17.0,
-                      ),
-                      Image(
-                        image: AssetImage(
-                          'assets/non-veg.png',
-                        ),
-                        width: 170.0,
-                        height: 150.0,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(left: 10.0),
-              child: Row(
-                children: <Widget>[
-                  Text(
-                    'Category',
-                    style: TextStyle(
-                      fontFamily: 'Raleway',
-                      color: Colors.grey[600],
-                      fontWeight: FontWeight.w900,
-                      fontSize: 17.0,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Cuisines(),
-            Container(
-              margin: EdgeInsets.only(left: 10.0, top: 15.0),
-              child: Row(
-                children: <Widget>[
-                  Text(
-                    'For you',
-                    style: TextStyle(
-                      fontFamily: 'Raleway',
-                      color: Colors.grey[600],
-                      fontWeight: FontWeight.w900,
-                      fontSize: 17.0,
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(left: 220.0, right: 8.0),
-                    child: GestureDetector(
-                        child: Text(
-                          'See all',
-                          style: TextStyle(
-                              fontFamily: 'Raleway',
-                              color: Colors.grey,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        onTap: () {
-                          _fetch();
-                        }),
-                  ),
-                  Container(
-                    child: FaIcon(
-                      FontAwesomeIcons.arrowRight,
-                      size: 15.0,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        DishesGrid(),
-        Container(
-          margin: EdgeInsets.only(left: 10.0, top: 15.0),
-          child: Row(
+    double screenWidth = MediaQuery.of(context).size.width;
+    return Container(
+      width: screenWidth,
+      child: ListView(
+        shrinkWrap: true,
+        physics: const ClampingScrollPhysics(),
+        children: [
+          Column(
             children: <Widget>[
-              Text(
-                'Restaurants',
-                style: TextStyle(
-                  fontFamily: 'Raleway',
-                  color: Colors.grey[600],
-                  fontWeight: FontWeight.w900,
-                  fontSize: 17.0,
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(left: 180.0, right: 8.0),
-                child: Text(
-                  'See all',
-                  style: TextStyle(
+              ListTile(
+                leading: Icon(Icons.edit_location),
+                title: GestureDetector(
+                  child: Text(
+                    '${location()}',
+                    style: TextStyle(
+                      color: Colors.grey[600],
                       fontFamily: 'Raleway',
-                      color: Colors.grey,
-                      fontWeight: FontWeight.bold),
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LocationScreen(),
+                      ),
+                    );
+                  },
+                ),
+                trailing: GestureDetector(
+                  child: Icon(Icons.shopping_cart),
+                  onTap: () {
+                    // display();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            ((Provider.of<Cart>(context, listen: false)
+                                        .loadedFoods
+                                        .length) ==
+                                    0)
+                                ? EmptyCart()
+                                : CartScreen(),
+                      ),
+                    );
+                  },
                 ),
               ),
               Container(
-                child: FaIcon(
-                  FontAwesomeIcons.arrowRight,
-                  size: 15.0,
-                  color: Colors.grey,
+                width: 380.0,
+                height: 168.0,
+                child: Card(
+                  elevation: 3.0,
+                  margin: EdgeInsets.all(10.0),
+                  shadowColor: Colors.grey,
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  child: Container(
+                    padding: EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Column(
+                          children: [
+                            Text(
+                              'Subway',
+                              style: TextStyle(
+                                color: Colors.orange[700],
+                                fontFamily: 'McLaren',
+                                fontSize: 35.0,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                            Text(
+                              'Get your favorite sub',
+                              style: TextStyle(
+                                fontFamily: 'Raleway',
+                                color: Colors.orange,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          width: 17.0,
+                        ),
+                        Image(
+                          image: AssetImage(
+                            'assets/non-veg.png',
+                          ),
+                          width: 170.0,
+                          height: 150.0,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              )
+              ),
+              Container(
+                margin: EdgeInsets.only(left: 10.0),
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      'Category',
+                      style: TextStyle(
+                        fontFamily: 'Raleway',
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w900,
+                        fontSize: 17.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Cuisines(),
+              Container(
+                margin: EdgeInsets.only(left: 10.0, top: 15.0),
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      'For you',
+                      style: TextStyle(
+                        fontFamily: 'Raleway',
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w900,
+                        fontSize: 17.0,
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(left: 220.0, right: 8.0),
+                      child: GestureDetector(
+                          child: Text(
+                            'See all',
+                            style: TextStyle(
+                                fontFamily: 'Raleway',
+                                color: Colors.grey,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          onTap: () {
+                            _fetch();
+                          }),
+                    ),
+                    Container(
+                      child: FaIcon(
+                        FontAwesomeIcons.arrowRight,
+                        size: 15.0,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
-        ),
-        // RestaurantList(),
-      ],
+          DishesGrid(),
+          Container(
+            margin: EdgeInsets.only(left: 10.0, top: 15.0),
+            child: Row(
+              children: <Widget>[
+                Text(
+                  'Restaurants',
+                  style: TextStyle(
+                    fontFamily: 'Raleway',
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w900,
+                    fontSize: 17.0,
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(left: 180.0, right: 8.0),
+                  child: Text(
+                    'See all',
+                    style: TextStyle(
+                        fontFamily: 'Raleway',
+                        color: Colors.grey,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Container(
+                  child: FaIcon(
+                    FontAwesomeIcons.arrowRight,
+                    size: 15.0,
+                    color: Colors.grey,
+                  ),
+                )
+              ],
+            ),
+          ),
+          Container(height: 70.0, width: screenWidth, child: RestaurantList()),
+        ],
+      ),
     );
   }
 }
