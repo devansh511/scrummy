@@ -104,3 +104,32 @@ class Food with ChangeNotifier {
     }
   }
 }
+
+class Restaurant with ChangeNotifier {
+  List loadedRestaurants = [];
+
+  Future<void> fetchRestaurants() async {
+    try {
+      final url = "http://$kUrl.ngrok.io/api/api/restaurantlist/";
+      final response = await http.get(url, headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      });
+      final responseData = json.decode(response.body);
+      responseData.forEach((rData) {
+        loadedRestaurants.add([
+          rData["id"],
+          rData["restaurent_name"],
+          rData["wallpaper"],
+          rData["ratings"],
+          // rData[""],
+          // rData[""],
+          // rData[""],
+        ]);
+      });
+      print(responseData);
+    } catch (error) {
+      print(error);
+    }
+  }
+}

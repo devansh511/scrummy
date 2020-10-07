@@ -26,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<Widget> _currentScreen = [
     FeedScreen(),
-    SearchScreen(),
+    SearchItems(),
     CheckoutScreen(),
     ProfileScreen()
   ];
@@ -161,67 +161,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-// BottomNavigationBar(
-//           opacity:
-//           backgroundColor: Colors.white,
-//           elevation: 20.0,
-//           items: [
-//             BottomNavigationBarItem(
-//               icon: Icon(
-//                 Icons.home,
-//                 color: Colors.grey,
-//               ),
-//               title: Text(
-//                 'Home',
-//                 style: TextStyle(
-//                   color: Colors.grey,
-//                   fontFamily: 'Raleway',
-//                   fontSize: 10,
-//                 ),
-//               ),
-//             ),
-//             BottomNavigationBarItem(
-//               icon: Icon(
-//                 Icons.search,
-//                 color: Colors.grey,
-//               ),
-//               title: Text(
-//                 'Search',
-//                 style: TextStyle(
-//                   color: Colors.grey,
-//                   fontFamily: 'Raleway',
-//                   fontSize: 25,
-//                 ),
-//               ),
-//             ),
-//             BottomNavigationBarItem(
-//               icon: Icon(
-//                 Icons.shopping_cart,
-//                 color: Colors.grey,
-//               ),
-//               title: Text(
-//                 'Orders',
-//                 style: TextStyle(
-//                   color: Colors.grey,
-//                   fontFamily: 'Raleway',
-//                   fontSize: 10,
-//                 ),
-//               ),
-//             ),
-//             BottomNavigationBarItem(
-//               icon: Icon(
-//                 Icons.person_outline,
-//                 color: Colors.grey,
-//               ),
-//               title: Text(
-//                 'Profile',
-//                 style: TextStyle(
-//                   color: Colors.grey,
-//                   fontFamily: 'Raleway',
-//                   fontSize: 10,
-//                 ),
-//               ),
-//             ),
-//           ],
-//         ),

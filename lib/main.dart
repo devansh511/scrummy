@@ -10,6 +10,7 @@ import './screens/edit_profile_screen.dart';
 import './screens/splash_screen.dart';
 import './providers/food.dart';
 import 'auth/verify.dart';
+import './providers/search.dart';
 
 void main() => runApp(MyApp());
 
@@ -26,6 +27,12 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider.value(
           value: Cart(),
+        ),
+        ChangeNotifierProvider.value(
+          value: Search(),
+        ),
+        ChangeNotifierProvider.value(
+          value: Restaurant(),
         ),
       ],
       child: Consumer<Auth>(

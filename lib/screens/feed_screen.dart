@@ -63,6 +63,8 @@ class _FeedScreenState extends State<FeedScreen> {
   Widget build(BuildContext context) {
     // final dishes = dishesData.items;
     return ListView(
+      shrinkWrap: true,
+      physics: const ClampingScrollPhysics(),
       children: [
         Column(
           children: <Widget>[
@@ -207,7 +209,7 @@ class _FeedScreenState extends State<FeedScreen> {
                       size: 15.0,
                       color: Colors.grey,
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -247,7 +249,7 @@ class _FeedScreenState extends State<FeedScreen> {
             ],
           ),
         ),
-        Restaurants(),
+        // RestaurantList(),
       ],
     );
   }
