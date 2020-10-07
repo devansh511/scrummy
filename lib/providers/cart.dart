@@ -1,7 +1,7 @@
 import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:async';
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart' as https;
 import 'dart:convert';
 import '../auth/auth.dart';
 import '../constants.dart';
@@ -27,8 +27,9 @@ class Cart with ChangeNotifier {
   Future<int> isAdded(String foodId) async {
     int check = 0;
     try {
-      final url = "http://$kUrl.ngrok.io/api/orderstatus/${int.parse(foodId)}/";
-      final response = await http.get(url, headers: {
+      final url =
+          "https://$kUrl.ngrok.io/api/orderstatus/${int.parse(foodId)}/";
+      final response = await https.get(url, headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Authorization': 'Bearer $accessToken',
@@ -47,16 +48,19 @@ class Cart with ChangeNotifier {
   }
 
   Future<void> addToCart(String foodId) async {
+    print(foodId);
     print("executing addToCart");
     try {
       print("try executing");
-      final url = "http://$kUrl.ngrok.io/api/add-to-cart/${int.parse(foodId)}/";
-      final response = await http.post(url, headers: {
+      final url =
+          "https://$kUrl.ngrok.io/api/add-to-cart/${int.parse(foodId)}/";
+      final response = await https.post(url, headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Authorization': 'Bearer $accessToken',
       });
       final responseData = json.decode(response.body);
+      notifyListeners();
       print(responseData);
     } catch (error) {
       print('An error occured');
@@ -66,14 +70,16 @@ class Cart with ChangeNotifier {
 
   Future<void> increaseQuantity(String foodId) async {
     try {
-      final url = "http://$kUrl.ngrok.io/api/add-to-cart/${int.parse(foodId)}/";
-      final response = await http.get(url, headers: {
+      final url =
+          "https://$kUrl.ngrok.io/api/add-to-cart/${int.parse(foodId)}/";
+      final response = await https.get(url, headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Authorization': 'Bearer $accessToken',
       });
       final responseData = json.decode(response.body);
       quant = responseData["quantity"].toString();
+      notifyListeners();
       print(responseData);
     } catch (error) {
       print(error);
@@ -82,15 +88,17 @@ class Cart with ChangeNotifier {
 
   Future<void> decreaseQuantity(String foodId) async {
     try {
-      final url = "http://$kUrl.ngrok.io/api/add-to-cart/${int.parse(foodId)}/";
-      final response = await http.patch(url, headers: {
+      final url =
+          "https://$kUrl.ngrok.io/api/add-to-cart/${int.parse(foodId)}/";
+      final response = await https.patch(url, headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Authorization': 'Bearer $accessToken',
       });
       final responseData = json.decode(response.body);
-      print(responseData);
       quant = responseData["quantity"].toString();
+      notifyListeners();
+      print(responseData);
     } catch (error) {
       print(error);
     }
@@ -98,13 +106,15 @@ class Cart with ChangeNotifier {
 
   Future<void> deleteItems(String foodId) async {
     try {
-      final url = "http://$kUrl.ngrok.io/api/add-to-cart/${int.parse(foodId)}/";
-      final response = await http.delete(url, headers: {
+      final url =
+          "https://$kUrl.ngrok.io/api/add-to-cart/${int.parse(foodId)}/";
+      final response = await https.delete(url, headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Authorization': 'Bearer $accessToken',
       });
       final responseData = json.decode(response.body);
+      notifyListeners();
       print(responseData);
     } catch (error) {
       print(error);
@@ -113,13 +123,14 @@ class Cart with ChangeNotifier {
 
   Future<void> emptyCart() async {
     try {
-      final url = "http://$kUrl.ngrok.io/api/add-to-cart/clearcart/";
-      final response = await http.delete(url, headers: {
+      final url = "https://$kUrl.ngrok.io/api/add-to-cart/clearcart/";
+      final response = await https.delete(url, headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Authorization': 'Bearer $accessToken',
       });
       final responseData = json.decode(response.body);
+      notifyListeners();
       print(responseData);
     } catch (error) {
       print(error);
@@ -130,8 +141,8 @@ class Cart with ChangeNotifier {
     print("executing display cart");
     try {
       print("try executing");
-      final url = "http://$kUrl.ngrok.io/api/cart/showcart/";
-      final response = await http.get(url, headers: {
+      final url = "https://$kUrl.ngrok.io/api/cart/show/";
+      final response = await https.get(url, headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Authorization': 'Bearer $accessToken',
@@ -154,9 +165,18 @@ class Cart with ChangeNotifier {
           fData["offer"],
         ]);
       });
+      notifyListeners();
       print(loadedFoods);
     } catch (error) {
       print(error);
     }
   }
 }
+
+// class Checkout with ChangeNotifier {
+//   Future<void> checkout() async {
+//     try {} catch (error) {
+//       print(error);
+//     }
+//   }
+// }

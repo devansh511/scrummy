@@ -55,7 +55,7 @@ class _RestaurantsState extends State<Restaurants> {
                           ClipRRect(
                             borderRadius: BorderRadius.circular(10.0),
                             child: Image(
-                              width: 148.0,
+                              width: 147.0,
                               image: NetworkImage(
                                 '${Provider.of<Restaurant>(context).loadedRestaurants[widget.idx][2]}',
                               ),

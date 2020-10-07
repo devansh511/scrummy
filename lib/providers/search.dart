@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../constants.dart';
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart' as https;
 import 'package:async/async.dart';
 import 'dart:convert';
 import 'package:provider/provider.dart';
@@ -12,8 +12,8 @@ class Search extends ChangeNotifier {
     print("searching food");
     try {
       print("try of search");
-      final url = "http://$kUrl.ngrok.io/api/foodlist/$food/";
-      final response = await http.get(url, headers: {
+      final url = "https://$kUrl.ngrok.io/api/foodlist/$food/";
+      final response = await https.get(url, headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       });
@@ -34,6 +34,7 @@ class Search extends ChangeNotifier {
           sData["rest_foods_id"].toString(),
         ]);
       });
+      notifyListeners();
       print(responseData);
     } catch (error) {
       print(error);

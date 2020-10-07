@@ -104,7 +104,7 @@ class _ListItemsState extends State<ListItems> {
                             children: <TextSpan>[
                               TextSpan(
                                 text:
-                                    '${Provider.of<Cart>(context, listen: false).loadedFoods[widget.i][4]}',
+                                    '${Provider.of<Cart>(context, listen: false).loadedFoods[widget.i][4]}mins',
                                 style: TextStyle(
                                   color: Colors.grey[700],
                                   fontFamily: 'Raleway',
@@ -125,7 +125,7 @@ class _ListItemsState extends State<ListItems> {
                             ),
                           ),
                           child: Text(
-                            '20% OFF',
+                            '${Provider.of<Cart>(context, listen: false).loadedFoods[widget.i][5]}% OFF',
                             style: TextStyle(
                               color: Colors.orange,
                               fontFamily: 'Raleway',
@@ -136,9 +136,9 @@ class _ListItemsState extends State<ListItems> {
                         ),
                       ],
                     ),
-                    SizedBox(
-                      width: 20.0,
-                    ),
+                    // SizedBox(
+                    //   width: 10.0,
+                    // ),
                     RawMaterialButton(
                       child: Text(
                         '-',
@@ -148,17 +148,17 @@ class _ListItemsState extends State<ListItems> {
                         ),
                       ),
                       onPressed: () {
-                        setState(() {
-                          if (int.parse(quant) > 1) {
-                            Provider.of<Cart>(context, listen: false)
-                                .decreaseQuantity(
-                              Provider.of<Food>(
-                                context,
-                                listen: false,
-                              ).loadedFoods[widget.i][0].toString(),
-                            );
-                          }
-                        });
+                        // setState(() {
+                        if (int.parse(quant) > 1) {
+                          Provider.of<Cart>(context, listen: false)
+                              .decreaseQuantity(
+                            Provider.of<Food>(
+                              context,
+                              listen: false,
+                            ).loadedFoods[widget.i][0],
+                          );
+                        }
+                        // });
                       },
                       elevation: 6.0,
                       constraints: BoxConstraints.tightFor(
@@ -184,15 +184,15 @@ class _ListItemsState extends State<ListItems> {
                         ),
                       ),
                       onPressed: () {
-                        setState(() {
-                          Provider.of<Cart>(context, listen: false)
-                              .increaseQuantity(
-                            Provider.of<Food>(
-                              context,
-                              listen: false,
-                            ).loadedFoods[widget.i][0].toString(),
-                          );
-                        });
+                        // setState(() {
+                        Provider.of<Cart>(context, listen: false)
+                            .increaseQuantity(
+                          Provider.of<Food>(
+                            context,
+                            listen: false,
+                          ).loadedFoods[widget.i][0],
+                        );
+                        // });
                       },
                       elevation: 6.0,
                       constraints: BoxConstraints.tightFor(
@@ -238,11 +238,11 @@ class _CartScreenState extends State<CartScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future.delayed(Duration.zero, () {
+    Future.delayed(Duration.zero, () async {
       print('provider calling');
-      display();
+      await Provider.of<Cart>(context).displayCart();
       print('provider called');
-      print('${Provider.of<Cart>(context, listen: false).loadedFoods}');
+      print('${Provider.of<Cart>(context).loadedFoods}');
     });
     _scrollController = ScrollController();
   }
@@ -290,9 +290,7 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                       physics: const ClampingScrollPhysics(),
                       shrinkWrap: true,
-                      itemCount: Provider.of<Cart>(context, listen: false)
-                          .loadedFoods
-                          .length,
+                      itemCount: Provider.of<Cart>(context).loadedFoods.length,
                       itemBuilder: (_, i) => ListItems(i),
                     ),
                     Text(
@@ -441,9 +439,11 @@ class _CartScreenState extends State<CartScreen> {
                               color: Colors.orange,
                               onPressed: () {
                                 Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => HomeScreen()));
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => HomeScreen(),
+                                  ),
+                                );
                               },
                             ),
                           ],

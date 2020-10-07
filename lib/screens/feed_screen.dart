@@ -31,7 +31,7 @@ class _FeedScreenState extends State<FeedScreen> {
     }
   }
 
-  void _fetchR() async {
+  Future<void> _fetchR() async {
     try {
       await Provider.of<Restaurant>(context, listen: false).fetchRestaurants();
     } catch (error) {
@@ -39,9 +39,11 @@ class _FeedScreenState extends State<FeedScreen> {
     }
   }
 
-  void display() async {
+  Future<void> display() async {
     try {
+      print('displaying cart');
       await Provider.of<Cart>(context, listen: false).displayCart();
+      print('displayed cart');
     } catch (error) {
       print(error);
     }
@@ -50,10 +52,17 @@ class _FeedScreenState extends State<FeedScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    setState(() {
-      _getLoc();
-      location();
+    Future.delayed(Duration.zero, () async {
+      // try {
+      await Provider.of<Restaurant>(context, listen: false).fetchRestaurants();
+      // } catch (error) {
+      //   print(error);
+      // }
     });
+    // setState(() {
+    //   _getLoc();
+    //   location();
+    // });
 
     super.initState();
   }
@@ -103,7 +112,7 @@ class _FeedScreenState extends State<FeedScreen> {
                 trailing: GestureDetector(
                   child: Icon(Icons.shopping_cart),
                   onTap: () {
-                    // display();
+                    display();
                     Navigator.push(
                       context,
                       MaterialPageRoute(

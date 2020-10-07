@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart' as https;
 import 'dart:convert';
 import 'dart:async';
 import '../constants.dart';
@@ -34,10 +34,10 @@ class Food with ChangeNotifier {
   List loadedFoods = [];
 
   Future<void> fetchFood() async {
-    final url = "http://$kUrl.ngrok.io/api/foodlist/";
+    final url = "https://$kUrl.ngrok.io/api/foodlist/";
 
     try {
-      final response = await http.get(url);
+      final response = await https.get(url);
       print(response.body);
       var extractedData =
           json.decode(response.body); // as Map<String, dynamic>;
@@ -60,10 +60,10 @@ class Food with ChangeNotifier {
           fData["restname"],
         ]);
       });
+      notifyListeners();
       print(loadedFoods);
       print(loadedFoods.length);
       // loadedFoods = parsedJson.map((i)=>Food.fromJson(i)).toList();
-      notifyListeners();
       //print(FoodDetails.foodName);
     } catch (error) {
       throw error;
@@ -71,10 +71,10 @@ class Food with ChangeNotifier {
   }
 
   Future<void> fetchCuisines(String cuisine) async {
-    final url = "http://$kUrl.ngrok.io/api/foodlist/$cuisine/";
+    final url = "https://$kUrl.ngrok.io/api/foodlist/$cuisine/";
 
     try {
-      final response = await http.get(url);
+      final response = await https.get(url);
       print(response.body);
       var extractedData = json.decode(response.body);
       // print(extractedData);
@@ -96,27 +96,29 @@ class Food with ChangeNotifier {
           fData["restname"],
         ]);
       });
+      notifyListeners();
       print(loadedFoods);
       print(loadedFoods.length);
-      notifyListeners();
     } catch (error) {
       throw error;
     }
+    notifyListeners();
   }
 }
 
 class Restaurant with ChangeNotifier {
   List loadedRestaurants = [];
-  List loadedRestFood = [];
+  List loadedFoods = [];
 
   Future<void> fetchRestaurants() async {
     try {
-      final url = "http://$kUrl.ngrok.io/api/restaurantlist/";
-      final response = await http.get(url, headers: {
+      final url = "https://$kUrl.ngrok.io/api/restaurantlist/";
+      final response = await https.get(url, headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       });
       final responseData = json.decode(response.body);
+      loadedRestaurants.clear();
       responseData.forEach((rData) {
         loadedRestaurants.add([
           rData["id"].toString(),
@@ -125,6 +127,7 @@ class Restaurant with ChangeNotifier {
           rData["ratings"],
         ]);
       });
+      notifyListeners();
       print(responseData);
     } catch (error) {
       print(error);
@@ -133,16 +136,16 @@ class Restaurant with ChangeNotifier {
 
   Future<void> fetchRestFood(String restName) async {
     try {
-      final url = "http://$kUrl.ngrok.io/api/foodlist/$restName/";
-      final response = await http.get(url, headers: {
+      final url = "https://$kUrl.ngrok.io/api/foodlist/$restName/";
+      final response = await https.get(url, headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       });
       final responseData = json.decode(response.body);
       print(responseData);
-      loadedRestFood.clear();
+      loadedFoods.clear();
       responseData.forEach((fData) {
-        loadedRestFood.add([
+        loadedFoods.add([
           fData["id"].toString(),
           fData["name"],
           fData["image"],
@@ -155,6 +158,8 @@ class Restaurant with ChangeNotifier {
           fData["restname"],
         ]);
       });
+      notifyListeners();
+      print(loadedFoods);
     } catch (error) {
       print(error);
     }

@@ -197,10 +197,10 @@ class SearchItems extends StatelessWidget {
                     onSubmitted: (value) {
                       Provider.of<Search>(context, listen: false)
                           .searchFood(value);
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SearchItems()));
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //         builder: (context) => SearchItems()));
                       // Navigator.pushReplacement(
                       //     context,
                       //     MaterialPageRoute(

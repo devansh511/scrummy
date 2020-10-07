@@ -315,6 +315,7 @@ class Auth with ChangeNotifier {
           throw HttpException(responseData["error"]);
         }
       }
+      notifyListeners();
       print(email);
     } catch (error) {
       throw error;
@@ -334,6 +335,7 @@ class Auth with ChangeNotifier {
             "accept": "application/json"
           });
       final responseData = json.decode(response.body);
+      notifyListeners();
       print(responseData);
       // if (response.body.isNotEmpty) {
       //   if (responseData["error"] != null) {
@@ -393,7 +395,6 @@ class Auth with ChangeNotifier {
     print('Token');
     print(accessToken);
     print('Token');
-
     return accessToken != null;
   }
 
@@ -405,10 +406,10 @@ class Auth with ChangeNotifier {
     //   _authTimer.cancel();
     //   _authTimer = null;
     // }
-    notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     // prefs.remove('userData');
     prefs.clear();
+    notifyListeners();
   }
 
   // void _autoLogout() {
