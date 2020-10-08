@@ -34,30 +34,30 @@ class EmptyCart extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  FlatButton(
-                    padding: EdgeInsets.symmetric(horizontal: 29.0),
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                      side: BorderSide(
-                        width: 1.0,
-                        color: Colors.orange,
-                      ),
-                    ),
-                    child: Text(
-                      'See my cart',
-                      style: TextStyle(
-                        color: Colors.orange,
-                        fontFamily: 'Raleway',
-                        fontSize: 15.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    onPressed: () {},
-                  ),
-                  SizedBox(
-                    width: 20.0,
-                  ),
+                  // FlatButton(
+                  //   padding: EdgeInsets.symmetric(horizontal: 29.0),
+                  //   color: Colors.white,
+                  //   shape: RoundedRectangleBorder(
+                  //     borderRadius: BorderRadius.circular(25.0),
+                  //     side: BorderSide(
+                  //       width: 1.0,
+                  //       color: Colors.orange,
+                  //     ),
+                  //   ),
+                  //   child: Text(
+                  //     'See my cart',
+                  //     style: TextStyle(
+                  //       color: Colors.orange,
+                  //       fontFamily: 'Raleway',
+                  //       fontSize: 15.0,
+                  //       fontWeight: FontWeight.bold,
+                  //     ),
+                  //   ),
+                  //   onPressed: () {},
+                  // ),
+                  // SizedBox(
+                  //   width: 20.0,
+                  // ),
                   FlatButton(
                     padding: EdgeInsets.symmetric(horizontal: 27.0),
                     color: Colors.orange,

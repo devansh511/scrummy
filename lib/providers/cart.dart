@@ -19,10 +19,16 @@ import '../constants.dart';
 //     // @required this.price,
 //   });
 // }
-String quant = "1";
 
 class Cart with ChangeNotifier {
   List loadedFoods = [];
+  String quant = "1";
+  String amount = "0";
+  String disAmount = "0";
+
+  String get quantity {
+    return quant;
+  }
 
   Future<int> isAdded(String foodId) async {
     int check = 0;
@@ -69,6 +75,7 @@ class Cart with ChangeNotifier {
   }
 
   Future<void> increaseQuantity(String foodId) async {
+    print(foodId);
     try {
       final url =
           "https://$kUrl.ngrok.io/api/add-to-cart/${int.parse(foodId)}/";
@@ -79,6 +86,7 @@ class Cart with ChangeNotifier {
       });
       final responseData = json.decode(response.body);
       quant = responseData["quantity"].toString();
+      print(quant);
       notifyListeners();
       print(responseData);
     } catch (error) {
@@ -87,6 +95,7 @@ class Cart with ChangeNotifier {
   }
 
   Future<void> decreaseQuantity(String foodId) async {
+    print(foodId);
     try {
       final url =
           "https://$kUrl.ngrok.io/api/add-to-cart/${int.parse(foodId)}/";
@@ -97,6 +106,7 @@ class Cart with ChangeNotifier {
       });
       final responseData = json.decode(response.body);
       quant = responseData["quantity"].toString();
+      print(quant);
       notifyListeners();
       print(responseData);
     } catch (error) {
@@ -157,12 +167,12 @@ class Cart with ChangeNotifier {
       loadedFoods.clear();
       responseData.forEach((fData) {
         loadedFoods.add([
-          fData["id"].toString(),
+          fData["food_id"].toString(),
           fData["item_name"],
           fData["image"],
           fData["get_total_item_price"].toString(),
-          fData["delivery_time"],
-          fData["offer"],
+          fData["delivery_time"].toString(),
+          fData["offer"].toString(),
         ]);
       });
       notifyListeners();
@@ -171,12 +181,57 @@ class Cart with ChangeNotifier {
       print(error);
     }
   }
-}
 
-// class Checkout with ChangeNotifier {
-//   Future<void> checkout() async {
-//     try {} catch (error) {
-//       print(error);
-//     }
-//   }
-// }
+  Future<void> getAmount() async {
+    try {
+      final url = "https://$kUrl.ngrok.io/api/ordertotal/";
+      final response = await https.get(url, headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      });
+      final responseData = json.decode(response.body);
+      amount = responseData["amount"].toString();
+      disAmount = responseData["discount_price"].toString();
+      notifyListeners();
+      print(responseData);
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  Future<void> checkout() async {
+    try {
+      final url = "https://$kUrl.ngrok.io/api/cart/checkout/";
+      final response = await https.post(url, headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      });
+      final responseData = json.decode(response.body);
+      print(responseData);
+      notifyListeners();
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  Future<void> myOrders() async {
+    try {
+      print('de>>>');
+      final url = "https://$kUrl.ngrok.io/api/myorders/";
+      final response = await https.get(url, headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken'
+      });
+      print('<<de');
+      final responseData = json.decode(response.body);
+      notifyListeners();
+      print(responseData);
+    } catch (error) {
+      print("@@@");
+      print(error);
+    }
+  }
+}

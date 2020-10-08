@@ -4,6 +4,8 @@ import 'package:scrummy/screens/home_screen.dart';
 import '../screens/search_screen.dart';
 import 'package:provider/provider.dart';
 import '../providers/search.dart';
+import '../providers/cart.dart';
+import '../providers/food.dart';
 
 class SearchList extends StatefulWidget {
   final int index;
@@ -125,7 +127,7 @@ class _SearchListState extends State<SearchList> {
                         borderRadius: BorderRadius.circular(25.0),
                         side: BorderSide(
                           width: 1.0,
-                          color: Colors.grey,
+                          color: Colors.orange,
                         ),
                       ),
                       child: Row(
@@ -133,13 +135,13 @@ class _SearchListState extends State<SearchList> {
                         children: [
                           Icon(
                             Icons.shopping_cart,
-                            color: Colors.grey,
+                            color: Colors.orange,
                             size: 18.0,
                           ),
                           Text(
                             'Add',
                             style: TextStyle(
-                              color: Colors.grey,
+                              color: Colors.orange,
                               fontFamily: 'Raleway',
                               fontSize: 12.0,
                               fontWeight: FontWeight.bold,
@@ -147,7 +149,11 @@ class _SearchListState extends State<SearchList> {
                           ),
                         ],
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        Provider.of<Cart>(context, listen: false).addToCart(
+                            Provider.of<Search>(context, listen: false)
+                                .searchedFoods[widget.index][0]);
+                      },
                     ),
                   ],
                 )

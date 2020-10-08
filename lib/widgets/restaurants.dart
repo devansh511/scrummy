@@ -10,6 +10,8 @@ class Restaurants extends StatefulWidget {
   _RestaurantsState createState() => _RestaurantsState();
 }
 
+bool isLoad = false;
+
 class _RestaurantsState extends State<Restaurants> {
   // void _fetchR() async {
   //   try {
@@ -20,8 +22,13 @@ class _RestaurantsState extends State<Restaurants> {
   // }
   void _fetchRestFood(String restName) async {
     try {
-      await Provider.of<Restaurant>(context, listen: false)
-          .fetchRestFood(restName);
+      setState(() {
+        isLoad = true;
+      });
+      await Provider.of<Food>(context, listen: false).fetchRestFood(restName);
+      setState(() {
+        isLoad = false;
+      });
     } catch (error) {
       print(error);
     }
@@ -57,7 +64,7 @@ class _RestaurantsState extends State<Restaurants> {
                             child: Image(
                               width: 147.0,
                               image: NetworkImage(
-                                '${Provider.of<Restaurant>(context).loadedRestaurants[widget.idx][2]}',
+                                '${Provider.of<Food>(context).loadedRestaurants[widget.idx][2]}',
                               ),
                               filterQuality: FilterQuality.high,
                               fit: BoxFit.fill,
@@ -72,7 +79,7 @@ class _RestaurantsState extends State<Restaurants> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  '${Provider.of<Restaurant>(context).loadedRestaurants[widget.idx][1]}',
+                                  '${Provider.of<Food>(context).loadedRestaurants[widget.idx][1]}',
                                   style: TextStyle(
                                     fontFamily: 'Raleway',
                                     color: Colors.grey[800],
@@ -81,7 +88,7 @@ class _RestaurantsState extends State<Restaurants> {
                                   textAlign: TextAlign.left,
                                 ),
                                 Text(
-                                  '★ ${Provider.of<Restaurant>(context).loadedRestaurants[widget.idx][3]}',
+                                  '★ ${Provider.of<Food>(context).loadedRestaurants[widget.idx][3]}',
                                   style: TextStyle(
                                     fontFamily: 'Raleway',
                                     color: Colors.grey,
@@ -98,9 +105,8 @@ class _RestaurantsState extends State<Restaurants> {
                     ),
                   ),
                   onTap: () {
-                    _fetchRestFood(
-                        Provider.of<Restaurant>(context, listen: false)
-                            .loadedRestaurants[widget.idx][1]);
+                    _fetchRestFood(Provider.of<Food>(context, listen: false)
+                        .loadedRestaurants[widget.idx][1]);
                   },
                 ),
               ],
@@ -119,7 +125,7 @@ class RestaurantList extends StatelessWidget {
       shrinkWrap: true,
       physics: const ClampingScrollPhysics(),
       scrollDirection: Axis.horizontal,
-      itemCount: Provider.of<Restaurant>(context).loadedRestaurants.length,
+      itemCount: Provider.of<Food>(context).loadedRestaurants.length,
       itemBuilder: (_, i) => Restaurants(i),
     );
   }

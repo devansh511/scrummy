@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:scrummy/screens/feed_screen.dart';
 import 'package:scrummy/screens/home_screen.dart';
 import 'package:scrummy/screens/location_screen.dart';
@@ -17,6 +16,41 @@ class ListItems extends StatefulWidget {
 }
 
 class _ListItemsState extends State<ListItems> {
+  ScrollController _scrollController;
+  bool isLoading = false;
+
+  void display() async {
+    try {
+      print("display called");
+      isLoading = true;
+      await Provider.of<Cart>(context, listen: false).displayCart();
+      isLoading = false;
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.delayed(Duration.zero, () async {
+      print('provider calling');
+      await Provider.of<Cart>(context, listen: false).displayCart();
+      await Provider.of<Cart>(context, listen: false).getAmount();
+      print('provider called');
+      print('${Provider.of<Cart>(context, listen: false).loadedFoods}');
+    });
+    _scrollController = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -76,9 +110,10 @@ class _ListItemsState extends State<ListItems> {
                     GestureDetector(
                       onTap: () {
                         Provider.of<Cart>(context, listen: false).deleteItems(
-                            Provider.of<Food>(context, listen: false)
+                            Provider.of<Cart>(context, listen: false)
                                 .loadedFoods[widget.i][0]);
-                        // display();
+                        Provider.of<Cart>(context, listen: false).getAmount();
+                        display();
                       },
                       child: Icon(
                         Icons.delete_outline,
@@ -148,17 +183,22 @@ class _ListItemsState extends State<ListItems> {
                         ),
                       ),
                       onPressed: () {
-                        // setState(() {
-                        if (int.parse(quant) > 1) {
-                          Provider.of<Cart>(context, listen: false)
-                              .decreaseQuantity(
-                            Provider.of<Food>(
-                              context,
-                              listen: false,
-                            ).loadedFoods[widget.i][0],
-                          );
-                        }
-                        // });
+                        setState(() {
+                          if (int.parse(
+                                  Provider.of<Cart>(context, listen: false)
+                                      .quant) >
+                              1) {
+                            Provider.of<Cart>(context, listen: false)
+                                .decreaseQuantity(
+                              Provider.of<Cart>(
+                                context,
+                                listen: false,
+                              ).loadedFoods[widget.i][0],
+                            );
+                            Provider.of<Cart>(context, listen: false)
+                                .getAmount();
+                          }
+                        });
                       },
                       elevation: 6.0,
                       constraints: BoxConstraints.tightFor(
@@ -170,7 +210,9 @@ class _ListItemsState extends State<ListItems> {
                       ),
                     ),
                     Text(
-                      '$quant',
+                      Provider.of<Cart>(context).quant == null
+                          ? "1"
+                          : '${Provider.of<Cart>(context).quant}',
                       style: TextStyle(
                         color: Colors.orange,
                       ),
@@ -184,15 +226,18 @@ class _ListItemsState extends State<ListItems> {
                         ),
                       ),
                       onPressed: () {
-                        // setState(() {
-                        Provider.of<Cart>(context, listen: false)
-                            .increaseQuantity(
-                          Provider.of<Food>(
-                            context,
-                            listen: false,
-                          ).loadedFoods[widget.i][0],
-                        );
-                        // });
+                        setState(() {
+                          Provider.of<Cart>(context, listen: false)
+                              .increaseQuantity(
+                            Provider.of<Cart>(
+                              context,
+                              listen: false,
+                            ).loadedFoods[widget.i][0],
+                          );
+                          Provider.of<Cart>(context, listen: false).getAmount();
+                          print(
+                              '${Provider.of<Cart>(context, listen: false).loadedFoods}');
+                        });
                       },
                       elevation: 6.0,
                       constraints: BoxConstraints.tightFor(
@@ -214,50 +259,13 @@ class _ListItemsState extends State<ListItems> {
   }
 }
 
-class CartScreen extends StatefulWidget {
-  @override
-  _CartScreenState createState() => _CartScreenState();
-}
+bool isLoading = false;
 
-class _CartScreenState extends State<CartScreen> {
-  ScrollController _scrollController;
-  bool isLoading = false;
-
-  void display() async {
-    try {
-      print("display called");
-      isLoading = true;
-      await Provider.of<Cart>(context, listen: false).displayCart();
-      isLoading = false;
-    } catch (error) {
-      print(error);
-    }
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    Future.delayed(Duration.zero, () async {
-      print('provider calling');
-      await Provider.of<Cart>(context).displayCart();
-      print('provider called');
-      print('${Provider.of<Cart>(context).loadedFoods}');
-    });
-    _scrollController = ScrollController();
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    _scrollController.dispose();
-    super.dispose();
-  }
-
+class CartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: isLoading
+      body: (isLoading)
           ? CircularProgressIndicator(
               backgroundColor: Colors.white,
               valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
@@ -272,13 +280,48 @@ class _CartScreenState extends State<CartScreen> {
                       margin: EdgeInsets.only(left: 10.0),
                       child: Row(
                         children: <Widget>[
-                          Text(
-                            'My Cart',
-                            style: TextStyle(
-                              fontFamily: 'Raleway',
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.w900,
-                              fontSize: 17.0,
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'My Cart',
+                                  style: TextStyle(
+                                    fontFamily: 'Raleway',
+                                    color: Colors.grey[600],
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 17.0,
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Provider.of<Cart>(context, listen: false)
+                                        .emptyCart();
+                                    Provider.of<Cart>(context, listen: false)
+                                        .getAmount();
+                                    Provider.of<Cart>(context, listen: false)
+                                        .displayCart();
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(4.0),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(25.0),
+                                      border: Border.all(
+                                        color: Colors.orange,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'Clear cart',
+                                      style: TextStyle(
+                                        fontFamily: 'Raleway',
+                                        color: Colors.orange,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -311,7 +354,7 @@ class _CartScreenState extends State<CartScreen> {
                         ),
                       ),
                       trailing: Text(
-                        '4',
+                        '${Provider.of<Cart>(context).loadedFoods.length}',
                         style: TextStyle(
                           color: Colors.grey[900],
                           fontFamily: 'Raleway',
@@ -330,7 +373,26 @@ class _CartScreenState extends State<CartScreen> {
                         ),
                       ),
                       trailing: Text(
-                        '₹189',
+                        '₹${Provider.of<Cart>(context).amount}',
+                        style: TextStyle(
+                          color: Colors.grey[900],
+                          fontFamily: 'Raleway',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17.0,
+                        ),
+                      ),
+                    ),
+                    ListTile(
+                      title: Text(
+                        'Discounted Amount',
+                        style: TextStyle(
+                          color: Colors.grey[700],
+                          fontFamily: 'Raleway',
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      trailing: Text(
+                        '₹${Provider.of<Cart>(context).disAmount}',
                         style: TextStyle(
                           color: Colors.grey[900],
                           fontFamily: 'Raleway',
@@ -363,10 +425,8 @@ class _CartScreenState extends State<CartScreen> {
                 ),
               ),
               onPressed: () {
-                Provider.of<Cart>(context, listen: false).emptyCart();
-                display();
-                // Navigator.pushReplacement(context,
-                //     MaterialPageRoute(builder: (context) => HomeScreen()));
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()));
               },
             ),
             FlatButton(
@@ -384,7 +444,7 @@ class _CartScreenState extends State<CartScreen> {
                 ),
               ),
               onPressed: () {
-                display();
+                Provider.of<Cart>(context, listen: false).checkout();
                 return showDialog<void>(
                   context: context,
                   // barrierDismissible: false, // user must tap button!

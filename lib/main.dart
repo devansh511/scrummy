@@ -31,14 +31,11 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(
           value: Search(),
         ),
-        ChangeNotifierProvider.value(
-          value: Restaurant(),
-        ),
       ],
       child: Consumer<Auth>(
         builder: (ctx, auth, _) => MaterialApp(
           home: auth.isAuth
-              ? (addr2 == null ? LocationScreen() : HomeScreen())
+              ? HomeScreen()
               : FutureBuilder(
                   future: auth.autoLogin(),
                   builder: (ctx, authResultSnapshot) =>
@@ -49,9 +46,6 @@ class MyApp extends StatelessWidget {
                 ),
         ),
       ),
-      // theme: ThemeData(
-      //   canvasColor: Colors.transparent,
-      // ),
     );
   }
 }

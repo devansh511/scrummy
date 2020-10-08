@@ -14,6 +14,7 @@ import '../screens/splash_screen.dart';
 
 String e_mail;
 String p_word;
+String name;
 
 class AuthScreen extends StatelessWidget {
   @override
@@ -377,6 +378,7 @@ class _AuthPageState extends State<AuthPage> {
                         // },
                         onChanged: (value) {
                           _authData['name'] = value;
+                          name = value;
                         },
                       ),
               ),

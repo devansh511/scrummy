@@ -16,6 +16,8 @@ class Auth with ChangeNotifier {
   DateTime _expiryDate;
   String _userId;
   Timer _authTimer;
+  String profName;
+  String profEmail;
   // String kUrl = "a078d6616f5e";
 
   // String get token {
@@ -226,6 +228,7 @@ class Auth with ChangeNotifier {
           "expiryTime": _expiryDate.toIso8601String()
         },
       );
+
       prefs.setString('userData', userData);
       notifyListeners();
     } catch (error) {
@@ -347,6 +350,24 @@ class Auth with ChangeNotifier {
       throw error;
     }
     return check;
+  }
+
+  Future<void> getProfile() async {
+    try {
+      final url = 'https://$kUrl.ngrok.io/api/accounts/';
+      final response = await http.get(url, headers: {
+        "content-type": "application/json",
+        "accept": "application/json",
+        'Authorization': 'Bearer $accessToken',
+      });
+      final responseData = json.decode(response.body);
+      profEmail = responseData["email"];
+      profName = responseData["profile"]["name"];
+      notifyListeners();
+      print(responseData);
+    } catch (error) {
+      print(error);
+    }
   }
 
   // Future<bool> autoLogin() async {

@@ -7,11 +7,19 @@ class Cuisines extends StatefulWidget {
   _CuisinesState createState() => _CuisinesState();
 }
 
+bool isLoadin = false;
+
 class _CuisinesState extends State<Cuisines> {
   void _fetchCuisine(String cuisine) async {
     print("<<<<<<<<<<<<<<<<<<<");
     try {
+      setState(() {
+        isLoadin = true;
+      });
       await Provider.of<Food>(context, listen: false).fetchCuisines(cuisine);
+      setState(() {
+        isLoadin = false;
+      });
     } catch (error) {
       print(error);
     }

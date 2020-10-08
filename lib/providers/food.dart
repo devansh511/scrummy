@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as https;
 import 'dart:convert';
 import 'dart:async';
+import 'package:provider/provider.dart';
 import '../constants.dart';
 
 class FoodDetails with ChangeNotifier {
@@ -104,11 +105,8 @@ class Food with ChangeNotifier {
     }
     notifyListeners();
   }
-}
 
-class Restaurant with ChangeNotifier {
   List loadedRestaurants = [];
-  List loadedFoods = [];
 
   Future<void> fetchRestaurants() async {
     try {
@@ -158,6 +156,7 @@ class Restaurant with ChangeNotifier {
           fData["restname"],
         ]);
       });
+
       notifyListeners();
       print(loadedFoods);
     } catch (error) {

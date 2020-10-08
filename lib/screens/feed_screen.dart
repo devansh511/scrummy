@@ -23,6 +23,8 @@ class _FeedScreenState extends State<FeedScreen> {
     return Provider.of<Auth>(context, listen: false).isAuth;
   }
 
+  bool _isLoading = false;
+
   String location() {
     if (addr2 == null) {
       return "Food will be delivered here!";
@@ -33,7 +35,13 @@ class _FeedScreenState extends State<FeedScreen> {
 
   Future<void> _fetchR() async {
     try {
-      await Provider.of<Restaurant>(context, listen: false).fetchRestaurants();
+      // setState(() {
+      //   _isLoading = true;
+      // });
+      await Provider.of<Food>(context, listen: false).fetchRestaurants();
+      // setState(() {
+      //   _isLoading = false;
+      // });
     } catch (error) {
       print(error);
     }
@@ -54,7 +62,8 @@ class _FeedScreenState extends State<FeedScreen> {
     // TODO: implement initState
     Future.delayed(Duration.zero, () async {
       // try {
-      await Provider.of<Restaurant>(context, listen: false).fetchRestaurants();
+      await Provider.of<Food>(context, listen: false).fetchRestaurants();
+      await display();
       // } catch (error) {
       //   print(error);
       // }
@@ -70,7 +79,13 @@ class _FeedScreenState extends State<FeedScreen> {
   void _fetch() async {
     print("<<<<<<<<<<<<<<<<<<<");
     try {
-      await Provider.of<Food>(context).fetchFood();
+      setState(() {
+        _isLoading = true;
+      });
+      await Provider.of<Food>(context, listen: false).fetchFood();
+      setState(() {
+        _isLoading = false;
+      });
     } catch (error) {
       print(error);
     }
@@ -235,7 +250,14 @@ class _FeedScreenState extends State<FeedScreen> {
               ),
             ],
           ),
-          DishesGrid(),
+          if (isLoad == true || _isLoading == true)
+            Center(
+              child: CircularProgressIndicator(
+                  backgroundColor: Colors.white,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.orange)),
+            )
+          else
+            DishesGrid(),
           Container(
             margin: EdgeInsets.only(left: 10.0, top: 15.0),
             child: Row(

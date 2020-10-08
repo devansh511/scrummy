@@ -3,6 +3,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:scrummy/screens/cart_screen.dart';
 import 'package:scrummy/widgets/order_list_view.dart';
 import '../widgets/food_list_view.dart';
+import 'package:provider/provider.dart';
+import '../screens/empty_cart_screen.dart';
+import '../providers/cart.dart';
 
 class CheckoutScreen extends StatefulWidget {
   @override
@@ -86,7 +89,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => CartScreen(),
+                          builder: (context) =>
+                              ((Provider.of<Cart>(context, listen: false)
+                                          .loadedFoods
+                                          .length) ==
+                                      0)
+                                  ? EmptyCart()
+                                  : CartScreen(),
                         ),
                       );
                     },
