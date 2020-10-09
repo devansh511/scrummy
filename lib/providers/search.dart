@@ -32,6 +32,7 @@ class Search extends ChangeNotifier {
           sData["restname"],
           sData["cuisine"],
           sData["rest_foods_id"].toString(),
+          sData["offer"].toString(),
         ]);
       });
       notifyListeners();

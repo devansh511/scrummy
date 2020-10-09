@@ -216,6 +216,26 @@ class Cart with ChangeNotifier {
     }
   }
 
+  Future<void> rateFood(String fId, double rating) async {
+    try {
+      final url = "https://$kUrl.ngrok.io/api/foodrating/${int.parse(fId)}/";
+      final response = await https.put(url,
+          body: json.encode({
+            "rating": rating,
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $accessToken',
+          });
+      final responseData = json.decode(response.body);
+      print(responseData);
+      notifyListeners();
+    } catch (error) {
+      print(error);
+    }
+  }
+
   Future<void> myOrders() async {
     try {
       print('de>>>');

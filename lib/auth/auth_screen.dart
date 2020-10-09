@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:scrummy/auth/verify.dart';
-import 'package:scrummy/screens/home_screen.dart';
 import 'package:scrummy/screens/location_screen.dart';
 import 'package:scrummy/screens/reset_password.dart';
-import 'package:scrummy/screens/splash_screen.dart';
 import 'auth.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/gestures.dart';
 import '../models/Http_Exceptions.dart';
-import '../screens/splash_screen.dart';
 
 String e_mail;
 String p_word;

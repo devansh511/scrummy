@@ -78,101 +78,101 @@ class _GridBuilderState extends State<GridBuilder> {
                 ),
               ),
               onTap: () {
-                setState(() {
-                  showModalBottomSheet(
-                      context: context,
-                      builder: (context) {
-                        return Container(
-                          color: Color(0xff737373),
-                          height: 306.0,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.only(
-                                topLeft: const Radius.circular(25.0),
-                                topRight: const Radius.circular(25.0),
-                              ),
-                            ),
-                            child: Column(
-                              children: [
-                                Stack(
-                                  children: [
-                                    Image(
-                                      image: NetworkImage(
-                                          '${Provider.of<Food>(context).loadedFoods[widget.i][2]}'),
-                                      height: 200.0,
-                                    ),
-                                    Container(
-                                      margin: EdgeInsets.only(top: 160.0),
-                                      child: ListTile(
-                                        title: Text(
-                                          '${Provider.of<Food>(context).loadedFoods[widget.i][1]}',
-                                          style: TextStyle(
-                                            fontFamily: 'McLaren',
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        subtitle: Text(
-                                          '${Provider.of<Food>(context).loadedFoods[widget.i][9]}',
-                                          style: TextStyle(
-                                            fontFamily: 'McLaren',
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Text(
-                                      '★${Provider.of<Food>(context).loadedFoods[widget.i][4]}            | ',
-                                      style: TextStyle(
-                                        fontFamily: 'Raleway',
-                                        color: Colors.grey[600],
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      '🕑${Provider.of<Food>(context).loadedFoods[widget.i][8]}mins        |',
-                                      style: TextStyle(
-                                        fontFamily: 'Raleway',
-                                        color: Colors.grey[600],
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      '₹${Provider.of<Food>(context).loadedFoods[widget.i][3]}',
-                                      style: TextStyle(
-                                        fontFamily: 'Raleway',
-                                        color: Colors.grey[600],
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(30.0),
-                                  child: FlatButton(
-                                    color: Colors.orange,
-                                    child: Icon(
-                                      Icons.shopping_cart,
-                                      size: 20.0,
-                                      color: Colors.white,
-                                    ),
-                                    onPressed: () {},
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      });
-                });
+                // setState(() {
+                //   showModalBottomSheet(
+                //       context: context,
+                //       builder: (context) {
+                //         return Container(
+                //           color: Color(0xff737373),
+                //           height: 306.0,
+                //           child: Container(
+                //             decoration: BoxDecoration(
+                //               color: Colors.white,
+                //               borderRadius: BorderRadius.only(
+                //                 topLeft: const Radius.circular(25.0),
+                //                 topRight: const Radius.circular(25.0),
+                //               ),
+                //             ),
+                //             child: Column(
+                //               children: [
+                //                 Stack(
+                //                   children: [
+                //                     Image(
+                //                       image: NetworkImage(
+                //                           '${Provider.of<Food>(context).loadedFoods[widget.i][2]}'),
+                //                       height: 200.0,
+                //                     ),
+                //                     Container(
+                //                       margin: EdgeInsets.only(top: 160.0),
+                //                       child: ListTile(
+                //                         title: Text(
+                //                           '${Provider.of<Food>(context).loadedFoods[widget.i][1]}',
+                //                           style: TextStyle(
+                //                             fontFamily: 'McLaren',
+                //                             color: Colors.white,
+                //                             fontWeight: FontWeight.bold,
+                //                           ),
+                //                         ),
+                //                         subtitle: Text(
+                //                           '${Provider.of<Food>(context).loadedFoods[widget.i][9]}',
+                //                           style: TextStyle(
+                //                             fontFamily: 'McLaren',
+                //                             fontWeight: FontWeight.bold,
+                //                             color: Colors.white,
+                //                           ),
+                //                         ),
+                //                       ),
+                //                     ),
+                //                   ],
+                //                 ),
+                //                 Row(
+                //                   mainAxisAlignment:
+                //                       MainAxisAlignment.spaceEvenly,
+                //                   children: [
+                //                     Text(
+                //                       '★${Provider.of<Food>(context).loadedFoods[widget.i][4]}            | ',
+                //                       style: TextStyle(
+                //                         fontFamily: 'Raleway',
+                //                         color: Colors.grey[600],
+                //                         fontWeight: FontWeight.bold,
+                //                       ),
+                //                     ),
+                //                     Text(
+                //                       '🕑${Provider.of<Food>(context).loadedFoods[widget.i][8]}mins        |',
+                //                       style: TextStyle(
+                //                         fontFamily: 'Raleway',
+                //                         color: Colors.grey[600],
+                //                         fontWeight: FontWeight.bold,
+                //                       ),
+                //                     ),
+                //                     Text(
+                //                       '₹${Provider.of<Food>(context).loadedFoods[widget.i][3]}',
+                //                       style: TextStyle(
+                //                         fontFamily: 'Raleway',
+                //                         color: Colors.grey[600],
+                //                         fontWeight: FontWeight.bold,
+                //                       ),
+                //                     ),
+                //                   ],
+                //                 ),
+                //                 ClipRRect(
+                //                   borderRadius: BorderRadius.circular(30.0),
+                //                   child: FlatButton(
+                //                     color: Colors.orange,
+                //                     child: Icon(
+                //                       Icons.shopping_cart,
+                //                       size: 20.0,
+                //                       color: Colors.white,
+                //                     ),
+                //                     onPressed: () {},
+                //                   ),
+                //                 ),
+                //               ],
+                //             ),
+                //           ),
+                //         );
+                //       });
+                // });
               },
             ),
             Text(

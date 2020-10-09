@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:scrummy/screens/home_screen.dart';
 import '../screens/search_screen.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +14,16 @@ class SearchList extends StatefulWidget {
 }
 
 class _SearchListState extends State<SearchList> {
+  Future<void> display() async {
+    try {
+      print('displaying cart');
+      await Provider.of<Cart>(context, listen: false).displayCart();
+      print('displayed cart');
+    } catch (error) {
+      print(error);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -107,7 +116,7 @@ class _SearchListState extends State<SearchList> {
                             ),
                           ),
                           child: Text(
-                            '20% OFF',
+                            '${Provider.of<Search>(context).searchedFoods[widget.index][9]}% OFF',
                             style: TextStyle(
                               color: Colors.orange,
                               fontFamily: 'Raleway',
@@ -153,6 +162,31 @@ class _SearchListState extends State<SearchList> {
                         Provider.of<Cart>(context, listen: false).addToCart(
                             Provider.of<Search>(context, listen: false)
                                 .searchedFoods[widget.index][0]);
+                        Scaffold.of(context).hideCurrentSnackBar();
+                        Scaffold.of(context).showSnackBar(
+                          SnackBar(
+                            elevation: 2.0,
+                            backgroundColor: Colors.grey[200],
+                            content: Text(
+                              'Added item to cart!',
+                              style: TextStyle(
+                                color: Colors.orange,
+                              ),
+                            ),
+                            duration: Duration(seconds: 2),
+                            // action: SnackBarAction(
+                            //   label: 'UNDO',
+                            //   onPressed: () {
+                            //     // cart.removeSingleItem(product.id);
+                            //     Provider.of<Cart>(context, listen: false)
+                            //         .deleteItems(
+                            //             Provider.of<Cart>(context, listen: false)
+                            //                 .loadedFoods[widget.i][0]);
+                            //   },
+                            // ),
+                          ),
+                        );
+                        display();
                       },
                     ),
                   ],
@@ -197,10 +231,16 @@ class SearchItems extends StatelessWidget {
                       ),
                     ),
                     onChanged: (value) {
+                      if (value == null) {
+                        Provider.of<Search>(context).searchedFoods.length;
+                      }
                       Provider.of<Search>(context, listen: false)
                           .searchFood(value);
                     },
                     onSubmitted: (value) {
+                      if (value == null) {
+                        Provider.of<Search>(context).searchedFoods.length;
+                      }
                       Provider.of<Search>(context, listen: false)
                           .searchFood(value);
                       // Navigator.push(
@@ -216,70 +256,70 @@ class SearchItems extends StatelessWidget {
                   ),
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    padding: EdgeInsets.fromLTRB(10.0, 3.0, 10.0, 3.0),
-                    margin: EdgeInsets.only(left: 172.0, right: 5.0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(25.0),
-                      border: Border.all(
-                        color: Colors.grey[600],
-                        width: 1,
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.filter_list,
-                          color: Colors.grey,
-                        ),
-                        Text(
-                          ' Filter',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontFamily: 'Raleway',
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13.0,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    // width: 10.0,
-                    padding: EdgeInsets.fromLTRB(10.0, 4.0, 10.0, 4.0),
-                    margin: EdgeInsets.only(right: 30.0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(25.0),
-                      border: Border.all(
-                        color: Colors.grey[600],
-                        width: 1,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        FaIcon(
-                          FontAwesomeIcons.sortAmountDown,
-                          size: 20.0,
-                          color: Colors.grey,
-                        ),
-                        Text(
-                          ' Sort',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontFamily: 'Raleway',
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13.0,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: [
+              //     Container(
+              //       padding: EdgeInsets.fromLTRB(10.0, 3.0, 10.0, 3.0),
+              //       margin: EdgeInsets.only(left: 172.0, right: 5.0),
+              //       decoration: BoxDecoration(
+              //         borderRadius: BorderRadius.circular(25.0),
+              //         border: Border.all(
+              //           color: Colors.grey[600],
+              //           width: 1,
+              //         ),
+              //       ),
+              //       child: Row(
+              //         children: [
+              //           Icon(
+              //             Icons.filter_list,
+              //             color: Colors.grey,
+              //           ),
+              //           Text(
+              //             ' Filter',
+              //             style: TextStyle(
+              //               color: Colors.grey[600],
+              //               fontFamily: 'Raleway',
+              //               fontWeight: FontWeight.bold,
+              //               fontSize: 13.0,
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //     ),
+              //     Container(
+              //       // width: 10.0,
+              //       padding: EdgeInsets.fromLTRB(10.0, 4.0, 10.0, 4.0),
+              //       margin: EdgeInsets.only(right: 30.0),
+              //       decoration: BoxDecoration(
+              //         borderRadius: BorderRadius.circular(25.0),
+              //         border: Border.all(
+              //           color: Colors.grey[600],
+              //           width: 1,
+              //         ),
+              //       ),
+              //       child: Row(
+              //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //         children: [
+              //           FaIcon(
+              //             FontAwesomeIcons.sortAmountDown,
+              //             size: 20.0,
+              //             color: Colors.grey,
+              //           ),
+              //           Text(
+              //             ' Sort',
+              //             style: TextStyle(
+              //               color: Colors.grey[600],
+              //               fontFamily: 'Raleway',
+              //               fontWeight: FontWeight.bold,
+              //               fontSize: 13.0,
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //     ),
+              //   ],
+              // ),
               ListView.builder(
                 physics: const ClampingScrollPhysics(),
                 shrinkWrap: true,
