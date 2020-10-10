@@ -147,7 +147,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
       print("received otp");
     } catch (error) {
       print(error);
-      const errorMessage = 'Something went wrong';
+      const errorMessage = 'Something went wrong on our servers!';
       _showMyDialog(errorMessage);
     }
   }
@@ -211,7 +211,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
         _isLoading = false;
       });
       print(error);
-      const errorMessage = 'Something went wrong';
+      const errorMessage = 'Something went wrong on our servers';
       _showMyDialog(errorMessage);
     }
   }

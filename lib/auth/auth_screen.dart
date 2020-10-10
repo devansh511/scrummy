@@ -277,7 +277,7 @@ class _AuthPageState extends State<AuthPage> {
       _showMyDialog(errorMessage);
     } catch (error) {
       print(error);
-      const errorMessage = 'Something went wrong!';
+      const errorMessage = 'Something went wrong on our servers!';
       _showMyDialog(errorMessage);
     }
 

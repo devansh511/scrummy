@@ -148,7 +148,7 @@ class _ResetPasswordState extends State<ResetPassword> {
         _isLoading = false;
       });
       print(error);
-      const errorMessage = 'Something went wrong!';
+      const errorMessage = 'Something went wrong on our servers!';
       _showMyDialog(errorMessage);
     }
     setState(() {
@@ -181,8 +181,7 @@ class _ResetPasswordState extends State<ResetPassword> {
       _showMyDialog(errorMessage);
     } catch (error) {
       print(error);
-      const errorMessage =
-          'Could not authenticate you. Please try again later!';
+      const errorMessage = 'Something went wrong on our servers!';
       _showMyDialog(errorMessage);
     }
     print(p_wordReset);

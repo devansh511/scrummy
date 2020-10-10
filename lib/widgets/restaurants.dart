@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:scrummy/models/Http_Exceptions.dart';
 import 'package:scrummy/providers/food.dart';
 import 'package:scrummy/widgets/dishes_grid.dart';
 
@@ -22,25 +23,73 @@ class _RestaurantsState extends State<Restaurants> {
   //     print(error);
   //   }
   // }
+  Future<void> _showMyDialog(String msg) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Foodies Alert',
+            style: TextStyle(
+              fontFamily: 'Raleway',
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[600],
+            ),
+          ),
+          content: Text(
+            msg,
+            style: TextStyle(
+              fontFamily: "Raleway",
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text(
+                'Okay',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Raleway',
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _fetchRestFood(String restName) async {
     try {
       setState(() {
         isLoad = true;
       });
+      check = await Provider.of<Food>(context, listen: false)
+          .fetchRestFood(restName);
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => DishesGrid(),
         ),
       );
-      check = await Provider.of<Food>(context, listen: false)
-          .fetchRestFood(restName);
-
-      setState(() {
-        isLoad = false;
-      });
+    } on HttpException catch (error) {
+      String msg = "Unable to process your request";
+      if (error.toString().contains("Error message")) {
+        msg = "";
+      }
+      _showMyDialog(msg);
+      print(error);
     } catch (error) {
       print(error);
+      _showMyDialog("Something went wrong our servers");
     }
+    setState(() {
+      isLoad = false;
+    });
   }
 
   @override
@@ -73,7 +122,8 @@ class _RestaurantsState extends State<Restaurants> {
                             child: Image(
                               width: 147.0,
                               image: NetworkImage(
-                                '${Provider.of<Food>(context).loadedRestaurants[widget.idx][2]}',
+                                '${Provider.of<Food>(context).loadedRestaurants[widget.idx][2]}' ??
+                                    'https://5.imimg.com/data5/SP/FB/RP/SELLER-92009985/ready-to-eat-north-indian-food-non-veg-food-500x500.jpg',
                               ),
                               filterQuality: FilterQuality.high,
                               fit: BoxFit.fill,

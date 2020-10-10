@@ -18,15 +18,65 @@ class ListItems extends StatefulWidget {
 class _ListItemsState extends State<ListItems> {
   ScrollController _scrollController;
   bool isLoading = false;
+  Future<void> _showMyDialog(String msg) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Foodies Alert',
+            style: TextStyle(
+              fontFamily: 'Raleway',
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[600],
+            ),
+          ),
+          content: Text(
+            msg,
+            style: TextStyle(
+              fontFamily: "Raleway",
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text(
+                'Okay',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Raleway',
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
-  void display() async {
+  Future<void> display() async {
     try {
       print("display called");
       isLoading = true;
       await Provider.of<Cart>(context, listen: false).displayCart();
       isLoading = false;
     } catch (error) {
+      _showMyDialog("Something went wrong on our servers!");
       print(error);
+    }
+  }
+
+  Future<void> getAmount() async {
+    try {
+      await Provider.of<Cart>(context, listen: false).getAmount();
+    } catch (error) {
+      print(error);
+      _showMyDialog("Something went wrong on our servers!");
     }
   }
 
@@ -36,8 +86,8 @@ class _ListItemsState extends State<ListItems> {
     super.initState();
     Future.delayed(Duration.zero, () async {
       print('provider calling');
-      await Provider.of<Cart>(context, listen: false).displayCart();
-      await Provider.of<Cart>(context, listen: false).getAmount();
+      display();
+      getAmount();
       print('provider called');
       print('${Provider.of<Cart>(context, listen: false).loadedFoods}');
     });
@@ -108,11 +158,27 @@ class _ListItemsState extends State<ListItems> {
                       width: 120.0,
                     ),
                     GestureDetector(
-                      onTap: () {
-                        Provider.of<Cart>(context, listen: false).deleteItems(
-                            Provider.of<Cart>(context, listen: false)
-                                .loadedFoods[widget.i][0]);
-                        Provider.of<Cart>(context, listen: false).getAmount();
+                      onTap: () async {
+                        await Provider.of<Cart>(context, listen: false)
+                            .deleteItems(
+                                Provider.of<Cart>(context, listen: false)
+                                    .loadedFoods[widget.i][0]);
+                        Scaffold.of(context).hideCurrentSnackBar();
+                        Scaffold.of(context).showSnackBar(
+                          SnackBar(
+                            elevation: 2.0,
+                            backgroundColor: Colors.grey[200],
+                            content: Text(
+                              'Item deleted. Pull to refresh cart',
+                              style: TextStyle(
+                                color: Colors.orange,
+                              ),
+                            ),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                        await Provider.of<Cart>(context, listen: false)
+                            .getAmount();
                         display();
                       },
                       child: Icon(
@@ -183,22 +249,20 @@ class _ListItemsState extends State<ListItems> {
                         ),
                       ),
                       onPressed: () {
-                        setState(() {
-                          if (int.parse(
-                                  Provider.of<Cart>(context, listen: false)
-                                      .quant[widget.i]) >
-                              1) {
-                            Provider.of<Cart>(context, listen: false)
-                                .decreaseQuantity(
-                                    Provider.of<Cart>(
-                                      context,
-                                      listen: false,
-                                    ).loadedFoods[widget.i][0],
-                                    widget.i);
-                            Provider.of<Cart>(context, listen: false)
-                                .getAmount();
-                          }
-                        });
+                        // setState(() {
+                        // if ((Provider.of<Cart>(context, listen: false)
+                        //         .quant[widget.i][0]) >
+                        //     1) {
+                        Provider.of<Cart>(context, listen: false)
+                            .decreaseQuantity(
+                                Provider.of<Cart>(
+                                  context,
+                                  listen: false,
+                                ).loadedFoods[widget.i][0],
+                                widget.i);
+                        Provider.of<Cart>(context, listen: false).getAmount();
+                        // }
+                        // });
                       },
                       elevation: 6.0,
                       constraints: BoxConstraints.tightFor(
@@ -211,7 +275,8 @@ class _ListItemsState extends State<ListItems> {
                     ),
                     Text(
                       Provider.of<Cart>(context).quant.isEmpty
-                          ? "1"
+                          ? "${Provider.of<Cart>(context).loadedFoods[widget.i][7]}" ??
+                              "1"
                           : '${Provider.of<Cart>(context).quant[widget.i][0]}',
                       style: TextStyle(
                         color: Colors.orange,
@@ -269,150 +334,199 @@ bool isLoading = false;
 class CartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    Future<void> refreshDisplay() async {
-      await Future.delayed(Duration(seconds: 2), () async {
-        await Provider.of<Cart>(context, listen: false).displayCart();
-      });
-    }
-
-    return Scaffold(
-      body: RefreshIndicator(
-        onRefresh: refreshDisplay,
-        color: Colors.orange,
-        backgroundColor: Colors.white,
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(12.0, 60.0, 12.0, 12.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(left: 10.0),
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'My Cart',
-                              style: TextStyle(
-                                fontFamily: 'Raleway',
-                                color: Colors.grey[600],
-                                fontWeight: FontWeight.w900,
-                                fontSize: 17.0,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Provider.of<Cart>(context, listen: false)
-                                    .emptyCart();
-                                Provider.of<Cart>(context, listen: false)
-                                    .getAmount();
-                                Provider.of<Cart>(context, listen: false)
-                                    .displayCart();
-                              },
-                              child: Container(
-                                padding: EdgeInsets.all(10.0),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(25.0),
-                                  border: Border.all(
-                                    color: Colors.orange,
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Text(
-                                  'Clear cart',
-                                  style: TextStyle(
-                                    fontFamily: 'Raleway',
-                                    color: Colors.orange,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                ListView.builder(
-                  padding: EdgeInsets.only(
-                    top: 10.0,
-                  ),
-                  physics: const ClampingScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: Provider.of<Cart>(context).loadedFoods.length,
-                  itemBuilder: (_, i) => ListItems(i),
-                ),
-                Text(
-                  '   Payment Summary',
+    Future<void> _showMyDialog(String msg) async {
+      return showDialog<void>(
+        context: context,
+        barrierDismissible: false, // user must tap button!
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(
+              'Foodies Alert',
+              style: TextStyle(
+                fontFamily: 'Raleway',
+                fontWeight: FontWeight.bold,
+                color: Colors.grey[600],
+              ),
+            ),
+            content: Text(
+              msg,
+              style: TextStyle(
+                fontFamily: "Raleway",
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text(
+                  'Okay',
                   style: TextStyle(
                     color: Colors.grey[600],
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Raleway',
                   ),
                 ),
-                ListTile(
-                  title: Text(
-                    'Total Items',
-                    style: TextStyle(
-                      color: Colors.grey[700],
-                      fontFamily: 'Raleway',
-                      fontWeight: FontWeight.bold,
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(12.0, 60.0, 12.0, 12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                margin: EdgeInsets.only(left: 10.0),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'My Cart',
+                            style: TextStyle(
+                              fontFamily: 'Raleway',
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.w900,
+                              fontSize: 17.0,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () async {
+                              try {
+                                await Provider.of<Cart>(context, listen: false)
+                                    .emptyCart();
+                                await Provider.of<Cart>(context, listen: false)
+                                    .getAmount();
+                                await Provider.of<Cart>(context, listen: false)
+                                    .displayCart();
+                              } catch (error) {
+                                print(error);
+                                _showMyDialog(
+                                    "Something went wrong on our servers!");
+                              }
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(10.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(25.0),
+                                border: Border.all(
+                                  color: Colors.orange,
+                                  width: 1,
+                                ),
+                              ),
+                              child: Text(
+                                'Clear cart',
+                                style: TextStyle(
+                                  fontFamily: 'Raleway',
+                                  color: Colors.orange,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
+                  ],
+                ),
+              ),
+              RefreshIndicator(
+                onRefresh: () async {
+                  try {
+                    await Provider.of<Cart>(context, listen: false)
+                        .displayCart();
+                  } catch (error) {
+                    print(error);
+                    _showMyDialog("Something went wrong on our servers!");
+                  }
+                },
+                backgroundColor: Colors.white,
+                color: Colors.orange,
+                child: ListView.builder(
+                  padding: EdgeInsets.only(
+                    top: 10.0,
                   ),
-                  trailing: Text(
-                    '${Provider.of<Cart>(context).loadedFoods.length}',
-                    style: TextStyle(
-                      color: Colors.grey[900],
-                      fontFamily: 'Raleway',
-                      fontWeight: FontWeight.bold,
-                      fontSize: 17.0,
-                    ),
+                  physics: AlwaysScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: Provider.of<Cart>(context).loadedFoods.length,
+                  itemBuilder: (_, i) => ListItems(i),
+                ),
+              ),
+              Text(
+                '   Payment Summary',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Raleway',
+                ),
+              ),
+              ListTile(
+                title: Text(
+                  'Total Items',
+                  style: TextStyle(
+                    color: Colors.grey[700],
+                    fontFamily: 'Raleway',
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                ListTile(
-                  title: Text(
-                    'Total Amount',
-                    style: TextStyle(
-                      color: Colors.grey[700],
-                      fontFamily: 'Raleway',
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  trailing: Text(
-                    '₹${Provider.of<Cart>(context).amount}',
-                    style: TextStyle(
-                      color: Colors.grey[900],
-                      fontFamily: 'Raleway',
-                      fontWeight: FontWeight.bold,
-                      fontSize: 17.0,
-                    ),
+                trailing: Text(
+                  '${Provider.of<Cart>(context).loadedFoods.length}',
+                  style: TextStyle(
+                    color: Colors.grey[900],
+                    fontFamily: 'Raleway',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17.0,
                   ),
                 ),
-                ListTile(
-                  title: Text(
-                    'Discounted Amount',
-                    style: TextStyle(
-                      color: Colors.grey[700],
-                      fontFamily: 'Raleway',
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  trailing: Text(
-                    '₹${Provider.of<Cart>(context).disAmount}',
-                    style: TextStyle(
-                      color: Colors.grey[900],
-                      fontFamily: 'Raleway',
-                      fontWeight: FontWeight.bold,
-                      fontSize: 17.0,
-                    ),
+              ),
+              ListTile(
+                title: Text(
+                  'Total Amount',
+                  style: TextStyle(
+                    color: Colors.grey[700],
+                    fontFamily: 'Raleway',
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              ],
-            ),
+                trailing: Text(
+                  '₹${Provider.of<Cart>(context).amount}',
+                  style: TextStyle(
+                    color: Colors.grey[900],
+                    fontFamily: 'Raleway',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17.0,
+                  ),
+                ),
+              ),
+              ListTile(
+                title: Text(
+                  'Discounted Amount',
+                  style: TextStyle(
+                    color: Colors.grey[700],
+                    fontFamily: 'Raleway',
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                trailing: Text(
+                  '₹${Provider.of<Cart>(context).disAmount}',
+                  style: TextStyle(
+                    color: Colors.grey[900],
+                    fontFamily: 'Raleway',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17.0,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -454,81 +568,87 @@ class CartScreen extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              onPressed: () {
+              onPressed: () async {
                 if (addr2 == "" || addr2 == null) {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => LocationScreen()));
-                }
-                Provider.of<Cart>(context, listen: false).checkout();
-                return showDialog<void>(
-                  context: context,
-                  // barrierDismissible: false, // user must tap button!
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      content: Container(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            SvgPicture.asset('assets/illustration.svg'),
-                            SizedBox(
-                              height: 15.0,
-                            ),
-                            Text(
-                              'Order Placed Successfully',
-                              style: TextStyle(
-                                color: Colors.orange,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'McLaren',
-                                fontSize: 21.0,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 15.0,
-                            ),
-                            Text(
-                              'Your food is on the way to $addr2',
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                                fontFamily: 'Raleway',
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 15.0,
-                            ),
-                            FlatButton(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                  8.0,
+                } else {
+                  try {
+                    await Provider.of<Cart>(context, listen: false).checkout();
+                    return showDialog<void>(
+                      context: context,
+                      // barrierDismissible: false, // user must tap button!
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          content: Container(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                SvgPicture.asset('assets/illustration.svg'),
+                                SizedBox(
+                                  height: 15.0,
                                 ),
-                              ),
-                              child: Text(
-                                'Go Home!',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'Raleway',
-                                ),
-                              ),
-                              color: Colors.orange,
-                              onPressed: () {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => HomeScreen(),
+                                Text(
+                                  'Order Placed',
+                                  style: TextStyle(
+                                    color: Colors.orange,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'McLaren',
+                                    fontSize: 21.0,
                                   ),
-                                );
-                              },
+                                ),
+                                SizedBox(
+                                  height: 15.0,
+                                ),
+                                Text(
+                                  'Your food is on the way to $addr2',
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontFamily: 'Raleway',
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 15.0,
+                                ),
+                                FlatButton(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                      8.0,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'Go Home!',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Raleway',
+                                    ),
+                                  ),
+                                  color: Colors.orange,
+                                  onPressed: () {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => HomeScreen(),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
+                          ),
+                        );
+                      },
                     );
-                  },
-                );
+                  } catch (error) {
+                    print(error);
+                    _showMyDialog("Something went wrong on our servers!");
+                  }
+                }
               },
             ),
           ],

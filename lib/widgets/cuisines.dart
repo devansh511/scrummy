@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:scrummy/models/Http_Exceptions.dart';
 import 'package:scrummy/widgets/dishes_grid.dart';
 import '../providers/food.dart';
 
@@ -11,24 +12,72 @@ class Cuisines extends StatefulWidget {
 bool isLoadin = false;
 
 class _CuisinesState extends State<Cuisines> {
+  Future<void> _showMyDialog(String msg) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Foodies Alert',
+            style: TextStyle(
+              fontFamily: 'Raleway',
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[600],
+            ),
+          ),
+          content: Text(
+            msg,
+            style: TextStyle(
+              fontFamily: "Raleway",
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text(
+                'Okay',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Raleway',
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _fetchCuisine(String cuisine) async {
     print("<<<<<<<<<<<<<<<<<<<");
     try {
       setState(() {
         isLoadin = true;
       });
+      await Provider.of<Food>(context, listen: false).fetchCuisines(cuisine);
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => DishesGrid(),
         ),
       );
-      await Provider.of<Food>(context, listen: false).fetchCuisines(cuisine);
-      setState(() {
-        isLoadin = false;
-      });
+    } on HttpException catch (error) {
+      String msg = "Sorry, we are unable to process your request";
+      if (error.toString().contains("error")) {
+        msg = "";
+      }
+      _showMyDialog(msg);
     } catch (error) {
       print(error);
+      _showMyDialog("Something went wrong on our servers!");
     }
+    setState(() {
+      isLoadin = false;
+    });
   }
 
   @override

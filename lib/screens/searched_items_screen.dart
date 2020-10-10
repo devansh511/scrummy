@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scrummy/screens/home_screen.dart';
 import '../screens/search_screen.dart';
+import '../models/Http_Exceptions.dart';
 import 'package:provider/provider.dart';
 import '../providers/search.dart';
 import '../providers/cart.dart';
@@ -14,6 +15,66 @@ class SearchList extends StatefulWidget {
 }
 
 class _SearchListState extends State<SearchList> {
+  Future<void> _showMyDialog(String msg) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Foodies Alert',
+            style: TextStyle(
+              fontFamily: 'Raleway',
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[600],
+            ),
+          ),
+          content: Text(
+            msg,
+            style: TextStyle(
+              fontFamily: "Raleway",
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text(
+                'Continue',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Raleway',
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Provider.of<Cart>(context, listen: false).addToCart(
+                    Provider.of<Food>(context, listen: false)
+                        .loadedFoods[widget.index][0]);
+              },
+            ),
+            SizedBox(
+              width: 10.0,
+            ),
+            FlatButton(
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Raleway',
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> display() async {
     try {
       print('displaying cart');
@@ -158,34 +219,41 @@ class _SearchListState extends State<SearchList> {
                           ),
                         ],
                       ),
-                      onPressed: () {
-                        Provider.of<Cart>(context, listen: false).addToCart(
-                            Provider.of<Search>(context, listen: false)
-                                .searchedFoods[widget.index][0]);
-                        Scaffold.of(context).hideCurrentSnackBar();
-                        Scaffold.of(context).showSnackBar(
-                          SnackBar(
-                            elevation: 2.0,
-                            backgroundColor: Colors.grey[200],
-                            content: Text(
-                              'Added item to cart!',
-                              style: TextStyle(
-                                color: Colors.orange,
+                      onPressed: () async {
+                        try {
+                          await Provider.of<Cart>(context, listen: false)
+                              .addToCart(
+                                  Provider.of<Food>(context, listen: false)
+                                      .loadedFoods[widget.index][0]);
+                          Scaffold.of(context).hideCurrentSnackBar();
+                          Scaffold.of(context).showSnackBar(
+                            SnackBar(
+                              elevation: 2.0,
+                              backgroundColor: Colors.grey[200],
+                              content: Text(
+                                'Added item to cart!',
+                                style: TextStyle(
+                                  color: Colors.orange,
+                                ),
                               ),
+                              duration: Duration(seconds: 2),
                             ),
-                            duration: Duration(seconds: 2),
-                            // action: SnackBarAction(
-                            //   label: 'UNDO',
-                            //   onPressed: () {
-                            //     // cart.removeSingleItem(product.id);
-                            //     Provider.of<Cart>(context, listen: false)
-                            //         .deleteItems(
-                            //             Provider.of<Cart>(context, listen: false)
-                            //                 .loadedFoods[widget.i][0]);
-                            //   },
-                            // ),
-                          ),
-                        );
+                          );
+                        } on HttpException catch (error) {
+                          String errorMsg =
+                              "Something went wrong on our servers";
+                          if (error
+                              .toString()
+                              .contains("conflicting restaurants")) {
+                            errorMsg =
+                                "Adding food from different restaurant will clear your existing cart!";
+                          }
+                          _showMyDialog(errorMsg);
+                        } catch (error) {
+                          print(error);
+                          _showMyDialog("Something went wrong on our servers!");
+                        }
+
                         display();
                       },
                     ),
@@ -239,20 +307,22 @@ class _SearchItemsState extends State<SearchItems> {
                     ),
                     onChanged: (value) async {
                       if (value == null || value == "") {
-                        Provider.of<Search>(context).allClear();
+                        print("????????????????????????????????????????????");
+                        Provider.of<Search>(context, listen: false).allClear();
+                        return;
                       }
-                      setState(() {
-                        _isLoading = true;
-                      });
-                      check = await Provider.of<Search>(context, listen: false)
-                          .searchFood(value);
-                      setState(() {
-                        _isLoading = false;
-                      });
+                      // setState(() {
+                      //   _isLoading = true;
+                      // });
+                      // check = await Provider.of<Search>(context, listen: false)
+                      //     .searchFood(value);
+                      // setState(() {
+                      //   _isLoading = false;
+                      // });
                     },
                     onSubmitted: (value) async {
                       if (value == null || value == "") {
-                        Provider.of<Search>(context).allClear();
+                        Provider.of<Search>(context, listen: false).allClear();
                       }
                       setState(() {
                         _isLoading = true;
@@ -276,8 +346,13 @@ class _SearchItemsState extends State<SearchItems> {
                                   color: Colors.grey[600],
                                 ),
                               ),
-                              content:
-                                  Text('Sorry! We don\'t serve this food yet!'),
+                              content: Text(
+                                'Sorry! We don\'t serve this food yet!',
+                                style: TextStyle(
+                                  fontFamily: "Raleway",
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                               actions: <Widget>[
                                 FlatButton(
                                   child: Text(

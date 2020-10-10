@@ -26,6 +26,47 @@ class _FeedScreenState extends State<FeedScreen> {
 
   bool _isL = false;
   bool _isLoading = false;
+  Future<void> _showMyDialog(String msg) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Foodies Alert',
+            style: TextStyle(
+              fontFamily: 'Raleway',
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[600],
+            ),
+          ),
+          content: Text(
+            msg,
+            style: TextStyle(
+              fontFamily: "Raleway",
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text(
+                'Okay',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Raleway',
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   String location() {
     if (addr2 == null) {
       return "Food will be delivered here!";
@@ -45,7 +86,11 @@ class _FeedScreenState extends State<FeedScreen> {
       });
     } catch (error) {
       print(error);
+      _showMyDialog("Something went wrong on our servers!");
     }
+    setState(() {
+      _isL = false;
+    });
   }
 
   Future<void> display() async {
@@ -70,7 +115,11 @@ class _FeedScreenState extends State<FeedScreen> {
       });
     } catch (error) {
       print(error);
+      _showMyDialog("Something went wrong on our servers!");
     }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -78,7 +127,7 @@ class _FeedScreenState extends State<FeedScreen> {
     // TODO: implement initState
     Future.delayed(Duration.zero, () async {
       // try {
-      await Provider.of<Food>(context, listen: false).fetchRestaurants();
+      await _fetchR();
       await display();
       // } catch (error) {
       //   print(error);
@@ -284,10 +333,10 @@ class _FeedScreenState extends State<FeedScreen> {
                       },
                       child: GestureDetector(
                         onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => DishesGrid()));
                           Provider.of<Food>(context, listen: false)
                               .fetchRestFood("The Village");
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => DishesGrid()));
                         },
                         child: Container(
                           width: 380.0,
@@ -347,7 +396,7 @@ class _FeedScreenState extends State<FeedScreen> {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => DishesGrid()));
                         Provider.of<Food>(context, listen: false)
-                            .fetchRestFood("Fresh n fillin");
+                            .fetchRestFood("The Village");
                       },
                       child: Container(
                         width: 380.0,
@@ -402,55 +451,63 @@ class _FeedScreenState extends State<FeedScreen> {
                         ),
                       ),
                     ),
-                    Container(
-                      width: 380.0,
-                      height: 168.0,
-                      child: Card(
-                        elevation: 7.0,
-                        margin: EdgeInsets.all(10.0),
-                        shadowColor: Colors.grey,
-                        color: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            Image(
-                              image: AssetImage('assets/backgroundIce.jpg'),
-                              fit: BoxFit.fill,
-                            ),
-                            Container(
-                              padding: EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        'Fresh N Fillin\'',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: 'Raleway',
-                                          fontSize: 31.0,
-                                          fontWeight: FontWeight.w900,
-                                        ),
-                                      ),
-                                      Text(
-                                        'Food & Chill',
-                                        style: TextStyle(
-                                          fontFamily: 'Raleway',
-                                          color: Colors.orange,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => DishesGrid()));
+                        Provider.of<Food>(context, listen: false)
+                            .fetchRestFood("Fresh N Fillin");
+                      },
+                      child: Container(
+                        width: 380.0,
+                        height: 168.0,
+                        child: Card(
+                          elevation: 7.0,
+                          margin: EdgeInsets.all(10.0),
+                          shadowColor: Colors.grey,
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              Image(
+                                image: AssetImage('assets/backgroundIce.jpg'),
+                                fit: BoxFit.fill,
                               ),
-                            ),
-                          ],
+                              Container(
+                                padding: EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Column(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          'Fresh N Fillin\'',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontFamily: 'Raleway',
+                                            fontSize: 31.0,
+                                            fontWeight: FontWeight.w900,
+                                          ),
+                                        ),
+                                        Text(
+                                          'Food & Chill',
+                                          style: TextStyle(
+                                            fontFamily: 'Raleway',
+                                            color: Colors.orange,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),

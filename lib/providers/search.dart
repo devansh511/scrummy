@@ -44,6 +44,7 @@ class Search extends ChangeNotifier {
   }
 
   void allClear() {
+    print('clearing the list');
     searchedFoods.clear();
     notifyListeners();
   }

@@ -5,31 +5,31 @@ import 'dart:async';
 import 'package:provider/provider.dart';
 import '../constants.dart';
 
-class FoodDetails with ChangeNotifier {
-  int id;
-  String name;
-  String image;
-  int price;
-  int rating;
-  int offer;
-  String category;
-  String cuisine;
-  int deliveryTime;
-  int restName;
+// class FoodDetails with ChangeNotifier {
+//   int id;
+//   String name;
+//   String image;
+//   int price;
+//   int rating;
+//   int offer;
+//   String category;
+//   String cuisine;
+//   int deliveryTime;
+//   int restName;
 
-  FoodDetails({
-    this.id,
-    this.name,
-    this.image,
-    this.price,
-    this.rating,
-    this.offer,
-    this.category,
-    this.cuisine,
-    this.deliveryTime,
-    this.restName,
-  });
-}
+//   FoodDetails({
+//     this.id,
+//     this.name,
+//     this.image,
+//     this.price,
+//     this.rating,
+//     this.offer,
+//     this.category,
+//     this.cuisine,
+//     this.deliveryTime,
+//     this.restName,
+//   });
+// }
 
 class Food with ChangeNotifier {
   List loadedFoods = [];

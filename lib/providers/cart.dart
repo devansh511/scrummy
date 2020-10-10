@@ -93,7 +93,7 @@ class Cart with ChangeNotifier {
       quant.clear();
       responseData.forEach((fData) {
         quant.add([
-          fData["quantity"],
+          fData["quantity"].toString(),
         ]);
       });
       print(quant);
@@ -118,7 +118,7 @@ class Cart with ChangeNotifier {
       quant.clear();
       responseData.forEach((fData) {
         quant.add([
-          fData["quantity"],
+          fData["quantity"].toString(),
         ]);
       });
       print('<<<<<<<<<<<<<<<<<<$quant');
@@ -189,7 +189,8 @@ class Cart with ChangeNotifier {
           fData["get_total_item_price"].toString(),
           fData["delivery_time"].toString(),
           fData["offer"].toString(),
-          fData["restname"]
+          fData["restname"],
+          fData["quantity"].toString(),
         ]);
       });
       notifyListeners();
@@ -201,6 +202,7 @@ class Cart with ChangeNotifier {
 
   Future<void> getAmount() async {
     try {
+      print("getting amt");
       final url = "https://$kUrl.ngrok.io/api/ordertotal/";
       final response = await https.get(url, headers: {
         'Content-Type': 'application/json',
@@ -274,6 +276,9 @@ class Cart with ChangeNotifier {
           fData["discounted_price"],
         ]);
       });
+      if (orderedFoods.isEmpty) {
+        throw HttpException(responseData["details"]);
+      }
       print(loadedFoods);
       notifyListeners();
       print(responseData);

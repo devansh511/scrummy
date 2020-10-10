@@ -34,7 +34,13 @@ class _GridBuilderState extends State<GridBuilder> {
               color: Colors.grey[600],
             ),
           ),
-          content: Text(msg),
+          content: Text(
+            msg,
+            style: TextStyle(
+              fontFamily: "Raleway",
+              fontWeight: FontWeight.w600,
+            ),
+          ),
           actions: <Widget>[
             FlatButton(
               child: Text(
@@ -100,6 +106,7 @@ class _GridBuilderState extends State<GridBuilder> {
       await Provider.of<Cart>(context, listen: false).displayCart();
       print('displayed cart');
     } catch (error) {
+      _showMyDialog("Something went wrong on our servers");
       print(error);
     }
   }
@@ -108,14 +115,19 @@ class _GridBuilderState extends State<GridBuilder> {
     try {
       await Provider.of<Cart>(context, listen: false).addToCart(
           Provider.of<Food>(context, listen: false).loadedFoods[widget.i][0]);
+      display();
+      await Provider.of<Cart>(context, listen: false).getAmount();
     } on HttpException catch (error) {
-      var errorMsg = "Something went wrong";
+      String errorMsg = "Something went wrong";
       if (error.toString().contains("conflicting restaurants")) {
         errorMsg =
             "Adding food from different restaurant will clear your existing cart!";
       }
       _showMyDialog(errorMsg);
-    } catch (error) {}
+    } catch (error) {
+      print(error);
+      _showMyDialog("Something went wrong on our servers!");
+    }
   }
 
   @override
@@ -290,6 +302,7 @@ class _GridBuilderState extends State<GridBuilder> {
                 ),
                 GestureDetector(
                   onTap: () {
+                    addToCart();
                     Scaffold.of(context).hideCurrentSnackBar();
                     Scaffold.of(context).showSnackBar(
                       SnackBar(
@@ -314,9 +327,6 @@ class _GridBuilderState extends State<GridBuilder> {
                         // ),
                       ),
                     );
-                    addToCart();
-                    Provider.of<Cart>(context, listen: false).getAmount();
-                    display();
                   },
                   child: Icon(
                     Icons.shopping_cart,
@@ -376,7 +386,7 @@ class _DishesGridState extends State<DishesGrid> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text(
-                      'Food for you',
+                      'Food For You',
                       style: TextStyle(
                         fontFamily: 'Raleway',
                         color: Colors.grey[600],
@@ -423,30 +433,30 @@ class _DishesGridState extends State<DishesGrid> {
                   ],
                 ),
               ),
-              if (_isLoading)
-                Center(
-                  child: CircularProgressIndicator(
-                    backgroundColor: Colors.white,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
-                  ),
-                )
-              else
-                Container(
-                  margin: EdgeInsets.only(top: 15.0),
-                  child: GridView.builder(
-                    shrinkWrap: true,
-                    physics: const ClampingScrollPhysics(),
-                    padding: const EdgeInsets.all(10),
-                    itemCount: Provider.of<Food>(context).loadedFoods.length,
-                    itemBuilder: (_, i) => GridBuilder(i),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 9 / 11,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                    ),
+              // if (_isLoading)
+              //   Center(
+              //     child: CircularProgressIndicator(
+              //       backgroundColor: Colors.white,
+              //       valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
+              //     ),
+              //   )
+              // else
+              Container(
+                margin: EdgeInsets.only(top: 15.0),
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  physics: const ClampingScrollPhysics(),
+                  padding: const EdgeInsets.all(10),
+                  itemCount: Provider.of<Food>(context).loadedFoods.length,
+                  itemBuilder: (_, i) => GridBuilder(i),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 9 / 11,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
                   ),
                 ),
+              ),
             ],
           ),
         ),
