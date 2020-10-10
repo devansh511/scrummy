@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:scrummy/widgets/dishes_grid.dart';
 import '../providers/food.dart';
 
 class Cuisines extends StatefulWidget {
@@ -16,6 +17,11 @@ class _CuisinesState extends State<Cuisines> {
       setState(() {
         isLoadin = true;
       });
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => DishesGrid(),
+        ),
+      );
       await Provider.of<Food>(context, listen: false).fetchCuisines(cuisine);
       setState(() {
         isLoadin = false;

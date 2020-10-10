@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 class Search extends ChangeNotifier {
   List searchedFoods = [];
 
-  Future<void> searchFood(String food) async {
+  Future<int> searchFood(String food) async {
     print("searching food");
     try {
       print("try of search");
@@ -37,8 +37,14 @@ class Search extends ChangeNotifier {
       });
       notifyListeners();
       print(responseData);
+      return 1;
     } catch (error) {
       print(error);
     }
+  }
+
+  void allClear() {
+    searchedFoods.clear();
+    notifyListeners();
   }
 }

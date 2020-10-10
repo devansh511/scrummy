@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:scrummy/models/Http_Exceptions.dart';
 import '../providers/food.dart';
 import '../providers/cart.dart';
 import '../widgets/restaurants.dart';
+import '../screens/cart_screen.dart';
+import '../screens/empty_cart_screen.dart';
 
 class GridBuilder extends StatefulWidget {
   final int i;
@@ -339,23 +340,26 @@ class DishesGrid extends StatefulWidget {
 
 class _DishesGridState extends State<DishesGrid> {
   bool _isLoading = true;
-
-  @override
-  void initState() {
-    if (check == 2) {
-      setState(() {
-        _isLoading = false;
-      });
+  Future<void> display() async {
+    try {
+      print('displaying cart');
+      await Provider.of<Cart>(context, listen: false).displayCart();
+      print('displayed cart');
+    } catch (error) {
+      print(error);
     }
-
-    super.initState();
   }
 
   @override
-  void dispose() {
-    // TODO: implement dispose
-    _isLoading = true;
-    super.dispose();
+  void initState() {
+    Future.delayed(Duration.zero, () {
+      if (Provider.of<Food>(context, listen: false).loadedFoods.length != 0) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    });
+    super.initState();
   }
 
   @override
@@ -364,16 +368,72 @@ class _DishesGridState extends State<DishesGrid> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Container(
-            margin: EdgeInsets.only(top: 40.0),
-            child: (_isLoading)
-                ? Center(
-                    child: CircularProgressIndicator(
-                      backgroundColor: Colors.white,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
+          child: Column(
+            children: [
+              Container(
+                margin: EdgeInsets.only(left: 10.0, top: 40.0, right: 10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      'Food for you',
+                      style: TextStyle(
+                        fontFamily: 'Raleway',
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w900,
+                        fontSize: 17.0,
+                      ),
                     ),
-                  )
-                : GridView.builder(
+                    GestureDetector(
+                      onTap: () {
+                        display();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ((Provider.of<Cart>(context, listen: false)
+                                            .loadedFoods
+                                            .length) ==
+                                        0)
+                                    ? EmptyCart()
+                                    : CartScreen(),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(10.0),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(25.0),
+                          border: Border.all(
+                            color: Colors.orange,
+                            width: 1,
+                          ),
+                        ),
+                        child: Text(
+                          'See Cart',
+                          style: TextStyle(
+                            fontFamily: 'Raleway',
+                            color: Colors.orange,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (_isLoading)
+                Center(
+                  child: CircularProgressIndicator(
+                    backgroundColor: Colors.white,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
+                  ),
+                )
+              else
+                Container(
+                  margin: EdgeInsets.only(top: 15.0),
+                  child: GridView.builder(
                     shrinkWrap: true,
                     physics: const ClampingScrollPhysics(),
                     padding: const EdgeInsets.all(10),
@@ -386,6 +446,8 @@ class _DishesGridState extends State<DishesGrid> {
                       mainAxisSpacing: 10,
                     ),
                   ),
+                ),
+            ],
           ),
         ),
       ),

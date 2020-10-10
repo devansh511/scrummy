@@ -24,6 +24,7 @@ class _FeedScreenState extends State<FeedScreen> {
     return Provider.of<Auth>(context, listen: false).isAuth;
   }
 
+  bool _isL = false;
   bool _isLoading = false;
   String location() {
     if (addr2 == null) {
@@ -35,13 +36,13 @@ class _FeedScreenState extends State<FeedScreen> {
 
   Future<void> _fetchR() async {
     try {
-      // setState(() {
-      //   _isLoading = true;
-      // });
+      setState(() {
+        _isL = true;
+      });
       await Provider.of<Food>(context, listen: false).fetchRestaurants();
-      // setState(() {
-      //   _isLoading = false;
-      // });
+      setState(() {
+        _isL = false;
+      });
     } catch (error) {
       print(error);
     }
@@ -100,7 +101,6 @@ class _FeedScreenState extends State<FeedScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final dishes = dishesData.items;
     double screenWidth = MediaQuery.of(context).size.width;
     return Container(
       width: screenWidth,
@@ -275,122 +275,130 @@ class _FeedScreenState extends State<FeedScreen> {
                     viewportFraction: 1,
                   ),
                   items: [
-                    Container(
-                      width: 380.0,
-                      height: 168.0,
-                      child: Card(
-                        elevation: 7.0,
-                        margin: EdgeInsets.all(10.0),
-                        shadowColor: Colors.grey,
-                        color: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            Image(
-                              image: AssetImage('assets/backgroundVillage.jpg'),
-                              fit: BoxFit.fill,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => DishesGrid()));
+                        Provider.of<Food>(context, listen: false)
+                            .fetchRestFood("Grill Inn");
+                      },
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => DishesGrid()));
+                          Provider.of<Food>(context, listen: false)
+                              .fetchRestFood("The Village");
+                        },
+                        child: Container(
+                          width: 380.0,
+                          height: 168.0,
+                          child: Card(
+                            elevation: 7.0,
+                            margin: EdgeInsets.all(10.0),
+                            shadowColor: Colors.grey,
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
                             ),
-                            Container(
-                              padding: EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  Column(
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                Image(
+                                  image: AssetImage(
+                                      'assets/backgroundVillage.jpg'),
+                                  fit: BoxFit.fill,
+                                ),
+                                Container(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Row(
                                     children: [
-                                      Text(
-                                        'Grill Inn',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: 'Raleway',
-                                          fontSize: 40.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      Text(
-                                        'Burn your cravings away!',
-                                        style: TextStyle(
-                                          fontFamily: 'Raleway',
-                                          color: Colors.orange,
-                                          fontWeight: FontWeight.w800,
-                                        ),
+                                      Column(
+                                        children: [
+                                          Text(
+                                            'Grill Inn',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontFamily: 'Raleway',
+                                              fontSize: 40.0,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            'Burn your cravings away!',
+                                            style: TextStyle(
+                                              fontFamily: 'Raleway',
+                                              color: Colors.orange,
+                                              fontWeight: FontWeight.w800,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
-                                  // SizedBox(
-                                  //   width: 17.0,
-                                  // ),
-                                  // Image(
-                                  //   image: AssetImage(
-                                  //     'assets/carouselBurger.jpg',
-                                  //   ),
-                                  //   width: 149.0,
-                                  // ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
                       ),
                     ),
-                    Container(
-                      width: 380.0,
-                      height: 168.0,
-                      child: Card(
-                        elevation: 7.0,
-                        margin: EdgeInsets.all(10.0),
-                        shadowColor: Colors.grey,
-                        color: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            Image(
-                              image: AssetImage('assets/backgroundFnf.jpg'),
-                              fit: BoxFit.fill,
-                            ),
-                            Container(
-                              padding: EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'The Village',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: 'Raleway',
-                                          fontSize: 31.0,
-                                          fontWeight: FontWeight.w900,
-                                        ),
-                                      ),
-                                      Text(
-                                        'We cook what you love!',
-                                        style: TextStyle(
-                                          fontFamily: 'Raleway',
-                                          color: Colors.yellowAccent,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  // SizedBox(
-                                  //   width: 17.0,
-                                  // ),
-                                  // Image(
-                                  //   image: AssetImage(
-                                  //     'assets/carouselPaneer.jpg',
-                                  //   ),
-                                  //   height: 95.0,
-                                  // ),
-                                ],
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => DishesGrid()));
+                        Provider.of<Food>(context, listen: false)
+                            .fetchRestFood("Fresh n fillin");
+                      },
+                      child: Container(
+                        width: 380.0,
+                        height: 168.0,
+                        child: Card(
+                          elevation: 7.0,
+                          margin: EdgeInsets.all(10.0),
+                          shadowColor: Colors.grey,
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              Image(
+                                image: AssetImage('assets/backgroundFnf.jpg'),
+                                fit: BoxFit.fill,
                               ),
-                            ),
-                          ],
+                              Container(
+                                padding: EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: [
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          'The Village',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontFamily: 'Raleway',
+                                            fontSize: 31.0,
+                                            fontWeight: FontWeight.w900,
+                                          ),
+                                        ),
+                                        Text(
+                                          'We cook what you love!',
+                                          style: TextStyle(
+                                            fontFamily: 'Raleway',
+                                            color: Colors.yellowAccent,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -498,10 +506,17 @@ class _FeedScreenState extends State<FeedScreen> {
             ),
           ),
           Container(
-            height: 190.0,
-            width: screenWidth,
-            child: RestaurantList(),
-          ),
+              height: 190.0,
+              width: screenWidth,
+              child: _isL
+                  ? Center(
+                      child: CircularProgressIndicator(
+                        backgroundColor: Colors.white,
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(Colors.orange),
+                      ),
+                    )
+                  : RestaurantList()),
         ],
       ),
     );

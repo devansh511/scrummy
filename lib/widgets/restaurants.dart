@@ -63,8 +63,8 @@ class _RestaurantsState extends State<Restaurants> {
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     child: Container(
-                      width: 168.0,
-                      height: 170.0,
+                      width: 150.0,
+                      height: 160.0,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

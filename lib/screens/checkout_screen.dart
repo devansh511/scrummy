@@ -121,13 +121,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       ),
                     ),
                   ),
-                  // Container(
-                  //   child: FaIcon(
-                  //     FontAwesomeIcons.arrowRight,
-                  //     size: 15.0,
-                  //     color: Colors.orange,
-                  //   ),
-                  // ),
                 ],
               ),
             ),
@@ -195,101 +188,100 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     itemCount: Provider.of<Cart>(context).orderedFoods.length,
                     itemBuilder: (context, i) => GestureDetector(
                       onTap: () {
-                        setState(
-                          () {
-                            showModalBottomSheet(
-                              context: context,
-                              builder: (context) {
-                                return Container(
-                                  color: Color(0xff737373),
-                                  height: 306.0,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: const Radius.circular(25.0),
-                                        topRight: const Radius.circular(25.0),
-                                      ),
-                                    ),
-                                    child: Column(
+                        // setState(
+                        //   () {
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (context) {
+                            return Container(
+                              color: Color(0xff737373),
+                              height: 306.0,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: const Radius.circular(25.0),
+                                    topRight: const Radius.circular(25.0),
+                                  ),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Stack(
                                       children: [
-                                        Stack(
-                                          children: [
-                                            Image(
-                                              image: NetworkImage(
-                                                  '${Provider.of<Cart>(context).orderedFoods[i][2]}'),
-                                              height: 200.0,
-                                            ),
-                                            Container(
-                                              margin:
-                                                  EdgeInsets.only(top: 70.0),
-                                              child: ListTile(
-                                                title: Text(
-                                                  '',
-                                                  style: TextStyle(
-                                                    fontFamily: 'McLaren',
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                subtitle: Text(
-                                                  '',
-                                                  style: TextStyle(
-                                                    fontFamily: 'McLaren',
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
+                                        Image(
+                                          image: NetworkImage(
+                                              '${Provider.of<Cart>(context).orderedFoods[i][2]}'),
+                                          height: 200.0,
+                                        ),
+                                        Container(
+                                          margin: EdgeInsets.only(top: 70.0),
+                                          child: ListTile(
+                                            title: Text(
+                                              '${Provider.of<Cart>(context).orderedFoods[i][1]}',
+                                              style: TextStyle(
+                                                fontFamily: 'McLaren',
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                          ],
-                                        ),
-                                        SmoothStarRating(
-                                          allowHalfRating: false,
-                                          onRated: (double rating) {
-                                            Provider.of<Cart>(context,
-                                                    listen: false)
-                                                .rateFood("16", rating);
-                                          },
-                                          starCount: 5,
-                                          size: 50.0,
-                                          rating: rating,
-                                          color: Colors.orange,
-                                          borderColor: Colors.grey[400],
-                                          spacing: 15.0,
-                                        ),
-                                        FlatButton(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(25.0),
+                                            subtitle: Text(
+                                              '${Provider.of<Cart>(context).orderedFoods[i][2]}',
+                                              style: TextStyle(
+                                                fontFamily: 'McLaren',
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
+                                            ),
                                           ),
-                                          color: Colors.orange,
-                                          child: Icon(
-                                            Icons.shopping_cart,
-                                            size: 20.0,
-                                            color: Colors.white,
-                                          ),
-                                          onPressed: () {
-                                            Provider.of<Cart>(context,
-                                                    listen: false)
-                                                .addToCart(Provider.of<Food>(
-                                                        context,
-                                                        listen: false)
-                                                    .loadedFoods[1][0]);
-                                            Provider.of<Cart>(context,
-                                                    listen: false)
-                                                .getAmount();
-                                            display();
-                                          },
                                         ),
                                       ],
                                     ),
-                                  ),
-                                );
-                              },
+                                    SmoothStarRating(
+                                      allowHalfRating: false,
+                                      onRated: (double rating) {
+                                        Provider.of<Cart>(context,
+                                                listen: false)
+                                            .rateFood("16", rating);
+                                      },
+                                      starCount: 5,
+                                      size: 50.0,
+                                      rating: rating,
+                                      color: Colors.orange,
+                                      borderColor: Colors.grey[400],
+                                      spacing: 15.0,
+                                    ),
+                                    FlatButton(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(25.0),
+                                      ),
+                                      color: Colors.orange,
+                                      child: Icon(
+                                        Icons.shopping_cart,
+                                        size: 20.0,
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: () {
+                                        Provider.of<Cart>(context,
+                                                listen: false)
+                                            .addToCart(Provider.of<Food>(
+                                                    context,
+                                                    listen: false)
+                                                .loadedFoods[1][0]);
+                                        Provider.of<Cart>(context,
+                                                listen: false)
+                                            .getAmount();
+                                        display();
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
                             );
                           },
                         );
+                        //   },
+                        // );
                       },
                       child: Container(
                         margin: EdgeInsets.only(top: 10.0),
@@ -379,13 +371,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                                       listen: false)
                                                   .orderedFoods[i][0]);
                                           display();
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  CartScreen(),
-                                            ),
-                                          );
+                                          // Navigator.push(
+                                          //   context,
+                                          //   MaterialPageRoute(
+                                          //     builder: (context) =>
+                                          //         CartScreen(),
+                                          //   ),
+                                          // );
                                         },
                                       ),
                                     ],

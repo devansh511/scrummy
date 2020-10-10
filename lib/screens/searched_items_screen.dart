@@ -200,7 +200,14 @@ class _SearchListState extends State<SearchList> {
   }
 }
 
-class SearchItems extends StatelessWidget {
+class SearchItems extends StatefulWidget {
+  @override
+  _SearchItemsState createState() => _SearchItemsState();
+}
+
+class _SearchItemsState extends State<SearchItems> {
+  bool _isLoading = false;
+  int check = 0;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -230,19 +237,66 @@ class SearchItems extends StatelessWidget {
                         Icons.search,
                       ),
                     ),
-                    onChanged: (value) {
-                      if (value == null) {
-                        Provider.of<Search>(context).searchedFoods.clear();
+                    onChanged: (value) async {
+                      if (value == null || value == "") {
+                        Provider.of<Search>(context).allClear();
                       }
-                      Provider.of<Search>(context, listen: false)
+                      setState(() {
+                        _isLoading = true;
+                      });
+                      check = await Provider.of<Search>(context, listen: false)
                           .searchFood(value);
+                      setState(() {
+                        _isLoading = false;
+                      });
                     },
-                    onSubmitted: (value) {
-                      if (value == null) {
-                        Provider.of<Search>(context).searchedFoods.length;
+                    onSubmitted: (value) async {
+                      if (value == null || value == "") {
+                        Provider.of<Search>(context).allClear();
                       }
-                      Provider.of<Search>(context, listen: false)
+                      setState(() {
+                        _isLoading = true;
+                      });
+                      check = await Provider.of<Search>(context, listen: false)
                           .searchFood(value);
+                      setState(() {
+                        _isLoading = false;
+                      });
+                      if (check != 1) {
+                        return showDialog<void>(
+                          context: context,
+                          barrierDismissible: false, // user must tap button!
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text(
+                                'Foodies Alert',
+                                style: TextStyle(
+                                  fontFamily: 'Raleway',
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                              content:
+                                  Text('Sorry! We don\'t serve this food yet!'),
+                              actions: <Widget>[
+                                FlatButton(
+                                  child: Text(
+                                    'Okay',
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Raleway',
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
                       // Navigator.push(
                       //     context,
                       //     MaterialPageRoute(
@@ -320,12 +374,20 @@ class SearchItems extends StatelessWidget {
               //     ),
               //   ],
               // ),
-              ListView.builder(
-                physics: const ClampingScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: Provider.of<Search>(context).searchedFoods.length,
-                itemBuilder: (context, i) => SearchList(i),
-              ),
+              if (_isLoading)
+                Center(
+                  child: CircularProgressIndicator(
+                    backgroundColor: Colors.white,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
+                  ),
+                )
+              else
+                ListView.builder(
+                  physics: const ClampingScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: Provider.of<Search>(context).searchedFoods.length,
+                  itemBuilder: (context, i) => SearchList(i),
+                ),
             ],
           ),
         ),

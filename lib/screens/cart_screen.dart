@@ -151,7 +151,7 @@ class _ListItemsState extends State<ListItems> {
                           ),
                         ),
                         Container(
-                          padding: EdgeInsets.all(4.0),
+                          padding: EdgeInsets.all(5.0),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(25.0),
                             border: Border.all(
@@ -212,7 +212,7 @@ class _ListItemsState extends State<ListItems> {
                     Text(
                       Provider.of<Cart>(context).quant.isEmpty
                           ? "1"
-                          : '${Provider.of<Cart>(context).quant[widget.i]}',
+                          : '${Provider.of<Cart>(context).quant[widget.i][0]}',
                       style: TextStyle(
                         color: Colors.orange,
                       ),
@@ -269,147 +269,153 @@ bool isLoading = false;
 class CartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    Future<void> refreshDisplay() async {
+      await Future.delayed(Duration(seconds: 2), () async {
+        await Provider.of<Cart>(context, listen: false).displayCart();
+      });
+    }
+
     return Scaffold(
-      body: (isLoading)
-          ? CircularProgressIndicator(
-              backgroundColor: Colors.white,
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
-            )
-          : SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(12.0, 60.0, 12.0, 12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(left: 10.0),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'My Cart',
+      body: RefreshIndicator(
+        onRefresh: refreshDisplay,
+        color: Colors.orange,
+        backgroundColor: Colors.white,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(12.0, 60.0, 12.0, 12.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  margin: EdgeInsets.only(left: 10.0),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'My Cart',
+                              style: TextStyle(
+                                fontFamily: 'Raleway',
+                                color: Colors.grey[600],
+                                fontWeight: FontWeight.w900,
+                                fontSize: 17.0,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Provider.of<Cart>(context, listen: false)
+                                    .emptyCart();
+                                Provider.of<Cart>(context, listen: false)
+                                    .getAmount();
+                                Provider.of<Cart>(context, listen: false)
+                                    .displayCart();
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(10.0),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(25.0),
+                                  border: Border.all(
+                                    color: Colors.orange,
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Text(
+                                  'Clear cart',
                                   style: TextStyle(
                                     fontFamily: 'Raleway',
-                                    color: Colors.grey[600],
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 17.0,
+                                    color: Colors.orange,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Provider.of<Cart>(context, listen: false)
-                                        .emptyCart();
-                                    Provider.of<Cart>(context, listen: false)
-                                        .getAmount();
-                                    Provider.of<Cart>(context, listen: false)
-                                        .displayCart();
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.all(4.0),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(25.0),
-                                      border: Border.all(
-                                        color: Colors.orange,
-                                        width: 1,
-                                      ),
-                                    ),
-                                    child: Text(
-                                      'Clear cart',
-                                      style: TextStyle(
-                                        fontFamily: 'Raleway',
-                                        color: Colors.orange,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    ListView.builder(
-                      padding: EdgeInsets.only(
-                        top: 10.0,
-                      ),
-                      physics: const ClampingScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: Provider.of<Cart>(context).loadedFoods.length,
-                      itemBuilder: (_, i) => ListItems(i),
-                    ),
-                    Text(
-                      '   Payment Summary',
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Raleway',
-                      ),
-                    ),
-                    ListTile(
-                      title: Text(
-                        'Total Items',
-                        style: TextStyle(
-                          color: Colors.grey[700],
-                          fontFamily: 'Raleway',
-                          fontWeight: FontWeight.bold,
+                          ],
                         ),
                       ),
-                      trailing: Text(
-                        '${Provider.of<Cart>(context).loadedFoods.length}',
-                        style: TextStyle(
-                          color: Colors.grey[900],
-                          fontFamily: 'Raleway',
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17.0,
-                        ),
-                      ),
-                    ),
-                    ListTile(
-                      title: Text(
-                        'Total Amount',
-                        style: TextStyle(
-                          color: Colors.grey[700],
-                          fontFamily: 'Raleway',
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      trailing: Text(
-                        '₹${Provider.of<Cart>(context).amount}',
-                        style: TextStyle(
-                          color: Colors.grey[900],
-                          fontFamily: 'Raleway',
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17.0,
-                        ),
-                      ),
-                    ),
-                    ListTile(
-                      title: Text(
-                        'Discounted Amount',
-                        style: TextStyle(
-                          color: Colors.grey[700],
-                          fontFamily: 'Raleway',
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      trailing: Text(
-                        '₹${Provider.of<Cart>(context).disAmount}',
-                        style: TextStyle(
-                          color: Colors.grey[900],
-                          fontFamily: 'Raleway',
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17.0,
-                        ),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
+                ListView.builder(
+                  padding: EdgeInsets.only(
+                    top: 10.0,
+                  ),
+                  physics: const ClampingScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: Provider.of<Cart>(context).loadedFoods.length,
+                  itemBuilder: (_, i) => ListItems(i),
+                ),
+                Text(
+                  '   Payment Summary',
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Raleway',
+                  ),
+                ),
+                ListTile(
+                  title: Text(
+                    'Total Items',
+                    style: TextStyle(
+                      color: Colors.grey[700],
+                      fontFamily: 'Raleway',
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  trailing: Text(
+                    '${Provider.of<Cart>(context).loadedFoods.length}',
+                    style: TextStyle(
+                      color: Colors.grey[900],
+                      fontFamily: 'Raleway',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 17.0,
+                    ),
+                  ),
+                ),
+                ListTile(
+                  title: Text(
+                    'Total Amount',
+                    style: TextStyle(
+                      color: Colors.grey[700],
+                      fontFamily: 'Raleway',
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  trailing: Text(
+                    '₹${Provider.of<Cart>(context).amount}',
+                    style: TextStyle(
+                      color: Colors.grey[900],
+                      fontFamily: 'Raleway',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 17.0,
+                    ),
+                  ),
+                ),
+                ListTile(
+                  title: Text(
+                    'Discounted Amount',
+                    style: TextStyle(
+                      color: Colors.grey[700],
+                      fontFamily: 'Raleway',
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  trailing: Text(
+                    '₹${Provider.of<Cart>(context).disAmount}',
+                    style: TextStyle(
+                      color: Colors.grey[900],
+                      fontFamily: 'Raleway',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 17.0,
+                    ),
+                  ),
+                ),
+              ],
             ),
+          ),
+        ),
+      ),
       bottomNavigationBar: BottomAppBar(
         elevation: 8.0,
         child: Row(
@@ -449,6 +455,12 @@ class CartScreen extends StatelessWidget {
                 ),
               ),
               onPressed: () {
+                if (addr2 == "" || addr2 == null) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => LocationScreen()));
+                }
                 Provider.of<Cart>(context, listen: false).checkout();
                 return showDialog<void>(
                   context: context,
@@ -465,7 +477,7 @@ class CartScreen extends StatelessWidget {
                               height: 15.0,
                             ),
                             Text(
-                              'Payment Successful',
+                              'Order Placed Successfully',
                               style: TextStyle(
                                 color: Colors.orange,
                                 fontWeight: FontWeight.bold,

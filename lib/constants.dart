@@ -1,1 +1,1 @@
-const kUrl = "6834dbe733a6";
+const kUrl = "844688fdb04b";

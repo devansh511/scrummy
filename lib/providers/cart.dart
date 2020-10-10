@@ -90,8 +90,12 @@ class Cart with ChangeNotifier {
         'Authorization': 'Bearer $accessToken',
       });
       final responseData = json.decode(response.body);
-      quant.removeAt(index);
-      this.quant.insert(index, responseData["quantity"]);
+      quant.clear();
+      responseData.forEach((fData) {
+        quant.add([
+          fData["quantity"],
+        ]);
+      });
       print(quant);
       notifyListeners();
       print(responseData);
@@ -111,11 +115,15 @@ class Cart with ChangeNotifier {
         'Authorization': 'Bearer $accessToken',
       });
       final responseData = json.decode(response.body);
-      quant.removeAt(index);
-      this.quant.insert(index, responseData["quantity"].toString());
+      quant.clear();
+      responseData.forEach((fData) {
+        quant.add([
+          fData["quantity"],
+        ]);
+      });
       print('<<<<<<<<<<<<<<<<<<$quant');
-      notifyListeners();
       print(responseData);
+      notifyListeners();
     } catch (error) {
       print('<<<<<<<<<<<<<<<<<<<<<<<<<<<');
       print(error);
