@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:scrummy/models/Http_Exceptions.dart';
 import '../providers/food.dart';
 import '../providers/cart.dart';
+import '../widgets/restaurants.dart';
 
 class GridBuilder extends StatefulWidget {
   final int i;
@@ -15,6 +17,61 @@ class GridBuilder extends StatefulWidget {
 class _GridBuilderState extends State<GridBuilder> {
   Color _cartColor = Colors.grey[600];
   bool added = false;
+  // bool _isLoading = true;
+
+  Future<void> _showMyDialog(String msg) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Foodies Alert',
+            style: TextStyle(
+              fontFamily: 'Raleway',
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[600],
+            ),
+          ),
+          content: Text(msg),
+          actions: <Widget>[
+            FlatButton(
+              child: Text(
+                'Continue',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Raleway',
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Provider.of<Cart>(context, listen: false).addToCart(
+                    Provider.of<Food>(context, listen: false)
+                        .loadedFoods[widget.i][0]);
+              },
+            ),
+            SizedBox(
+              width: 10.0,
+            ),
+            FlatButton(
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Raleway',
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   Future<void> _isAdded(int i) async {
     final check = await Provider.of<Cart>(context, listen: false)
@@ -44,6 +101,20 @@ class _GridBuilderState extends State<GridBuilder> {
     } catch (error) {
       print(error);
     }
+  }
+
+  Future<void> addToCart() async {
+    try {
+      await Provider.of<Cart>(context, listen: false).addToCart(
+          Provider.of<Food>(context, listen: false).loadedFoods[widget.i][0]);
+    } on HttpException catch (error) {
+      var errorMsg = "Something went wrong";
+      if (error.toString().contains("conflicting restaurants")) {
+        errorMsg =
+            "Adding food from different restaurant will clear your existing cart!";
+      }
+      _showMyDialog(errorMsg);
+    } catch (error) {}
   }
 
   @override
@@ -242,9 +313,7 @@ class _GridBuilderState extends State<GridBuilder> {
                         // ),
                       ),
                     );
-                    Provider.of<Cart>(context, listen: false).addToCart(
-                        Provider.of<Food>(context, listen: false)
-                            .loadedFoods[widget.i][0]);
+                    addToCart();
                     Provider.of<Cart>(context, listen: false).getAmount();
                     display();
                   },
@@ -263,20 +332,62 @@ class _GridBuilderState extends State<GridBuilder> {
   }
 }
 
-class DishesGrid extends StatelessWidget {
+class DishesGrid extends StatefulWidget {
+  @override
+  _DishesGridState createState() => _DishesGridState();
+}
+
+class _DishesGridState extends State<DishesGrid> {
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    if (check == 2) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _isLoading = true;
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const ClampingScrollPhysics(),
-      padding: const EdgeInsets.all(10),
-      itemCount: Provider.of<Food>(context).loadedFoods.length,
-      itemBuilder: (_, i) => GridBuilder(i),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 9 / 11,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Container(
+            margin: EdgeInsets.only(top: 40.0),
+            child: (_isLoading)
+                ? Center(
+                    child: CircularProgressIndicator(
+                      backgroundColor: Colors.white,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
+                    ),
+                  )
+                : GridView.builder(
+                    shrinkWrap: true,
+                    physics: const ClampingScrollPhysics(),
+                    padding: const EdgeInsets.all(10),
+                    itemCount: Provider.of<Food>(context).loadedFoods.length,
+                    itemBuilder: (_, i) => GridBuilder(i),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 9 / 11,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                    ),
+                  ),
+          ),
+        ),
       ),
     );
   }

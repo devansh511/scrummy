@@ -57,6 +57,21 @@ class _FeedScreenState extends State<FeedScreen> {
     }
   }
 
+  void _fetch() async {
+    print("<<<<<<<<<<<<<<<<<<<");
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+      await Provider.of<Food>(context, listen: false).fetchFood();
+      setState(() {
+        _isLoading = false;
+      });
+    } catch (error) {
+      print(error);
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -76,19 +91,11 @@ class _FeedScreenState extends State<FeedScreen> {
     super.initState();
   }
 
-  void _fetch() async {
-    print("<<<<<<<<<<<<<<<<<<<");
-    try {
-      setState(() {
-        _isLoading = true;
-      });
-      await Provider.of<Food>(context, listen: false).fetchFood();
-      setState(() {
-        _isLoading = false;
-      });
-    } catch (error) {
-      print(error);
-    }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    display();
+    super.dispose();
   }
 
   @override
@@ -216,35 +223,35 @@ class _FeedScreenState extends State<FeedScreen> {
                 child: Row(
                   children: <Widget>[
                     Text(
-                      'For you',
+                      'Featured',
                       style: TextStyle(
                         fontFamily: 'Raleway',
                         color: Colors.grey[600],
                         fontWeight: FontWeight.w900,
-                        fontSize: 17.0,
+                        fontSize: 19.0,
                       ),
                     ),
-                    Container(
-                      margin: EdgeInsets.only(left: 220.0, right: 8.0),
-                      child: GestureDetector(
-                          child: Text(
-                            'See all',
-                            style: TextStyle(
-                                fontFamily: 'Raleway',
-                                color: Colors.grey,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          onTap: () {
-                            _fetch();
-                          }),
-                    ),
-                    Container(
-                      child: FaIcon(
-                        FontAwesomeIcons.arrowRight,
-                        size: 15.0,
-                        color: Colors.grey,
-                      ),
-                    ),
+                    // Container(
+                    //   margin: EdgeInsets.only(left: 220.0, right: 8.0),
+                    //   child: GestureDetector(
+                    //       child: Text(
+                    //         'See all',
+                    //         style: TextStyle(
+                    //             fontFamily: 'Raleway',
+                    //             color: Colors.grey,
+                    //             fontWeight: FontWeight.bold),
+                    //       ),
+                    //       onTap: () {
+                    //         _fetch();
+                    //       }),
+                    // ),
+                    // Container(
+                    //   child: FaIcon(
+                    //     FontAwesomeIcons.arrowRight,
+                    //     size: 15.0,
+                    //     color: Colors.grey,
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
@@ -272,7 +279,7 @@ class _FeedScreenState extends State<FeedScreen> {
                       width: 380.0,
                       height: 168.0,
                       child: Card(
-                        elevation: 3.0,
+                        elevation: 7.0,
                         margin: EdgeInsets.all(10.0),
                         shadowColor: Colors.grey,
                         color: Colors.white,
@@ -331,7 +338,7 @@ class _FeedScreenState extends State<FeedScreen> {
                       width: 380.0,
                       height: 168.0,
                       child: Card(
-                        elevation: 3.0,
+                        elevation: 7.0,
                         margin: EdgeInsets.all(10.0),
                         shadowColor: Colors.grey,
                         color: Colors.white,
@@ -391,7 +398,7 @@ class _FeedScreenState extends State<FeedScreen> {
                       width: 380.0,
                       height: 168.0,
                       child: Card(
-                        elevation: 3.0,
+                        elevation: 7.0,
                         margin: EdgeInsets.all(10.0),
                         shadowColor: Colors.grey,
                         color: Colors.white,
@@ -432,15 +439,6 @@ class _FeedScreenState extends State<FeedScreen> {
                                       ),
                                     ],
                                   ),
-                                  // SizedBox(
-                                  //   width: 17.0,
-                                  // // ),
-                                  // Image(
-                                  //   image: AssetImage(
-                                  //     'assets/carouselPaneer.jpg',
-                                  //   ),
-                                  //   height: 95.0,
-                                  // ),
                                 ],
                               ),
                             ),

@@ -232,7 +232,7 @@ class SearchItems extends StatelessWidget {
                     ),
                     onChanged: (value) {
                       if (value == null) {
-                        Provider.of<Search>(context).searchedFoods.length;
+                        Provider.of<Search>(context).searchedFoods.clear();
                       }
                       Provider.of<Search>(context, listen: false)
                           .searchFood(value);

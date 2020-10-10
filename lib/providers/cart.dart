@@ -1,10 +1,10 @@
-import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:async';
 import 'package:http/http.dart' as https;
 import 'dart:convert';
 import '../auth/auth.dart';
 import '../constants.dart';
+import '../models/Http_Exceptions.dart';
 
 // class CartItem {
 //   final String id;
@@ -22,13 +22,15 @@ import '../constants.dart';
 
 class Cart with ChangeNotifier {
   List loadedFoods = [];
-  String quant = "1";
+  List orderedFoods = [];
+  List quant = [];
+  // String quant = "1";
   String amount = "0";
   String disAmount = "0";
 
-  String get quantity {
-    return quant;
-  }
+  // String get quantity {
+  //   return quant;
+  // }
 
   Future<int> isAdded(String foodId) async {
     int check = 0;
@@ -66,6 +68,9 @@ class Cart with ChangeNotifier {
         'Authorization': 'Bearer $accessToken',
       });
       final responseData = json.decode(response.body);
+      if (responseData["details"] != null) {
+        throw HttpException(responseData["details"]);
+      }
       notifyListeners();
       print(responseData);
     } catch (error) {
@@ -74,7 +79,7 @@ class Cart with ChangeNotifier {
     }
   }
 
-  Future<void> increaseQuantity(String foodId) async {
+  Future<void> increaseQuantity(String foodId, int index) async {
     print(foodId);
     try {
       final url =
@@ -85,7 +90,8 @@ class Cart with ChangeNotifier {
         'Authorization': 'Bearer $accessToken',
       });
       final responseData = json.decode(response.body);
-      quant = responseData["quantity"].toString();
+      quant.removeAt(index);
+      this.quant.insert(index, responseData["quantity"]);
       print(quant);
       notifyListeners();
       print(responseData);
@@ -94,7 +100,7 @@ class Cart with ChangeNotifier {
     }
   }
 
-  Future<void> decreaseQuantity(String foodId) async {
+  Future<void> decreaseQuantity(String foodId, int index) async {
     print(foodId);
     try {
       final url =
@@ -105,11 +111,13 @@ class Cart with ChangeNotifier {
         'Authorization': 'Bearer $accessToken',
       });
       final responseData = json.decode(response.body);
-      quant = responseData["quantity"].toString();
-      print(quant);
+      quant.removeAt(index);
+      this.quant.insert(index, responseData["quantity"].toString());
+      print('<<<<<<<<<<<<<<<<<<$quant');
       notifyListeners();
       print(responseData);
     } catch (error) {
+      print('<<<<<<<<<<<<<<<<<<<<<<<<<<<');
       print(error);
     }
   }
@@ -173,6 +181,7 @@ class Cart with ChangeNotifier {
           fData["get_total_item_price"].toString(),
           fData["delivery_time"].toString(),
           fData["offer"].toString(),
+          fData["restname"]
         ]);
       });
       notifyListeners();
@@ -236,7 +245,7 @@ class Cart with ChangeNotifier {
     }
   }
 
-  Future<void> myOrders() async {
+  Future<int> myOrders() async {
     try {
       print('de>>>');
       final url = "https://$kUrl.ngrok.io/api/myorders/";
@@ -246,9 +255,21 @@ class Cart with ChangeNotifier {
         'Authorization': 'Bearer $accessToken'
       });
       print('<<de');
+      print(response);
       final responseData = json.decode(response.body);
+      orderedFoods.clear();
+      responseData.forEach((fData) {
+        orderedFoods.add([
+          fData["id"].toString(),
+          fData["food_name"],
+          fData["image"],
+          fData["discounted_price"],
+        ]);
+      });
+      print(loadedFoods);
       notifyListeners();
       print(responseData);
+      return 2;
     } catch (error) {
       print("@@@");
       print(error);

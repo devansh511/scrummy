@@ -132,7 +132,7 @@ class Food with ChangeNotifier {
     }
   }
 
-  Future<void> fetchRestFood(String restName) async {
+  Future<int> fetchRestFood(String restName) async {
     try {
       final url = "https://$kUrl.ngrok.io/api/foodlist/$restName/";
       final response = await https.get(url, headers: {
@@ -156,9 +156,9 @@ class Food with ChangeNotifier {
           fData["restname"],
         ]);
       });
-
       notifyListeners();
       print(loadedFoods);
+      return 2;
     } catch (error) {
       print(error);
     }

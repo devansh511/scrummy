@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scrummy/providers/food.dart';
+import 'package:scrummy/widgets/dishes_grid.dart';
 
 class Restaurants extends StatefulWidget {
   final int idx;
@@ -11,6 +12,7 @@ class Restaurants extends StatefulWidget {
 }
 
 bool isLoad = false;
+int check = 0;
 
 class _RestaurantsState extends State<Restaurants> {
   // void _fetchR() async {
@@ -25,7 +27,14 @@ class _RestaurantsState extends State<Restaurants> {
       setState(() {
         isLoad = true;
       });
-      await Provider.of<Food>(context, listen: false).fetchRestFood(restName);
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => DishesGrid(),
+        ),
+      );
+      check = await Provider.of<Food>(context, listen: false)
+          .fetchRestFood(restName);
+
       setState(() {
         isLoad = false;
       });

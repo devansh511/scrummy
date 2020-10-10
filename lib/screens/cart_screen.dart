@@ -97,7 +97,7 @@ class _ListItemsState extends State<ListItems> {
                 Row(
                   children: [
                     Text(
-                      'Burgers',
+                      '${Provider.of<Cart>(context, listen: false).loadedFoods[widget.i][6]}',
                       style: TextStyle(
                           fontFamily: 'Raleway',
                           color: Colors.grey[600],
@@ -186,15 +186,15 @@ class _ListItemsState extends State<ListItems> {
                         setState(() {
                           if (int.parse(
                                   Provider.of<Cart>(context, listen: false)
-                                      .quant) >
+                                      .quant[widget.i]) >
                               1) {
                             Provider.of<Cart>(context, listen: false)
                                 .decreaseQuantity(
-                              Provider.of<Cart>(
-                                context,
-                                listen: false,
-                              ).loadedFoods[widget.i][0],
-                            );
+                                    Provider.of<Cart>(
+                                      context,
+                                      listen: false,
+                                    ).loadedFoods[widget.i][0],
+                                    widget.i);
                             Provider.of<Cart>(context, listen: false)
                                 .getAmount();
                           }
@@ -210,9 +210,9 @@ class _ListItemsState extends State<ListItems> {
                       ),
                     ),
                     Text(
-                      Provider.of<Cart>(context).quant == null
+                      Provider.of<Cart>(context).quant.isEmpty
                           ? "1"
-                          : '${Provider.of<Cart>(context).quant}',
+                          : '${Provider.of<Cart>(context).quant[widget.i]}',
                       style: TextStyle(
                         color: Colors.orange,
                       ),
@@ -226,14 +226,19 @@ class _ListItemsState extends State<ListItems> {
                         ),
                       ),
                       onPressed: () {
+                        print(Provider.of<Cart>(
+                          context,
+                          listen: false,
+                        ).loadedFoods);
+                        print('${widget.i}<<<<<<<<>>>>>>>>');
                         setState(() {
                           Provider.of<Cart>(context, listen: false)
                               .increaseQuantity(
-                            Provider.of<Cart>(
-                              context,
-                              listen: false,
-                            ).loadedFoods[widget.i][0],
-                          );
+                                  Provider.of<Cart>(
+                                    context,
+                                    listen: false,
+                                  ).loadedFoods[widget.i][0],
+                                  widget.i);
                           Provider.of<Cart>(context, listen: false).getAmount();
                           print(
                               '${Provider.of<Cart>(context, listen: false).loadedFoods}');

@@ -17,6 +17,8 @@ class CheckoutScreen extends StatefulWidget {
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
   double rating = 1.0;
+  bool isL = true;
+  int check = 0;
 
   Future<void> display() async {
     try {
@@ -31,13 +33,38 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   @override
   void initState() {
     Future.delayed(Duration.zero, () async {
-      await Provider.of<Cart>(context, listen: false).myOrders();
+      setState(() {
+        print('$check>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+        isL = true;
+        print(isL);
+      });
+      check = await Provider.of<Cart>(context, listen: false).myOrders();
+      setState(() {
+        print('$check>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+        isL = false;
+        print(isL);
+      });
+      print('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<$check');
     });
     super.initState();
   }
 
   @override
+  void dispose() {
+    check = 0;
+    isL = true;
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (check > 1) {
+      setState(() {
+        print('$check>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+        isL = false;
+        print(isL);
+      });
+    }
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(12.0, 20.0, 12.0, 50.0),
@@ -47,6 +74,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             Container(
               margin: EdgeInsets.only(left: 10.0),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text(
                     'Food in your cart',
@@ -58,17 +86,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     ),
                   ),
                   GestureDetector(
-                    child: Container(
-                      margin: EdgeInsets.only(left: 120.0, right: 8.0),
-                      child: Text(
-                        'See all',
-                        style: TextStyle(
-                            fontFamily: 'Raleway',
-                            color: Colors.grey,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
                     onTap: () {
+                      display();
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -82,14 +101,33 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         ),
                       );
                     },
-                  ),
-                  Container(
-                    child: FaIcon(
-                      FontAwesomeIcons.arrowRight,
-                      size: 15.0,
-                      color: Colors.grey,
+                    child: Container(
+                      padding: EdgeInsets.all(15.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(25.0),
+                        border: Border.all(
+                          color: Colors.orange,
+                          width: 1,
+                        ),
+                      ),
+                      child: Text(
+                        'See Cart',
+                        style: TextStyle(
+                          fontFamily: 'Raleway',
+                          color: Colors.orange,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0,
+                        ),
+                      ),
                     ),
                   ),
+                  // Container(
+                  //   child: FaIcon(
+                  //     FontAwesomeIcons.arrowRight,
+                  //     size: 15.0,
+                  //     color: Colors.orange,
+                  //   ),
+                  // ),
                 ],
               ),
             ),
@@ -144,189 +182,222 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 ),
               ],
             ),
-            ListView.builder(
-              physics: const ClampingScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: 1,
-              itemBuilder: (context, i) => GestureDetector(
-                onTap: () {
-                  setState(
-                    () {
-                      showModalBottomSheet(
-                        context: context,
-                        builder: (context) {
-                          return Container(
-                            color: Color(0xff737373),
-                            height: 306.0,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.only(
-                                  topLeft: const Radius.circular(25.0),
-                                  topRight: const Radius.circular(25.0),
+            isL
+                ? Center(
+                    child: CircularProgressIndicator(
+                      backgroundColor: Colors.white,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
+                    ),
+                  )
+                : ListView.builder(
+                    physics: const ClampingScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: Provider.of<Cart>(context).orderedFoods.length,
+                    itemBuilder: (context, i) => GestureDetector(
+                      onTap: () {
+                        setState(
+                          () {
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (context) {
+                                return Container(
+                                  color: Color(0xff737373),
+                                  height: 306.0,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: const Radius.circular(25.0),
+                                        topRight: const Radius.circular(25.0),
+                                      ),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Stack(
+                                          children: [
+                                            Image(
+                                              image: NetworkImage(
+                                                  '${Provider.of<Cart>(context).orderedFoods[i][2]}'),
+                                              height: 200.0,
+                                            ),
+                                            Container(
+                                              margin:
+                                                  EdgeInsets.only(top: 70.0),
+                                              child: ListTile(
+                                                title: Text(
+                                                  '',
+                                                  style: TextStyle(
+                                                    fontFamily: 'McLaren',
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                subtitle: Text(
+                                                  '',
+                                                  style: TextStyle(
+                                                    fontFamily: 'McLaren',
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        SmoothStarRating(
+                                          allowHalfRating: false,
+                                          onRated: (double rating) {
+                                            Provider.of<Cart>(context,
+                                                    listen: false)
+                                                .rateFood("16", rating);
+                                          },
+                                          starCount: 5,
+                                          size: 50.0,
+                                          rating: rating,
+                                          color: Colors.orange,
+                                          borderColor: Colors.grey[400],
+                                          spacing: 15.0,
+                                        ),
+                                        FlatButton(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(25.0),
+                                          ),
+                                          color: Colors.orange,
+                                          child: Icon(
+                                            Icons.shopping_cart,
+                                            size: 20.0,
+                                            color: Colors.white,
+                                          ),
+                                          onPressed: () {
+                                            Provider.of<Cart>(context,
+                                                    listen: false)
+                                                .addToCart(Provider.of<Food>(
+                                                        context,
+                                                        listen: false)
+                                                    .loadedFoods[1][0]);
+                                            Provider.of<Cart>(context,
+                                                    listen: false)
+                                                .getAmount();
+                                            display();
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        );
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(top: 10.0),
+                        height: 130.0,
+                        child: Card(
+                          margin: EdgeInsets.only(bottom: 25.0),
+                          elevation: 0.0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                            side: BorderSide(
+                              color: Colors.grey[400],
+                            ),
+                          ),
+                          child: Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 8.0, right: 8.0),
+                                child: Image(
+                                  image: AssetImage(
+                                      '${Provider.of<Cart>(context).orderedFoods[i][2]}'),
+                                  filterQuality: FilterQuality.high,
                                 ),
                               ),
-                              child: Column(
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  Stack(
-                                    children: [
-                                      Image(
-                                        image: NetworkImage(''),
-                                        height: 200.0,
-                                      ),
-                                      Container(
-                                        margin: EdgeInsets.only(top: 70.0),
-                                        child: ListTile(
-                                          title: Text(
-                                            '',
-                                            style: TextStyle(
-                                              fontFamily: 'McLaren',
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          subtitle: Text(
-                                            '',
-                                            style: TextStyle(
-                                              fontFamily: 'McLaren',
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                            ),
+                                  Text(
+                                    '${Provider.of<Cart>(context).orderedFoods[i][1]}',
+                                    style: TextStyle(
+                                        fontFamily: 'Raleway',
+                                        color: Colors.grey[600],
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14.0),
+                                  ),
+                                  RichText(
+                                    text: TextSpan(
+                                      text: 'Price ',
+                                      style: TextStyle(
+                                          fontFamily: 'Raleway',
+                                          color: Colors.grey[600],
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 11.0),
+                                      children: <TextSpan>[
+                                        TextSpan(
+                                          text:
+                                              '₹ ${Provider.of<Cart>(context).orderedFoods[i][3]}',
+                                          style: TextStyle(
+                                            color: Colors.grey[900],
+                                            fontFamily: 'Raleway',
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
+                                      ],
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Delivered',
+                                        style: TextStyle(
+                                          fontFamily: 'Raleway',
+                                          color: Colors.grey[600],
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 60.0,
+                                      ),
+                                      InkWell(
+                                        child: Text(
+                                          'Order Again',
+                                          style: TextStyle(
+                                            fontFamily: 'Raleway',
+                                            color: Colors.orange,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 15,
+                                          ),
+                                        ),
+                                        onTap: () {
+                                          Provider.of<Cart>(context,
+                                                  listen: false)
+                                              .addToCart(Provider.of<Cart>(
+                                                      context,
+                                                      listen: false)
+                                                  .orderedFoods[i][0]);
+                                          display();
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  CartScreen(),
+                                            ),
+                                          );
+                                        },
                                       ),
                                     ],
                                   ),
-                                  SmoothStarRating(
-                                    allowHalfRating: false,
-                                    onRated: (double rating) {
-                                      Provider.of<Cart>(context, listen: false)
-                                          .rateFood("16", rating);
-                                    },
-                                    starCount: 5,
-                                    size: 50.0,
-                                    rating: rating,
-                                    color: Colors.orange,
-                                    borderColor: Colors.grey[400],
-                                    spacing: 15.0,
-                                  ),
-                                  FlatButton(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(25.0),
-                                    ),
-                                    color: Colors.orange,
-                                    child: Icon(
-                                      Icons.shopping_cart,
-                                      size: 20.0,
-                                      color: Colors.white,
-                                    ),
-                                    onPressed: () {
-                                      Provider.of<Cart>(context, listen: false)
-                                          .addToCart(Provider.of<Food>(context,
-                                                  listen: false)
-                                              .loadedFoods[1][0]);
-                                      Provider.of<Cart>(context, listen: false)
-                                          .getAmount();
-                                      display();
-                                    },
-                                  ),
                                 ],
                               ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  );
-                },
-                child: Container(
-                  margin: EdgeInsets.only(top: 10.0),
-                  height: 130.0,
-                  child: Card(
-                    margin: EdgeInsets.only(bottom: 25.0),
-                    elevation: 0.0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                      side: BorderSide(
-                        color: Colors.grey[400],
-                      ),
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                          child: Image(
-                            image: AssetImage('assets/Untitled.png'),
-                            filterQuality: FilterQuality.high,
+                            ],
                           ),
                         ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text(
-                              'Maharaja MAC',
-                              style: TextStyle(
-                                  fontFamily: 'Raleway',
-                                  color: Colors.grey[600],
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14.0),
-                            ),
-                            RichText(
-                              text: TextSpan(
-                                text: 'Total price ',
-                                style: TextStyle(
-                                    fontFamily: 'Raleway',
-                                    color: Colors.grey[600],
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 11.0),
-                                children: <TextSpan>[
-                                  TextSpan(
-                                    text: '₹ 189',
-                                    style: TextStyle(
-                                      color: Colors.grey[900],
-                                      fontFamily: 'Raleway',
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  'Delivered',
-                                  style: TextStyle(
-                                    fontFamily: 'Raleway',
-                                    color: Colors.grey[600],
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 60.0,
-                                ),
-                                InkWell(
-                                  child: Text(
-                                    'Order Again',
-                                    style: TextStyle(
-                                      fontFamily: 'Raleway',
-                                      color: Colors.orange,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                  onTap: () {},
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ),
-            ),
             // SnackBar(
             //   backgroundColor: Colors.orange,
             //   content: Row(

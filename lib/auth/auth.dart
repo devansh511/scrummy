@@ -18,69 +18,7 @@ class Auth with ChangeNotifier {
   Timer _authTimer;
   String profName;
   String profEmail;
-  // String kUrl = "a078d6616f5e";
 
-  // String get token {
-  //   if (_expiryDate != null &&
-  //       _expiryDate.isAfter(DateTime.now()) &&
-  //       accessToken != null) {
-  //     return refreshToken;
-  //   }
-  //   return null;
-  // }
-
-  // String get userId {
-  //   return _userId;
-  // }
-
-  // Future<void> _authenticate(String email, String password, String name) async {
-  //   final url = 'https://d3cc68b4c9f1.ngrok.io/api/createaccount/';
-
-  //   var body = {};
-  //   body = {
-  //     'email': 'kumardevansh8@gmail.com',
-  //     'Role': '1',
-  //     'password': '1234567',
-  //     "profile": {"name": 'Devansh', "address": 'Arya Nagar'}
-  //   };
-
-  //   try {
-  //     final response = await http.post(url, body: json.encode(body), headers: {
-  //       "content-type": "application/json",
-  //       "accept": "application/json"
-  //     });
-  //     print(response);
-  //     final responseData = json.decode(response.body);
-  //     if (responseData['error'] != null) {
-  //       throw HttpException(
-  //         responseData['error']['message'],
-  //       );
-  //     }
-  //     _token = responseData['idToken'];
-  // _userId = responseData['localId'];
-  // _expiryDate = DateTime.now().add(
-  //   Duration(
-  //     seconds: int.parse(
-  //       responseData['expiresIn'],
-  //     ),
-  //   ),
-  // );
-  //     // _autoLogout();
-  //     notifyListeners();
-  //     final prefs = await SharedPreferences.getInstance();
-  // final userData = json.encode(
-  //   {
-  //     'token': _token,
-  //     'userId': _userId,
-  //     'expiryDate': _expiryDate.toIso8601String()
-  //   },
-  // );
-  // prefs.setString('userData', userData);
-  //     print(responseData);
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }
   Future<void> generateOtp(String email) async {
     final url = 'https://$kUrl.ngrok.io/api/otp/';
     try {
@@ -340,12 +278,6 @@ class Auth with ChangeNotifier {
       final responseData = json.decode(response.body);
       notifyListeners();
       print(responseData);
-      // if (response.body.isNotEmpty) {
-      //   if (responseData["error"] != null) {
-      //     check = -1;
-      //     throw HttpException(responseData["error"]);
-      //   }
-      // }
     } catch (error) {
       throw error;
     }
@@ -370,48 +302,6 @@ class Auth with ChangeNotifier {
     }
   }
 
-  // Future<bool> autoLogin() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //     if (!prefs.containsKey('userData')) {
-  //       return false;
-  //   }
-  //   final extractedUserData =
-  //   json.decode(prefs.getString('userData')) as Map<String, Object>;
-  //   //final url = 'https://$kUrl.ngrok.io/api/token/refresh/';
-
-  //   // final response = await http.post(url,
-  //   //     body: json.encode({"refresh": refreshToken}),
-  //   //     headers: {
-  //   //       "content-type": "application/json",
-  //   //       "accept": "application/json"
-  //   //     });
-  //   // final responseData = json.decode(response.body);
-  //   accessToken = extractedUserData["access"];
-  //   refreshToken = extractedUserData["refresh"];
-  //   print(accessToken);
-  //   print(refreshToken);
-  // }
-
-// Future<bool> tryAutoLogin() async {
-//   final prefs = await SharedPreferences.getInstance();
-// if (!prefs.containsKey('userData')) {
-//   return false;
-// }
-// final extractedUserData =
-//     json.decode(prefs.getString('userData')) as Map<String, Object>;
-// final expiryDate = DateTime.parse(extractedUserData['expiryDate']);
-
-// if (expiryDate.isBefore(DateTime.now())) {
-//   return false;
-// }
-
-//   accessToken = extractedUserData['access'];
-//   refreshToken = extractedUserData['refresh'];
-//   _expiryDate = expiryDate;
-//   notifyListeners();
-//   _autoLogout();
-//   return true;
-// }
   bool get isAuth {
     print('Token');
     print(accessToken);
@@ -432,12 +322,4 @@ class Auth with ChangeNotifier {
     prefs.clear();
     notifyListeners();
   }
-
-  // void _autoLogout() {
-  //   if (_authTimer != null) {
-  //     _authTimer.cancel();
-  //   }
-  //   final timeToExpiry = _expiryDate.difference(DateTime.now()).inSeconds;
-  //   _authTimer = Timer(Duration(seconds: timeToExpiry), logout);
-  //}
 }
