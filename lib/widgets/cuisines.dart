@@ -59,18 +59,12 @@ class _CuisinesState extends State<Cuisines> {
       setState(() {
         isLoadin = true;
       });
-      await Provider.of<Food>(context, listen: false).fetchCuisines(cuisine);
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => DishesGrid(),
         ),
       );
-    } on HttpException catch (error) {
-      String msg = "Sorry, we are unable to process your request";
-      if (error.toString().contains("error")) {
-        msg = "";
-      }
-      _showMyDialog(msg);
+      await Provider.of<Food>(context, listen: false).fetchCuisines(cuisine);
     } catch (error) {
       print(error);
       _showMyDialog("Something went wrong on our servers!");

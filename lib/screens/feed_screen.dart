@@ -217,7 +217,7 @@ class _FeedScreenState extends State<FeedScreen> {
                         Column(
                           children: [
                             Text(
-                              'Subway',
+                              'Grill Inn',
                               style: TextStyle(
                                 color: Colors.orange[800],
                                 fontFamily: 'McLaren',
@@ -226,12 +226,33 @@ class _FeedScreenState extends State<FeedScreen> {
                               ),
                             ),
                             Text(
-                              'Get your favorite sub',
+                              'Burn your cravings away',
                               style: TextStyle(
                                 fontFamily: 'Raleway',
                                 color: Colors.orange,
                                 fontWeight: FontWeight.bold,
                               ),
+                            ),
+                            Stack(
+                              children: <Widget>[
+                                // Image(
+                                //   image: AssetImage('assets/banner.png'),
+                                //   width: 100.0,
+                                //   height: 50.0,
+                                // ),
+                                Container(
+                                  padding: EdgeInsets.only(top: 30.0),
+                                  child: Text(
+                                    'Upto 30% OFF',
+                                    style: TextStyle(
+                                      fontFamily: "Raleway",
+                                      color: Colors.orange,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 21.0,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -242,7 +263,7 @@ class _FeedScreenState extends State<FeedScreen> {
                           image: AssetImage(
                             'assets/sub.jpg',
                           ),
-                          width: 170.0,
+                          width: 150.0,
                           height: 150.0,
                         ),
                       ],
@@ -537,28 +558,28 @@ class _FeedScreenState extends State<FeedScreen> {
                     fontSize: 17.0,
                   ),
                 ),
-                Container(
-                  margin: EdgeInsets.only(left: 180.0, right: 8.0),
-                  child: GestureDetector(
-                    child: Text(
-                      'See all',
-                      style: TextStyle(
-                          fontFamily: 'Raleway',
-                          color: Colors.grey,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    onTap: () {
-                      _fetchR();
-                    },
-                  ),
-                ),
-                Container(
-                  child: FaIcon(
-                    FontAwesomeIcons.arrowRight,
-                    size: 15.0,
-                    color: Colors.grey,
-                  ),
-                )
+                // Container(
+                //   margin: EdgeInsets.only(left: 180.0, right: 8.0),
+                //   child: GestureDetector(
+                //     child: Text(
+                //       'See all',
+                //       style: TextStyle(
+                //           fontFamily: 'Raleway',
+                //           color: Colors.grey,
+                //           fontWeight: FontWeight.bold),
+                //     ),
+                //     onTap: () {
+                //       _fetchR();
+                //     },
+                //   ),
+                // ),
+                // Container(
+                //   child: FaIcon(
+                //     FontAwesomeIcons.arrowRight,
+                //     size: 15.0,
+                //     color: Colors.grey,
+                //   ),
+                // )
               ],
             ),
           ),

@@ -237,8 +237,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     ),
                   )
                 : Provider.of<Cart>(context).orderedFoods.isEmpty
-                    ? Text('No previous orders',
-                        style: TextStyle(fontSize: 18.0))
+                    ? Container(
+                        margin: EdgeInsets.only(top: 20.0, left: 20.0),
+                        child: Text(
+                          'No previous orders',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 18.0,
+                            fontFamily: "Raleway",
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      )
                     : ListView.builder(
                         physics: const ClampingScrollPhysics(),
                         shrinkWrap: true,
@@ -266,11 +276,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                       children: [
                                         Stack(
                                           children: [
-                                            Image(
-                                              image: NetworkImage(
-                                                  '${Provider.of<Cart>(context).orderedFoods[i][2]}'),
-                                              height: 200.0,
-                                            ),
+                                            // Image(
+                                            //   image: NetworkImage(
+                                            //       '${Provider.of<Cart>(context).orderedFoods[i][2]}'),
+                                            //   height: 200.0,
+                                            // ),
                                             Container(
                                               margin:
                                                   EdgeInsets.only(top: 70.0),
@@ -278,17 +288,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                                 title: Text(
                                                   '${Provider.of<Cart>(context).orderedFoods[i][1]}',
                                                   style: TextStyle(
-                                                    fontFamily: 'McLaren',
-                                                    color: Colors.white,
+                                                    fontFamily: 'Raleway',
+                                                    color: Colors.grey[600],
                                                     fontWeight: FontWeight.bold,
+                                                    fontSize: 22.0,
                                                   ),
                                                 ),
                                                 subtitle: Text(
-                                                  '${Provider.of<Cart>(context).orderedFoods[i][3]}',
+                                                  '₹${Provider.of<Cart>(context).orderedFoods[i][3]}',
                                                   style: TextStyle(
-                                                    fontFamily: 'McLaren',
+                                                    fontFamily: 'Raleway',
                                                     fontWeight: FontWeight.bold,
-                                                    color: Colors.white,
+                                                    color: Colors.grey[500],
+                                                    fontSize: 18.0,
                                                   ),
                                                 ),
                                               ),
@@ -301,6 +313,44 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                             Provider.of<Cart>(context,
                                                     listen: false)
                                                 .rateFood("16", rating);
+                                                 return showDialog<void>(
+                          context: context,
+                          barrierDismissible: false, // user must tap button!
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text(
+                                'Foodies Alert',
+                                style: TextStyle(
+                                  fontFamily: 'Raleway',
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                              content: Text(
+                                'Thank you for rating our food!',
+                                style: TextStyle(
+                                  fontFamily: "Raleway",
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              actions: <Widget>[
+                                FlatButton(
+                                  child: Text(
+                                    'Okay',
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Raleway',
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
                                           },
                                           starCount: 5,
                                           size: 50.0,
@@ -450,16 +500,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                                   ),
                                                   duration:
                                                       Duration(seconds: 2),
-                                                  // action: SnackBarAction(
-                                                  //   label: 'UNDO',
-                                                  //   onPressed: () {
-                                                  //     // cart.removeSingleItem(product.id);
-                                                  //     Provider.of<Cart>(context, listen: false)
-                                                  //         .deleteItems(
-                                                  //             Provider.of<Cart>(context, listen: false)
-                                                  //                 .loadedFoods[widget.i][0]);
-                                                  //   },
-                                                  // ),
                                                 ),
                                               );
                                               // Navigator.push(
@@ -481,34 +521,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           ),
                         ),
                       ),
-            // SnackBar(
-            //   backgroundColor: Colors.orange,
-            //   content: Row(
-            //     children: [
-            //       RichText(
-            //         text: TextSpan(
-            //           text: '₹189 | ★ ',
-            //           style: TextStyle(
-            //             fontFamily: 'Raleway',
-            //             color: Colors.grey[600],
-            //             fontWeight: FontWeight.bold,
-            //           ),
-            //           children: <TextSpan>[
-            //             TextSpan(
-            //               text: '4.5',
-            //               style: TextStyle(
-            //                 color: Colors.grey[700],
-            //                 fontFamily: 'Raleway',
-            //                 fontWeight: FontWeight.bold,
-            //                 fontSize: 12.0,
-            //               ),
-            //             ),
-            //           ],
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ),
           ],
         ),
       ),

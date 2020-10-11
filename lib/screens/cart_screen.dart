@@ -570,10 +570,62 @@ class CartScreen extends StatelessWidget {
               ),
               onPressed: () async {
                 if (addr2 == "" || addr2 == null) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => LocationScreen()));
+                  return showDialog<void>(
+                    context: context,
+                    barrierDismissible: false, // user must tap button!
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text(
+                          'Foodies Alert',
+                          style: TextStyle(
+                            fontFamily: 'Raleway',
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        content: Text(
+                          "Scrummy needs your location to deliver your food",
+                          style: TextStyle(
+                            fontFamily: "Raleway",
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text(
+                              'Continue',
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Raleway',
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LocationScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          FlatButton(
+                            child: Text(
+                              'Cancel',
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Raleway',
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 } else {
                   try {
                     await Provider.of<Cart>(context, listen: false).checkout();
@@ -605,6 +657,17 @@ class CartScreen extends StatelessWidget {
                                 ),
                                 Text(
                                   'Your food is on the way to $addr2',
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontFamily: 'Raleway',
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 15.0,
+                                ),
+                                Text(
+                                  'Please keep ₹${Provider.of<Cart>(context).disAmount} ready with you!',
                                   style: TextStyle(
                                     color: Colors.grey[600],
                                     fontFamily: 'Raleway',

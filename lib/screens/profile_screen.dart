@@ -27,6 +27,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _logOut() {
+    setState(() {
+      _isLoading = true;
+    });
     Provider.of<Auth>(context, listen: false).logout();
     Navigator.pushReplacement(
       context,
@@ -48,6 +51,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         },
       ),
     );
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
