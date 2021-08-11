@@ -1,3 +1,3 @@
 # scrummy
 
-A Food Delivery app.
+An online food delivery mobile app.
